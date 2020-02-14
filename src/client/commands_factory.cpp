@@ -66,7 +66,7 @@ common::Error LoginRequest(protocol::sequance_id_t id,
 }
 
 common::Error PingRequest(protocol::sequance_id_t id,
-                          const commands_info::ServerPingInfo& params,
+                          const common::daemon::commands::ServerPingInfo& params,
                           protocol::request_t* req) {
   if (!req) {
     return common::make_error_inval();
@@ -174,7 +174,7 @@ common::Error CatchupUndoRequest(protocol::sequance_id_t id,
 }
 
 common::Error PingResponseSuccess(protocol::sequance_id_t id,
-                                  const commands_info::ClientPingInfo& params,
+                                  const common::daemon::commands::ClientPingInfo& params,
                                   protocol::response_t* resp) {
   if (!resp) {
     return common::make_error_inval();

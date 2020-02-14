@@ -30,7 +30,7 @@ namespace fastotv {
 namespace server {
 
 common::Error PingRequest(protocol::sequance_id_t id,
-                          const commands_info::ClientPingInfo& params,
+                          const common::daemon::commands::ClientPingInfo& params,
                           protocol::request_t* req) {
   if (!req) {
     return common::make_error_inval();
@@ -126,7 +126,7 @@ common::Error LoginResponseFail(protocol::sequance_id_t id, const std::string& e
 }
 
 common::Error PingResponseSuccess(protocol::sequance_id_t id,
-                                  const commands_info::ServerPingInfo& params,
+                                  const common::daemon::commands::ServerPingInfo& params,
                                   protocol::response_t* resp) {
   if (!resp) {
     return common::make_error_inval();

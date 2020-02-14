@@ -20,13 +20,14 @@
 
 #include <string>  // for string
 
+#include <common/daemon/commands/ping_info.h>
+
 #include <fastotv/protocol/types.h>
 
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
 #include <fastotv/commands_info/catchup_undo_info.h>
 #include <fastotv/commands_info/client_info.h>
-#include <fastotv/commands_info/ping_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 
 namespace fastotv {
@@ -38,7 +39,7 @@ common::Error ActivateDeviceRequest(protocol::sequance_id_t id,
                                     protocol::request_t* req);
 common::Error LoginRequest(protocol::sequance_id_t id, const commands_info::AuthInfo& params, protocol::request_t* req);
 common::Error PingRequest(protocol::sequance_id_t id,
-                          const commands_info::ServerPingInfo& params,
+                          const common::daemon::commands::ServerPingInfo& params,
                           protocol::request_t* req);
 common::Error GetServerInfoRequest(protocol::sequance_id_t id, protocol::request_t* req);
 common::Error GetChannelsRequest(protocol::sequance_id_t id, protocol::request_t* req);
@@ -54,7 +55,7 @@ common::Error CatchupUndoRequest(protocol::sequance_id_t id,
 
 // response
 common::Error PingResponseSuccess(protocol::sequance_id_t id,
-                                  const commands_info::ClientPingInfo& params,
+                                  const common::daemon::commands::ClientPingInfo& params,
                                   protocol::response_t* resp);
 common::Error SystemInfoResponseSuccess(protocol::sequance_id_t id,
                                         const commands_info::ClientInfo& params,

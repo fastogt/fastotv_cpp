@@ -15,6 +15,7 @@
 #pragma once
 
 #include <common/net/types.h>
+#include <common/daemon/commands/ping_info.h>
 
 #include <fastotv/client.h>
 #include <fastotv/commands_info/auth_info.h>
@@ -22,7 +23,6 @@
 #include <fastotv/commands_info/catchups_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/devices_info.h>
-#include <fastotv/commands_info/ping_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vods_info.h>
@@ -38,7 +38,7 @@ class Client : public ProtocoledClient {
 
   // requests
   common::ErrnoError Ping() WARN_UNUSED_RESULT;
-  common::ErrnoError Ping(const commands_info::ClientPingInfo& ping) WARN_UNUSED_RESULT;
+  common::ErrnoError Ping(const common::daemon::commands::ClientPingInfo& ping) WARN_UNUSED_RESULT;
 
   common::ErrnoError GetClientInfo() WARN_UNUSED_RESULT;
 
@@ -54,7 +54,7 @@ class Client : public ProtocoledClient {
                                   const commands_info::ServerAuthInfo& auth) WARN_UNUSED_RESULT;
 
   common::ErrnoError Pong(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
-  common::ErrnoError Pong(protocol::sequance_id_t id, const commands_info::ServerPingInfo& pong) WARN_UNUSED_RESULT;
+  common::ErrnoError Pong(protocol::sequance_id_t id, const common::daemon::commands::ServerPingInfo& pong) WARN_UNUSED_RESULT;
 
   common::ErrnoError GetServerInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
   common::ErrnoError GetServerInfoSuccess(protocol::sequance_id_t id,

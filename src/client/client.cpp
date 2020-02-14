@@ -28,11 +28,11 @@ namespace client {
 Client::Client(common::libev::IoLoop* server, const common::net::socket_info& info) : base_class(server, info) {}
 
 common::ErrnoError Client::Ping() {
-  commands_info::ServerPingInfo serv_ping;
+  common::daemon::commands::ServerPingInfo serv_ping;
   return Ping(serv_ping);
 }
 
-common::ErrnoError Client::Ping(const commands_info::ServerPingInfo& ping) {
+common::ErrnoError Client::Ping(const common::daemon::commands::ServerPingInfo& ping) {
   protocol::request_t ping_request;
   common::Error err_ser = PingRequest(NextRequestID(), ping, &ping_request);
   if (err_ser) {
@@ -54,11 +54,11 @@ common::ErrnoError Client::NotificationTextOK(protocol::sequance_id_t id) {
 }
 
 common::ErrnoError Client::Pong(protocol::sequance_id_t id) {
-  commands_info::ClientPingInfo client_pong;
+  common::daemon::commands::ClientPingInfo client_pong;
   return Pong(id, client_pong);
 }
 
-common::ErrnoError Client::Pong(protocol::sequance_id_t id, const commands_info::ClientPingInfo& pong) {
+common::ErrnoError Client::Pong(protocol::sequance_id_t id, const common::daemon::commands::ClientPingInfo& pong) {
   protocol::response_t resp;
   common::Error err_ser = PingResponseSuccess(id, pong, &resp);
   if (err_ser) {

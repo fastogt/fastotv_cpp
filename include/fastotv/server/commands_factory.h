@@ -20,6 +20,8 @@
 
 #include <string>  // for string
 
+#include <common/daemon/commands/ping_info.h>
+
 #include <fastotv/protocol/types.h>
 
 #include <fastotv/commands_info/auth_info.h>
@@ -27,7 +29,6 @@
 #include <fastotv/commands_info/catchups_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/devices_info.h>
-#include <fastotv/commands_info/ping_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vods_info.h>
@@ -37,7 +38,7 @@ namespace server {
 
 // requests
 common::Error PingRequest(protocol::sequance_id_t id,
-                          const commands_info::ClientPingInfo& params,
+                          const common::daemon::commands::ClientPingInfo& params,
                           protocol::request_t* req);
 
 common::Error GetClientInfoRequest(protocol::sequance_id_t id, protocol::request_t* req);
@@ -57,7 +58,7 @@ common::Error LoginResponseFail(protocol::sequance_id_t id, const std::string& e
 
 // client ping
 common::Error PingResponseSuccess(protocol::sequance_id_t id,
-                                  const commands_info::ServerPingInfo& params,
+                                  const common::daemon::commands::ServerPingInfo& params,
                                   protocol::response_t* resp);
 
 // server info
