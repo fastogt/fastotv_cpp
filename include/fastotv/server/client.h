@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <common/net/types.h>
 #include <common/daemon/commands/ping_info.h>
+#include <common/net/types.h>
 
 #include <fastotv/client.h>
 #include <fastotv/commands_info/auth_info.h>
@@ -54,7 +54,8 @@ class Client : public ProtocoledClient {
                                   const commands_info::ServerAuthInfo& auth) WARN_UNUSED_RESULT;
 
   common::ErrnoError Pong(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
-  common::ErrnoError Pong(protocol::sequance_id_t id, const common::daemon::commands::ServerPingInfo& pong) WARN_UNUSED_RESULT;
+  common::ErrnoError Pong(protocol::sequance_id_t id,
+                          const common::daemon::commands::ServerPingInfo& pong) WARN_UNUSED_RESULT;
 
   common::ErrnoError GetServerInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
   common::ErrnoError GetServerInfoSuccess(protocol::sequance_id_t id,
