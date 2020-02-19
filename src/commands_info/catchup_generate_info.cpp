@@ -31,7 +31,7 @@ namespace commands_info {
 CatchupGenerateInfo::CatchupGenerateInfo() : sid_(invalid_stream_id), title_(), start_time_(0), stop_time_(0) {}
 
 CatchupGenerateInfo::CatchupGenerateInfo(stream_id_t sid,
-                                         const std::__cxx11::string& title,
+                                         const std::string& title,
                                          timestamp_t start_time,
                                          timestamp_t stop_time)
     : sid_(sid), title_(title), start_time_(start_time), stop_time_(stop_time) {}
