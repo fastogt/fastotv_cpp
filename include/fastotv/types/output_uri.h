@@ -29,6 +29,7 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   typedef common::file_system::ascii_directory_string_path http_root_t;
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
   typedef fastotv::channel_id_t uri_id_t;
+
   OutputUri();
   explicit OutputUri(uri_id_t id, const common::uri::Url& output);
 
