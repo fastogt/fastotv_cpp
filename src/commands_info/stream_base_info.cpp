@@ -27,6 +27,7 @@
 #define CHANNEL_INFO_RECENT_FIELD "recent"
 #define CHANNEL_INFO_INTERRUPT_TIME_FIELD "interrupt_time"
 #define CHANNEL_INFO_PARTS_FIELD "parts"
+#define CHANNEL_INFO_VIEW_COUNT_FIELD "view_count"
 
 namespace fastotv {
 namespace commands_info {
@@ -40,7 +41,8 @@ StreamBaseInfo::StreamBaseInfo()
       interruption_time_(0),
       enable_audio_(true),
       enable_video_(true),
-      parts_() {}
+      parts_(),
+      view_count_(0) {}
 
 StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                const std::string& group,
@@ -50,7 +52,8 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                timestamp_t interruption_time,
                                bool enable_audio,
                                bool enable_video,
-                               const parts_t& parts)
+                               const parts_t& parts,
+                               fastotv::commands_info::StreamBaseInfo::view_count_t view)
     : stream_id_(sid),
       group_(group),
       iarc_(iarc),
@@ -59,7 +62,8 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
       interruption_time_(interruption_time),
       enable_audio_(enable_audio),
       enable_video_(enable_video),
-      parts_(parts) {}
+      parts_(parts),
+      view_count_(view) {}
 
 bool StreamBaseInfo::IsValid() const {
   return stream_id_ != invalid_stream_id;
@@ -142,6 +146,7 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
   json_object_object_add(deserialized, CHANNEL_INFO_INTERRUPT_TIME_FIELD, json_object_new_int64(interruption_time_));
   json_object_object_add(deserialized, CHANNEL_INFO_AUDIO_ENABLE_FIELD, json_object_new_boolean(enable_audio_));
   json_object_object_add(deserialized, CHANNEL_INFO_VIDEO_ENABLE_FIELD, json_object_new_boolean(enable_video_));
+  json_object_object_add(deserialized, CHANNEL_INFO_VIEW_COUNT_FIELD, json_object_new_int(view_count_));
 
   json_object* jparts = json_object_new_array();
   for (const auto part : parts_) {
@@ -224,7 +229,14 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  StreamBaseInfo url(sid, group, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts);
+  view_count_t view;
+  json_object* jview = nullptr;
+  json_bool jview_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_VIEW_COUNT_FIELD, &jview);
+  if (jview_exists) {
+    view = json_object_get_int(jview);
+  }
+
+  StreamBaseInfo url(sid, group, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts, view);
   if (!url.IsValid()) {
     return common::make_error_inval();
   }

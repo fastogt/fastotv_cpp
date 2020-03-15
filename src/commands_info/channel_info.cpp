@@ -34,8 +34,10 @@ ChannelInfo::ChannelInfo(stream_id_t sid,
                          const EpgInfo& epg,
                          bool enable_audio,
                          bool enable_video,
-                         const parts_t& parts)
-    : base_class(sid, group, iarc, favorite, recent, interruption_time, enable_audio, enable_video, parts), epg_(epg) {}
+                         const parts_t& parts,
+                         view_count_t view)
+    : base_class(sid, group, iarc, favorite, recent, interruption_time, enable_audio, enable_video, parts, view),
+      epg_(epg) {}
 
 bool ChannelInfo::IsValid() const {
   return base_class::IsValid() && epg_.IsValid();

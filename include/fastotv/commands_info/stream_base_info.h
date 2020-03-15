@@ -30,6 +30,7 @@ namespace commands_info {
 class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo> {
  public:
   typedef unsigned int iarc_t;
+  typedef unsigned int view_count_t;
   typedef std::vector<stream_id_t> parts_t;
   static const iarc_t DEFAULT_IARC = 21;
 
@@ -42,7 +43,8 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
                  timestamp_t interruption_time,
                  bool enable_audio,
                  bool enable_video,
-                 const parts_t& parts);
+                 const parts_t& parts,
+                 view_count_t view);
 
   bool IsValid() const;
 
@@ -80,6 +82,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   stream_id_t stream_id_;
   std::string group_;
   iarc_t iarc_;
+  view_count_t view_count_;
   bool favorite_;
   timestamp_t recent_;
   timestamp_t interruption_time_;

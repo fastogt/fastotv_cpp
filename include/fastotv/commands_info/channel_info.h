@@ -42,7 +42,8 @@ class ChannelInfo : public StreamBaseInfo {
               const EpgInfo& epg,
               bool enable_audio,
               bool enable_video,
-              const parts_t& parts);
+              const parts_t& parts,
+              view_count_t view);
 
   bool IsValid() const;
 

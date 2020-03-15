@@ -36,9 +36,10 @@ CatchupInfo::CatchupInfo(stream_id_t sid,
                          bool enable_audio,
                          bool enable_video,
                          const parts_t& parts,
+                         view_count_t view,
                          timestamp_t start,
                          timestamp_t stop)
-    : base_class(sid, group, iarc, favorite, recent, interruption_time, epg, enable_audio, enable_video, parts),
+    : base_class(sid, group, iarc, favorite, recent, interruption_time, epg, enable_audio, enable_video, parts, view),
       start_(start),
       stop_(stop) {}
 
