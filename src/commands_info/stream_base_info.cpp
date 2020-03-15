@@ -36,13 +36,13 @@ StreamBaseInfo::StreamBaseInfo()
     : stream_id_(invalid_stream_id),
       group_(),
       iarc_(DEFAULT_IARC),
+      view_count_(0),
       favorite_(false),
       recent_(0),
       interruption_time_(0),
       enable_audio_(true),
       enable_video_(true),
-      parts_(),
-      view_count_(0) {}
+      parts_() {}
 
 StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                const std::string& group,
@@ -57,13 +57,13 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
     : stream_id_(sid),
       group_(group),
       iarc_(iarc),
+      view_count_(view),
       favorite_(favorite),
       recent_(recent),
       interruption_time_(interruption_time),
       enable_audio_(enable_audio),
       enable_video_(enable_video),
-      parts_(parts),
-      view_count_(view) {}
+      parts_(parts) {}
 
 bool StreamBaseInfo::IsValid() const {
   return stream_id_ != invalid_stream_id;
@@ -91,6 +91,14 @@ StreamBaseInfo::iarc_t StreamBaseInfo::GetIARC() const {
 
 void StreamBaseInfo::SetIARC(iarc_t iarc) {
   iarc_ = iarc;
+}
+
+StreamBaseInfo::view_count_t StreamBaseInfo::GetViewCount() const {
+  return view_count_;
+}
+
+void StreamBaseInfo::SetViewCount(view_count_t view) {
+  view_count_ = view;
 }
 
 fastotv::timestamp_t StreamBaseInfo::GetRecent() const {

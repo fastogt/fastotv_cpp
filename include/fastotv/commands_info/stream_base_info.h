@@ -57,6 +57,9 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   iarc_t GetIARC() const;
   void SetIARC(iarc_t iarc);
 
+  view_count_t GetViewCount() const;
+  void SetViewCount(view_count_t view);
+
   timestamp_t GetRecent() const;
   void SetRecent(timestamp_t rec);
 
