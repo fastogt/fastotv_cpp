@@ -35,8 +35,19 @@ VodInfo::VodInfo(stream_id_t sid,
                  bool enable_audio,
                  bool enable_video,
                  const parts_t& parts,
-                 view_count_t view)
-    : base_class(sid, group, iarc, favorite, recent, interruption_time, enable_audio, enable_video, parts, view),
+                 view_count_t view,
+                 bool locked)
+    : base_class(sid,
+                 group,
+                 iarc,
+                 favorite,
+                 recent,
+                 interruption_time,
+                 enable_audio,
+                 enable_video,
+                 parts,
+                 view,
+                 locked),
       movie_(movie) {}
 
 bool VodInfo::IsValid() const {

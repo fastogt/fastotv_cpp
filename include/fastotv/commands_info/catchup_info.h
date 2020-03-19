@@ -41,6 +41,7 @@ class CatchupInfo : public ChannelInfo {
               bool enable_video,
               const parts_t& parts,
               view_count_t view,
+              bool locked,
               timestamp_t start,
               timestamp_t stop);
 

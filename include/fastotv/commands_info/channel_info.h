@@ -43,7 +43,8 @@ class ChannelInfo : public StreamBaseInfo {
               bool enable_audio,
               bool enable_video,
               const parts_t& parts,
-              view_count_t view);
+              view_count_t view,
+              bool locked);
 
   bool IsValid() const;
 

@@ -44,7 +44,8 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
                  bool enable_audio,
                  bool enable_video,
                  const parts_t& parts,
-                 view_count_t view);
+                 view_count_t view,
+                 bool locked);
 
   bool IsValid() const;
 
@@ -93,6 +94,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   bool enable_audio_;
   bool enable_video_;
   parts_t parts_;
+  bool locked_;
 };
 
 inline bool operator==(const StreamBaseInfo& left, const StreamBaseInfo& right) {
