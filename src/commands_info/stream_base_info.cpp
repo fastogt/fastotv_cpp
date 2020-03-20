@@ -145,6 +145,14 @@ void StreamBaseInfo::SetParts(const parts_t& parts) {
   parts_ = parts;
 }
 
+bool StreamBaseInfo::GetLocked() const {
+  return locked_;
+}
+
+void StreamBaseInfo::SetLocked(bool locked) {
+  locked_ = locked;
+}
+
 common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
   if (!IsValid()) {
     return common::make_error_inval();

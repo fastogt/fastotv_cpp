@@ -19,6 +19,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <common/serializer/json_serializer.h>
 
@@ -75,6 +76,9 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
 
   parts_t GetParts() const;
   void SetParts(const parts_t& parts);
+
+  bool GetLocked() const;
+  void SetLocked(bool locked);
 
   bool Equals(const StreamBaseInfo& url) const;
 
