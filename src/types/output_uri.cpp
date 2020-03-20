@@ -67,7 +67,7 @@ bool OutputUri::Equals(const OutputUri& inf) const {
   return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_;
 }
 
-common::Optional<OutputUri> OutputUri::MakeUrl(common::HashValue* hash) {
+common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<OutputUri>();
   }

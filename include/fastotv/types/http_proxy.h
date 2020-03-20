@@ -41,7 +41,7 @@ class HttpProxy : public common::serializer::JsonSerializer<HttpProxy> {
   password_t GetPassword() const;
   void SetPassword(const password_t& password);
 
-  static common::Optional<HttpProxy> MakeHttpProxy(common::HashValue* value);
+  static common::Optional<HttpProxy> Make(common::HashValue* value);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

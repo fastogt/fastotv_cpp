@@ -59,7 +59,7 @@ void HttpProxy::SetPassword(const password_t& password) {
   password_ = password;
 }
 
-common::Optional<HttpProxy> HttpProxy::MakeHttpProxy(common::HashValue* hash) {
+common::Optional<HttpProxy> HttpProxy::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<HttpProxy>();
   }

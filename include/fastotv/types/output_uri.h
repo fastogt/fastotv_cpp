@@ -47,7 +47,7 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
 
   bool Equals(const OutputUri& inf) const;
 
-  static common::Optional<OutputUri> MakeUrl(common::HashValue* hash);
+  static common::Optional<OutputUri> Make(common::HashValue* hash);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

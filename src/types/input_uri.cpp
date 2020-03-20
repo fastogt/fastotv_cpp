@@ -76,7 +76,7 @@ bool InputUri::Equals(const InputUri& inf) const {
   return id_ == inf.id_ && input_ == inf.input_;
 }
 
-common::Optional<InputUri> InputUri::MakeUrl(common::HashValue* hash) {
+common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<InputUri>();
   }
@@ -109,7 +109,10 @@ common::Optional<InputUri> InputUri::MakeUrl(common::HashValue* hash) {
   common::HashValue* http_proxy = nullptr;
   common::Value* http_proxy_field = hash->Find(INPUT_HTTP_PROXY_FIELD);
   if (http_proxy_field && http_proxy_field->GetAsHash(&http_proxy)) {
-    url.SetHttpProxyUrl(HttpProxy::MakeHttpProxy(http_proxy));
+    auto proxy = HttpProxy::Make(http_proxy);
+    if (proxy) {
+      url.SetHttpProxyUrl(proxy);
+    }
   }
   return url;
 }

@@ -53,7 +53,7 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
 
   bool Equals(const InputUri& inf) const;
 
-  static common::Optional<InputUri> MakeUrl(common::HashValue* hash);
+  static common::Optional<InputUri> Make(common::HashValue* hash);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
