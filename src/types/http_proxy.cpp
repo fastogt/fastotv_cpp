@@ -21,7 +21,7 @@
 
 #include <common/sprintf.h>
 
-#define HTTP_PROXY_URL_FIELD "url"
+#define HTTP_PROXY_URL_FIELD "uri"
 #define HTTP_PROXY_USER_FIELD "user"
 #define HTTP_PROXY_PASSWORD_FIELD "password"
 
