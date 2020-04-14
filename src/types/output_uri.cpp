@@ -83,8 +83,8 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     return common::Optional<OutputUri>();
   }
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  uri_id_t uid;
-  if (!input_id_field || !input_id_field->GetAsUInteger(&uid)) {
+  int uid;
+  if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
     return common::Optional<OutputUri>();
   }
 

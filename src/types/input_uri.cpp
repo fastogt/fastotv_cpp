@@ -117,8 +117,8 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     return common::Optional<InputUri>();
   }
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  uri_id_t uid;
-  if (!input_id_field || !input_id_field->GetAsUInteger(&uid)) {
+  int uid;
+  if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
     return common::Optional<InputUri>();
   }
 
