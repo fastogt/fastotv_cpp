@@ -29,14 +29,17 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
  public:
   typedef JsonSerializer<InputUri> base_class;
   typedef fastotv::channel_id_t uri_id_t;
-  typedef common::Optional<HttpProxy> http_proxy_url_t;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
   typedef UserAgent user_agent_t;
+  // optionals
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
+  typedef common::Optional<HttpProxy> http_proxy_url_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua = GSTREAMER);
+
+  bool IsValid() const;
 
   uri_id_t GetID() const;
   void SetID(uri_id_t id);

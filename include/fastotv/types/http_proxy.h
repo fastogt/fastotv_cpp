@@ -30,6 +30,8 @@ class HttpProxy : public common::serializer::JsonSerializer<HttpProxy> {
   HttpProxy();
   explicit HttpProxy(const common::uri::Url& url);
 
+  bool IsValid() const;
+
   bool Equals(const HttpProxy& proxy) const;
 
   common::uri::Url GetUrl() const;

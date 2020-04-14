@@ -33,6 +33,8 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   OutputUri();
   explicit OutputUri(uri_id_t id, const common::uri::Url& output);
 
+  bool IsValid() const;
+
   uri_id_t GetID() const;
   void SetID(uri_id_t id);
 

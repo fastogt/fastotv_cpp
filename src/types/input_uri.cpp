@@ -19,13 +19,13 @@
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
-#define INPUT_ID_FIELD "id"
-#define INPUT_URI_FIELD "uri"
+#define ID_FIELD "id"
+#define URI_FIELD "uri"
 #define USER_AGENT_FIELD "user_agent"
 #define STREAMLINK_URL_FIELD "stream_link"
-#define INPUT_HTTP_PROXY_FIELD "proxy"
-#define INPUT_PROGRAM_NUMBER_FIELD "program_number"
-#define INPUT_MULTICAST_IFACE "multicast_iface"
+#define PROXY_FIELD "proxy"
+#define PROGRAM_NUMBER_FIELD "program_number"
+#define MULTICAST_IFACE "multicast_iface"
 
 namespace fastotv {
 
@@ -40,6 +40,10 @@ InputUri::InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua)
       http_proxy_url_(),
       program_number_(),
       iface_() {}
+
+bool InputUri::IsValid() const {
+  return input_.IsValid();
+}
 
 InputUri::uri_id_t InputUri::GetID() const {
   return id_;
@@ -107,16 +111,18 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   InputUri url;
-  common::Value* input_id_field = hash->Find(INPUT_ID_FIELD);
+  std::string url_str;
+  common::uri::Url uri;
+  common::Value* url_str_field = hash->Find(URI_FIELD);
+  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
+    return common::Optional<InputUri>();
+  }
+  url.SetInput(uri);
+
+  common::Value* input_id_field = hash->Find(ID_FIELD);
   int uid;
   if (input_id_field && input_id_field->GetAsInteger(&uid)) {
     url.SetID(uid);
-  }
-
-  std::string url_str;
-  common::Value* url_str_field = hash->Find(INPUT_URI_FIELD);
-  if (url_str_field && url_str_field->GetAsBasicString(&url_str)) {
-    url.SetInput(common::uri::Url(url_str));
   }
 
   int agent;
@@ -132,7 +138,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   common::HashValue* http_proxy = nullptr;
-  common::Value* http_proxy_field = hash->Find(INPUT_HTTP_PROXY_FIELD);
+  common::Value* http_proxy_field = hash->Find(PROXY_FIELD);
   if (http_proxy_field && http_proxy_field->GetAsHash(&http_proxy)) {
     auto proxy = HttpProxy::Make(http_proxy);
     if (proxy) {
@@ -140,13 +146,13 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     }
   }
 
-  common::Value* pid_field = hash->Find(INPUT_PROGRAM_NUMBER_FIELD);
+  common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
   int pid;
   if (pid_field && pid_field->GetAsInteger(&pid)) {
     url.SetProgramNumber(pid);
   }
 
-  common::Value* iface_field = hash->Find(INPUT_MULTICAST_IFACE);
+  common::Value* iface_field = hash->Find(MULTICAST_IFACE);
   std::string iface;
   if (iface_field && iface_field->GetAsBasicString(&iface)) {
     url.SetMulticastIface(iface);
@@ -156,16 +162,17 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {
   InputUri res;
+  json_object* juri = nullptr;
+  json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
+  if (!juri_exists) {
+    return common::make_error_inval();
+  }
+  res.SetInput(common::uri::Url(json_object_get_string(juri)));
+
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, INPUT_ID_FIELD, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
-  }
-
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, INPUT_URI_FIELD, &juri);
-  if (juri_exists) {
-    res.SetInput(common::uri::Url(json_object_get_string(juri)));
   }
 
   json_object* juser_agent = nullptr;
@@ -183,20 +190,20 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jpid = nullptr;
-  json_bool jpid_exists = json_object_object_get_ex(serialized, INPUT_PROGRAM_NUMBER_FIELD, &jpid);
+  json_bool jpid_exists = json_object_object_get_ex(serialized, PROGRAM_NUMBER_FIELD, &jpid);
   if (jpid_exists) {
     res.SetProgramNumber(json_object_get_int(jpid));
   }
 
   json_object* jiface = nullptr;
-  json_bool jiface_exists = json_object_object_get_ex(serialized, INPUT_MULTICAST_IFACE, &jiface);
+  json_bool jiface_exists = json_object_object_get_ex(serialized, MULTICAST_IFACE, &jiface);
   if (jiface_exists) {
     std::string iface = json_object_get_string(jiface);
     res.SetMulticastIface(iface);
   }
 
   json_object* jhttp_proxy = nullptr;
-  json_bool jhttp_proxy_exists = json_object_object_get_ex(serialized, INPUT_HTTP_PROXY_FIELD, &jhttp_proxy);
+  json_bool jhttp_proxy_exists = json_object_object_get_ex(serialized, PROXY_FIELD, &jhttp_proxy);
   if (jhttp_proxy_exists) {
     HttpProxy proxy;
     common::Error err = proxy.DeSerialize(jhttp_proxy);
@@ -210,26 +217,30 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error InputUri::SerializeFields(json_object* out) const {
-  json_object_object_add(out, INPUT_ID_FIELD, json_object_new_int64(GetID()));
+  if (!IsValid()) {
+    return common::make_error_inval();
+  }
+
+  json_object_object_add(out, ID_FIELD, json_object_new_int64(GetID()));
   std::string url_str = common::ConvertToString(GetInput());
-  json_object_object_add(out, INPUT_URI_FIELD, json_object_new_string(url_str.c_str()));
+  json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
   json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(user_agent_));
   json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(stream_url_));
   const auto pid = GetProgramNumber();
   if (pid) {
-    json_object_object_add(out, INPUT_PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
+    json_object_object_add(out, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
   }
   const auto iface = GetMulticastIface();
   if (iface) {
     const std::string iface_str = *iface;
-    json_object_object_add(out, INPUT_MULTICAST_IFACE, json_object_new_string(iface_str.c_str()));
+    json_object_object_add(out, MULTICAST_IFACE, json_object_new_string(iface_str.c_str()));
   }
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
     json_object* jhttp_proxy = nullptr;
     common::Error err = hurl->Serialize(&jhttp_proxy);
     if (!err) {
-      json_object_object_add(out, INPUT_HTTP_PROXY_FIELD, jhttp_proxy);
+      json_object_object_add(out, PROXY_FIELD, jhttp_proxy);
     }
   }
 

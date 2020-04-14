@@ -19,10 +19,10 @@
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
-#define OUTPUT_ID_FIELD "id"
-#define OUTPUT_URI_FIELD "uri"
-#define OUTPUT_HTTP_ROOT_FIELD "http_root"
-#define OUTPUT_HLS_TYPE_FIELD "hls_type"
+#define ID_FIELD "id"
+#define URI_FIELD "uri"
+#define HTTP_ROOT_FIELD "http_root"
+#define HLS_TYPE_FIELD "hls_type"
 
 namespace fastotv {
 
@@ -30,6 +30,10 @@ OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
     : base_class(), id_(id), output_(output), http_root_(), hls_type_(HLS_PULL) {}
+
+bool OutputUri::IsValid() const {
+  return output_.IsValid();
+}
 
 OutputUri::uri_id_t OutputUri::GetID() const {
   return id_;
@@ -73,27 +77,29 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   }
 
   OutputUri url;
-  common::Value* input_id_field = hash->Find(OUTPUT_ID_FIELD);
+  std::string url_str;
+  common::uri::Url uri;
+  common::Value* url_str_field = hash->Find(URI_FIELD);
+  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
+    return common::Optional<OutputUri>();
+  }
+  url.SetOutput(uri);
+
+  common::Value* input_id_field = hash->Find(ID_FIELD);
   int uid;
   if (input_id_field && input_id_field->GetAsInteger(&uid)) {
     url.SetID(uid);
   }
 
-  std::string url_str;
-  common::Value* url_str_field = hash->Find(OUTPUT_URI_FIELD);
-  if (url_str_field && url_str_field->GetAsBasicString(&url_str)) {
-    url.SetOutput(common::uri::Url(url_str));
-  }
-
   std::string http_root_str;
-  common::Value* http_root_str_field = hash->Find(OUTPUT_HTTP_ROOT_FIELD);
+  common::Value* http_root_str_field = hash->Find(HTTP_ROOT_FIELD);
   if (http_root_str_field && http_root_str_field->GetAsBasicString(&http_root_str)) {
     const common::file_system::ascii_directory_string_path http_root(http_root_str);
     url.SetHttpRoot(http_root);
   }
 
   int hls_type;
-  common::Value* hls_type_field = hash->Find(OUTPUT_HLS_TYPE_FIELD);
+  common::Value* hls_type_field = hash->Find(HLS_TYPE_FIELD);
   if (hls_type_field && hls_type_field->GetAsInteger(&hls_type)) {
     url.SetHlsType(static_cast<HlsType>(hls_type));
   }
@@ -103,20 +109,21 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 
 common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   OutputUri res;
+  json_object* juri = nullptr;
+  json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
+  if (!juri_exists) {
+    return common::make_error_inval();
+  }
+  res.SetOutput(common::uri::Url(json_object_get_string(juri)));
+
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, OUTPUT_ID_FIELD, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
   }
 
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, OUTPUT_URI_FIELD, &juri);
-  if (juri_exists) {
-    res.SetOutput(common::uri::Url(json_object_get_string(juri)));
-  }
-
   json_object* jhttp_root = nullptr;
-  json_bool jhttp_root_exists = json_object_object_get_ex(serialized, OUTPUT_HTTP_ROOT_FIELD, &jhttp_root);
+  json_bool jhttp_root_exists = json_object_object_get_ex(serialized, HTTP_ROOT_FIELD, &jhttp_root);
   if (jhttp_root_exists) {
     const char* http_root_str = json_object_get_string(jhttp_root);
     const common::file_system::ascii_directory_string_path http_root(http_root_str);
@@ -124,7 +131,7 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jhls_type = nullptr;
-  json_bool jhls_type_exists = json_object_object_get_ex(serialized, OUTPUT_HLS_TYPE_FIELD, &jhls_type);
+  json_bool jhls_type_exists = json_object_object_get_ex(serialized, HLS_TYPE_FIELD, &jhls_type);
   if (jhls_type_exists) {
     res.SetHlsType(static_cast<HlsType>(json_object_get_int(jhls_type)));
   }
@@ -134,14 +141,17 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error OutputUri::SerializeFields(json_object* out) const {
+  if (!IsValid()) {
+    return common::make_error_inval();
+  }
+
   common::file_system::ascii_directory_string_path ps = GetHttpRoot();
   const std::string http_root_str = ps.GetPath();
-
-  json_object_object_add(out, OUTPUT_ID_FIELD, json_object_new_int64(GetID()));
+  json_object_object_add(out, ID_FIELD, json_object_new_int64(GetID()));
   std::string url_str = common::ConvertToString(GetOutput());
-  json_object_object_add(out, OUTPUT_URI_FIELD, json_object_new_string(url_str.c_str()));
-  json_object_object_add(out, OUTPUT_HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
-  json_object_object_add(out, OUTPUT_HLS_TYPE_FIELD, json_object_new_int(hls_type_));
+  json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
+  json_object_object_add(out, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
+  json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(hls_type_));
   return common::Error();
 }
 
