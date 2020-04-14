@@ -24,13 +24,22 @@
 #define USER_AGENT_FIELD "user_agent"
 #define STREAMLINK_URL_FIELD "stream_link"
 #define INPUT_HTTP_PROXY_FIELD "proxy"
+#define INPUT_PROGRAM_NUMBER_FIELD "program_number"
+#define INPUT_MULTICAST_IFACE "multicast_iface"
 
 namespace fastotv {
 
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
 InputUri::InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua)
-    : base_class(), id_(id), input_(input), user_agent_(ua), stream_url_(false), http_proxy_url_() {}
+    : base_class(),
+      id_(id),
+      input_(input),
+      user_agent_(ua),
+      stream_url_(false),
+      http_proxy_url_(),
+      program_number_(),
+      iface_() {}
 
 InputUri::uri_id_t InputUri::GetID() const {
   return id_;
@@ -70,6 +79,22 @@ InputUri::http_proxy_url_t InputUri::GetHttpProxyUrl() const {
 
 void InputUri::SetHttpProxyUrl(const http_proxy_url_t& url) {
   http_proxy_url_ = url;
+}
+
+fastotv::InputUri::program_number_t InputUri::GetProgramNumber() const {
+  return program_number_;
+}
+
+void InputUri::SetProgramNumber(fastotv::InputUri::program_number_t pid) {
+  program_number_ = pid;
+}
+
+InputUri::multicast_iface_t InputUri::GetMulticastIface() const {
+  return iface_;
+}
+
+void InputUri::SetMulticastIface(multicast_iface_t iface) {
+  iface_ = iface;
 }
 
 bool InputUri::Equals(const InputUri& inf) const {
@@ -114,6 +139,18 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
       url.SetHttpProxyUrl(proxy);
     }
   }
+
+  common::Value* pid_field = hash->Find(INPUT_PROGRAM_NUMBER_FIELD);
+  int pid;
+  if (pid_field && pid_field->GetAsInteger(&pid)) {
+    url.SetProgramNumber(pid);
+  }
+
+  common::Value* iface_field = hash->Find(INPUT_MULTICAST_IFACE);
+  std::string iface;
+  if (iface_field && iface_field->GetAsBasicString(&iface)) {
+    url.SetMulticastIface(iface);
+  }
   return url;
 }
 
@@ -145,6 +182,19 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetStreamLink(sl);
   }
 
+  json_object* jpid = nullptr;
+  json_bool jpid_exists = json_object_object_get_ex(serialized, INPUT_PROGRAM_NUMBER_FIELD, &jpid);
+  if (jpid_exists) {
+    res.SetProgramNumber(json_object_get_int(jpid));
+  }
+
+  json_object* jiface = nullptr;
+  json_bool jiface_exists = json_object_object_get_ex(serialized, INPUT_MULTICAST_IFACE, &jiface);
+  if (jiface_exists) {
+    std::string iface = json_object_get_string(jiface);
+    res.SetMulticastIface(iface);
+  }
+
   json_object* jhttp_proxy = nullptr;
   json_bool jhttp_proxy_exists = json_object_object_get_ex(serialized, INPUT_HTTP_PROXY_FIELD, &jhttp_proxy);
   if (jhttp_proxy_exists) {
@@ -165,6 +215,15 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   json_object_object_add(out, INPUT_URI_FIELD, json_object_new_string(url_str.c_str()));
   json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(user_agent_));
   json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(stream_url_));
+  const auto pid = GetProgramNumber();
+  if (pid) {
+    json_object_object_add(out, INPUT_PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
+  }
+  const auto iface = GetMulticastIface();
+  if (iface) {
+    const std::string iface_str = *iface;
+    json_object_object_add(out, INPUT_MULTICAST_IFACE, json_object_new_string(iface_str.c_str()));
+  }
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
     json_object* jhttp_proxy = nullptr;

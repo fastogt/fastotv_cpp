@@ -32,6 +32,8 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   typedef common::Optional<HttpProxy> http_proxy_url_t;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
   typedef UserAgent user_agent_t;
+  typedef common::Optional<int> program_number_t;
+  typedef common::Optional<std::string> multicast_iface_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua = GSTREAMER);
@@ -51,6 +53,12 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
 
+  program_number_t GetProgramNumber() const;
+  void SetProgramNumber(program_number_t id);
+
+  multicast_iface_t GetMulticastIface() const;
+  void SetMulticastIface(multicast_iface_t iface);
+
   bool Equals(const InputUri& inf) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -62,9 +70,14 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
  private:
   uri_id_t id_;
   common::uri::Url input_;
+  // http
   user_agent_t user_agent_;
   bool stream_url_;
   http_proxy_url_t http_proxy_url_;
+
+  // udp
+  program_number_t program_number_;
+  multicast_iface_t iface_;
 };
 
 }  // namespace fastotv
