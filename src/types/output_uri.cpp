@@ -76,20 +76,21 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     return common::Optional<OutputUri>();
   }
 
-  OutputUri url;
   std::string url_str;
   common::uri::Url uri;
   common::Value* url_str_field = hash->Find(URI_FIELD);
   if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
     return common::Optional<OutputUri>();
   }
-  url.SetOutput(uri);
-
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  int uid;
-  if (input_id_field && input_id_field->GetAsInteger(&uid)) {
-    url.SetID(uid);
+  uri_id_t uid;
+  if (!input_id_field || !input_id_field->GetAsUInteger(&uid)) {
+    return common::Optional<OutputUri>();
   }
+
+  OutputUri url;
+  url.SetOutput(uri);
+  url.SetID(uid);
 
   std::string http_root_str;
   common::Value* http_root_str_field = hash->Find(HTTP_ROOT_FIELD);
@@ -108,19 +109,21 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 }
 
 common::Error OutputUri::DoDeSerialize(json_object* serialized) {
-  OutputUri res;
   json_object* juri = nullptr;
   json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
   if (!juri_exists) {
     return common::make_error_inval();
   }
-  res.SetOutput(common::uri::Url(json_object_get_string(juri)));
 
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (jid_exists) {
-    res.SetID(json_object_get_int64(jid));
+  if (!jid_exists || !json_object_is_type(jid, json_type_int)) {
+    return common::make_error_inval();
   }
+
+  OutputUri res;
+  res.SetID(json_object_get_int(jid));
+  res.SetOutput(common::uri::Url(json_object_get_string(juri)));
 
   json_object* jhttp_root = nullptr;
   json_bool jhttp_root_exists = json_object_object_get_ex(serialized, HTTP_ROOT_FIELD, &jhttp_root);
@@ -147,7 +150,7 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
 
   common::file_system::ascii_directory_string_path ps = GetHttpRoot();
   const std::string http_root_str = ps.GetPath();
-  json_object_object_add(out, ID_FIELD, json_object_new_int64(GetID()));
+  json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
   std::string url_str = common::ConvertToString(GetOutput());
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
   json_object_object_add(out, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));

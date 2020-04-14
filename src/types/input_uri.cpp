@@ -110,20 +110,21 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     return common::Optional<InputUri>();
   }
 
-  InputUri url;
   std::string url_str;
   common::uri::Url uri;
   common::Value* url_str_field = hash->Find(URI_FIELD);
   if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
     return common::Optional<InputUri>();
   }
-  url.SetInput(uri);
-
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  int uid;
-  if (input_id_field && input_id_field->GetAsInteger(&uid)) {
-    url.SetID(uid);
+  uri_id_t uid;
+  if (!input_id_field || !input_id_field->GetAsUInteger(&uid)) {
+    return common::Optional<InputUri>();
   }
+
+  InputUri url;
+  url.SetInput(uri);
+  url.SetID(uid);
 
   int agent;
   common::Value* agent_field = hash->Find(USER_AGENT_FIELD);
@@ -161,19 +162,21 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
 }
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {
-  InputUri res;
   json_object* juri = nullptr;
   json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
   if (!juri_exists) {
     return common::make_error_inval();
   }
-  res.SetInput(common::uri::Url(json_object_get_string(juri)));
 
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (jid_exists) {
-    res.SetID(json_object_get_int64(jid));
+  if (!jid_exists || !json_object_is_type(jid, json_type_int)) {
+    return common::make_error_inval();
   }
+
+  InputUri res;
+  res.SetInput(common::uri::Url(json_object_get_string(juri)));
+  res.SetID(json_object_get_int(jid));
 
   json_object* juser_agent = nullptr;
   json_bool juser_agent_exists = json_object_object_get_ex(serialized, USER_AGENT_FIELD, &juser_agent);
@@ -221,8 +224,8 @@ common::Error InputUri::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, ID_FIELD, json_object_new_int64(GetID()));
-  std::string url_str = common::ConvertToString(GetInput());
+  json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
+  const std::string url_str = common::ConvertToString(GetInput());
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
   json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(user_agent_));
   json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(stream_url_));
