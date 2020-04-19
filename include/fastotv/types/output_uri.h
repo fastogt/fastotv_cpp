@@ -26,9 +26,10 @@ namespace fastotv {
 class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
  public:
   typedef JsonSerializer<OutputUri> base_class;
-  typedef common::file_system::ascii_directory_string_path http_root_t;
+  typedef common::Optional<common::file_system::ascii_directory_string_path> http_root_t;
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
   typedef fastotv::channel_id_t uri_id_t;
+  typedef common::Optional<HlsType> hls_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const common::uri::Url& output);
@@ -44,8 +45,8 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
 
-  HlsType GetHlsType() const;
-  void SetHlsType(HlsType type);
+  hls_t GetHlsType() const;
+  void SetHlsType(hls_t type);
 
   bool Equals(const OutputUri& inf) const;
 
@@ -56,10 +57,12 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   common::Error SerializeFields(json_object* out) const override;
 
  private:
+  // required
   uri_id_t id_;
   common::uri::Url output_;
+  // http
   http_root_t http_root_;
-  HlsType hls_type_;
+  hls_t hls_type_;
 };
 
 }  // namespace fastotv

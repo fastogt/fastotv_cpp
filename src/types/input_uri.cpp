@@ -31,12 +31,12 @@ namespace fastotv {
 
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
-InputUri::InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua)
+InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
     : base_class(),
       id_(id),
       input_(input),
-      user_agent_(ua),
-      stream_url_(false),
+      user_agent_(),
+      stream_url_(),
       http_proxy_url_(),
       program_number_(),
       iface_() {}
@@ -69,11 +69,11 @@ void InputUri::SetUserAgent(user_agent_t agent) {
   user_agent_ = agent;
 }
 
-bool InputUri::GetStreamLink() const {
+InputUri::is_stream_url_t InputUri::GetStreamLink() const {
   return stream_url_;
 }
 
-void InputUri::SetStreamLink(bool stream) {
+void InputUri::SetStreamLink(is_stream_url_t stream) {
   stream_url_ = stream;
 }
 
@@ -129,7 +129,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   int agent;
   common::Value* agent_field = hash->Find(USER_AGENT_FIELD);
   if (agent_field && agent_field->GetAsInteger(&agent)) {
-    url.SetUserAgent(static_cast<user_agent_t>(agent));
+    url.SetUserAgent(static_cast<UserAgent>(agent));
   }
 
   bool streamlink_url;
@@ -181,7 +181,7 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   json_object* juser_agent = nullptr;
   json_bool juser_agent_exists = json_object_object_get_ex(serialized, USER_AGENT_FIELD, &juser_agent);
   if (juser_agent_exists) {
-    user_agent_t agent = static_cast<user_agent_t>(json_object_get_int(juser_agent));
+    user_agent_t agent = static_cast<UserAgent>(json_object_get_int(juser_agent));
     res.SetUserAgent(agent);
   }
 
@@ -227,8 +227,12 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
   const std::string url_str = common::ConvertToString(GetInput());
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
-  json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(user_agent_));
-  json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(stream_url_));
+  if (user_agent_) {
+    json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
+  }
+  if (stream_url_) {
+    json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(*stream_url_));
+  }
   const auto pid = GetProgramNumber();
   if (pid) {
     json_object_object_add(out, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));

@@ -30,14 +30,15 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   typedef JsonSerializer<InputUri> base_class;
   typedef fastotv::channel_id_t uri_id_t;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
-  typedef UserAgent user_agent_t;
+  typedef common::Optional<UserAgent> user_agent_t;
   // optionals
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<HttpProxy> http_proxy_url_t;
+  typedef common::Optional<bool> is_stream_url_t;
 
   InputUri();
-  explicit InputUri(uri_id_t id, const common::uri::Url& input, user_agent_t ua = GSTREAMER);
+  explicit InputUri(uri_id_t id, const common::uri::Url& input);
 
   bool IsValid() const;
 
@@ -50,8 +51,8 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   user_agent_t GetUserAgent() const;
   void SetUserAgent(user_agent_t agent);
 
-  bool GetStreamLink() const;
-  void SetStreamLink(bool stream);
+  is_stream_url_t GetStreamLink() const;
+  void SetStreamLink(is_stream_url_t stream);
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
@@ -71,11 +72,12 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   common::Error SerializeFields(json_object* out) const override;
 
  private:
+  // required
   uri_id_t id_;
   common::uri::Url input_;
   // http
   user_agent_t user_agent_;
-  bool stream_url_;
+  is_stream_url_t stream_url_;
   http_proxy_url_t http_proxy_url_;
 
   // udp

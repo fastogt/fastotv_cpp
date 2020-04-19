@@ -29,7 +29,7 @@ namespace fastotv {
 OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
-    : base_class(), id_(id), output_(output), http_root_(), hls_type_(HLS_PULL) {}
+    : base_class(), id_(id), output_(output), http_root_(), hls_type_() {}
 
 bool OutputUri::IsValid() const {
   return output_.IsValid();
@@ -59,11 +59,11 @@ void OutputUri::SetHttpRoot(const http_root_t& root) {
   http_root_ = root;
 }
 
-OutputUri::HlsType OutputUri::GetHlsType() const {
+OutputUri::hls_t OutputUri::GetHlsType() const {
   return hls_type_;
 }
 
-void OutputUri::SetHlsType(HlsType type) {
+void OutputUri::SetHlsType(hls_t type) {
   hls_type_ = type;
 }
 
@@ -148,13 +148,17 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  common::file_system::ascii_directory_string_path ps = GetHttpRoot();
-  const std::string http_root_str = ps.GetPath();
   json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
   std::string url_str = common::ConvertToString(GetOutput());
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
-  json_object_object_add(out, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
-  json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(hls_type_));
+  auto ps = GetHttpRoot();
+  if (ps) {
+    const std::string http_root_str = ps->GetPath();
+    json_object_object_add(out, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
+  }
+  if (hls_type_) {
+    json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
+  }
   return common::Error();
 }
 
