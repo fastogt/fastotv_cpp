@@ -34,7 +34,7 @@ class ChannelInfo : public StreamBaseInfo {
 
   ChannelInfo();
   ChannelInfo(stream_id_t sid,
-              const std::string& group,
+              const groups_t& groups,
               iarc_t iarc,
               bool favorite,
               timestamp_t recent,

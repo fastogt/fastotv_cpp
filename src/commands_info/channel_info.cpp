@@ -26,7 +26,7 @@ namespace commands_info {
 ChannelInfo::ChannelInfo() : base_class(), epg_() {}
 
 ChannelInfo::ChannelInfo(stream_id_t sid,
-                         const std::string& group,
+                         const groups_t& groups,
                          iarc_t iarc,
                          bool favorite,
                          timestamp_t recent,
@@ -38,7 +38,7 @@ ChannelInfo::ChannelInfo(stream_id_t sid,
                          view_count_t view,
                          bool locked)
     : base_class(sid,
-                 group,
+                 groups,
                  iarc,
                  favorite,
                  recent,

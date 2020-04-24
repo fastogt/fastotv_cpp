@@ -19,7 +19,7 @@
 #include <fastotv/commands_info/stream_base_info.h>
 
 #define CHANNEL_INFO_ID_FIELD "id"
-#define CHANNEL_INFO_GROUP_FIELD "group"
+#define CHANNEL_INFO_GROUPS_FIELD "groups"
 #define CHANNEL_INFO_IARC_FIELD "iarc"
 #define CHANNEL_INFO_VIDEO_ENABLE_FIELD "video"
 #define CHANNEL_INFO_AUDIO_ENABLE_FIELD "audio"
@@ -35,7 +35,7 @@ namespace commands_info {
 
 StreamBaseInfo::StreamBaseInfo()
     : stream_id_(invalid_stream_id),
-      group_(),
+      groups_(),
       iarc_(DEFAULT_IARC),
       view_count_(0),
       favorite_(false),
@@ -47,7 +47,7 @@ StreamBaseInfo::StreamBaseInfo()
       locked_(false) {}
 
 StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
-                               const std::string& group,
+                               const groups_t& groups,
                                fastotv::commands_info::StreamBaseInfo::iarc_t iarc,
                                bool favorite,
                                timestamp_t recent,
@@ -58,7 +58,7 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                fastotv::commands_info::StreamBaseInfo::view_count_t view,
                                bool locked)
     : stream_id_(sid),
-      group_(group),
+      groups_(groups),
       iarc_(iarc),
       view_count_(view),
       favorite_(favorite),
@@ -81,12 +81,12 @@ void StreamBaseInfo::SetStreamID(const stream_id_t sid) {
   stream_id_ = sid;
 }
 
-std::string StreamBaseInfo::GetGroup() const {
-  return group_;
+StreamBaseInfo::groups_t StreamBaseInfo::GetGroups() const {
+  return groups_;
 }
 
-void StreamBaseInfo::SetGroup(const std::string& group) {
-  group_ = group;
+void StreamBaseInfo::SetGroups(const groups_t& groups) {
+  groups_ = groups;
 }
 
 StreamBaseInfo::iarc_t StreamBaseInfo::GetIARC() const {
@@ -158,8 +158,14 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
+  json_object* jgroups = json_object_new_array();
+  for (const auto group : groups_) {
+    json_object* jgroup = json_object_new_string(group.c_str());
+    json_object_array_add(jgroups, jgroup);
+  }
+
   json_object_object_add(deserialized, CHANNEL_INFO_ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  json_object_object_add(deserialized, CHANNEL_INFO_GROUP_FIELD, json_object_new_string(group_.c_str()));
+  json_object_object_add(deserialized, CHANNEL_INFO_GROUPS_FIELD, jgroups);
   json_object_object_add(deserialized, CHANNEL_INFO_IARC_FIELD, json_object_new_int(iarc_));
   json_object_object_add(deserialized, CHANNEL_INFO_FAVORITE_FIELD, json_object_new_boolean(favorite_));
   json_object_object_add(deserialized, CHANNEL_INFO_RECENT_FIELD, json_object_new_int64(recent_));
@@ -187,11 +193,15 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
   }
   sid = json_object_get_string(jsid);
 
-  std::string group;
+  groups_t groups;
   json_object* jgroup = nullptr;
-  json_bool jgroup_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_GROUP_FIELD, &jgroup);
+  json_bool jgroup_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_GROUPS_FIELD, &jgroup);
   if (jgroup_exists) {
-    group = json_object_get_string(jgroup);
+    size_t len = json_object_array_length(jgroup);
+    for (size_t i = 0; i < len; ++i) {
+      json_object* jpart = json_object_array_get_idx(jgroup, i);
+      groups.push_back(json_object_get_string(jpart));
+    }
   }
 
   iarc_t iart = DEFAULT_IARC;
@@ -264,7 +274,7 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     locked = json_object_get_int(jlocked);
   }
 
-  StreamBaseInfo url(sid, group, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts, view,
+  StreamBaseInfo url(sid, groups, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts, view,
                      locked);
   if (!url.IsValid()) {
     return common::make_error_inval();

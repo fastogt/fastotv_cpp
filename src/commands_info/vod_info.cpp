@@ -26,7 +26,7 @@ namespace commands_info {
 VodInfo::VodInfo() : base_class(), movie_() {}
 
 VodInfo::VodInfo(stream_id_t sid,
-                 const std::string& group,
+                 const groups_t& group,
                  iarc_t iarc,
                  bool favorite,
                  fastotv::timestamp_t recent,

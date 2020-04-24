@@ -31,7 +31,7 @@ class CatchupInfo : public ChannelInfo {
 
   CatchupInfo();
   CatchupInfo(stream_id_t sid,
-              const std::string& group,
+              const groups_t& group,
               iarc_t iarc,
               bool favorite,
               timestamp_t recent,

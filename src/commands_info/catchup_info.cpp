@@ -27,7 +27,7 @@ namespace commands_info {
 CatchupInfo::CatchupInfo() : base_class(), start_(0), stop_(0) {}
 
 CatchupInfo::CatchupInfo(stream_id_t sid,
-                         const std::string& group,
+                         const groups_t& groups,
                          iarc_t iarc,
                          bool favorite,
                          timestamp_t recent,
@@ -41,7 +41,7 @@ CatchupInfo::CatchupInfo(stream_id_t sid,
                          timestamp_t start,
                          timestamp_t stop)
     : base_class(sid,
-                 group,
+                 groups,
                  iarc,
                  favorite,
                  recent,

@@ -33,11 +33,12 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   typedef unsigned int iarc_t;
   typedef unsigned int view_count_t;
   typedef std::vector<stream_id_t> parts_t;
+  typedef std::vector<std::string> groups_t;
   static const iarc_t DEFAULT_IARC = 21;
 
   StreamBaseInfo();
   StreamBaseInfo(stream_id_t sid,
-                 const std::string& group,
+                 const groups_t& groups,
                  iarc_t iarc,
                  bool favorite,
                  timestamp_t recent,
@@ -53,8 +54,8 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   stream_id_t GetStreamID() const;
   void SetStreamID(const stream_id_t sid);
 
-  std::string GetGroup() const;
-  void SetGroup(const std::string& group);
+  groups_t GetGroups() const;
+  void SetGroups(const groups_t& groups);
 
   iarc_t GetIARC() const;
   void SetIARC(iarc_t iarc);
@@ -88,7 +89,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
 
  private:
   stream_id_t stream_id_;
-  std::string group_;
+  groups_t groups_;
   iarc_t iarc_;
   view_count_t view_count_;
   bool favorite_;
