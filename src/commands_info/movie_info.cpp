@@ -269,7 +269,7 @@ bool MovieInfo::Equals(const MovieInfo& url) const {
 }
 
 const common::uri::Url& MovieInfo::GetUnknownIconUrl() {
-  static const common::uri::Url url("https://fastocloud.com/static/images/unknown_preview.png");
+  static const common::uri::Url url("https://fastocloud.com/images/unknown_channel.png");
   return url;
 }
 

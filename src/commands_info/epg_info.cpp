@@ -206,7 +206,7 @@ bool EpgInfo::Equals(const EpgInfo& url) const {
 }
 
 const common::uri::Url& EpgInfo::GetUnknownIconUrl() {
-  static const common::uri::Url url("https://fastocloud.com/static/images/unknown_channel.png");
+  static const common::uri::Url url("https://fastocloud.com/images/unknown_channel.png");
   return url;
 }
 
