@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <common/net/types.h>  // for HostAndPort
 
 #include <common/serializer/json_serializer.h>
@@ -29,10 +31,13 @@ namespace commands_info {
 class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
  public:
   ServerInfo();
-  explicit ServerInfo(const common::uri::Url& epg_url);
+  explicit ServerInfo(const common::uri::Url& epg_url, const std::string& locked_stream_text);
 
   common::uri::Url GetEpgUrl() const;
   void SetEpgUrl(const common::uri::Url& url);
+
+  std::string GetLockedStreamText() const;
+  void SetLockedStreamText(const std::string& text);
 
   bool Equals(const ServerInfo& serv) const;
 
@@ -42,6 +47,7 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
 
  private:
   common::uri::Url epg_url_;
+  std::string locked_stream_text_;
 };
 
 inline bool operator==(const ServerInfo& lhs, const ServerInfo& rhs) {

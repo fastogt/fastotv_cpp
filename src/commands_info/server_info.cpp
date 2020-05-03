@@ -19,13 +19,15 @@
 #include <fastotv/commands_info/server_info.h>
 
 #define EPG_URL_FIELD "epg_url"
+#define LOCKED_STREAM_TEXT_FIELD "locked_stream_text"
 
 namespace fastotv {
 namespace commands_info {
 
-ServerInfo::ServerInfo() : epg_url_() {}
+ServerInfo::ServerInfo() : epg_url_(), locked_stream_text_() {}
 
-ServerInfo::ServerInfo(const common::uri::Url& epg_url) : epg_url_(epg_url) {}
+ServerInfo::ServerInfo(const common::uri::Url& epg_url, const std::string& locked_stream_text)
+    : epg_url_(epg_url), locked_stream_text_(locked_stream_text) {}
 
 common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
   const std::string epg_url_str = epg_url_.GetUrl();
@@ -55,6 +57,14 @@ common::uri::Url ServerInfo::GetEpgUrl() const {
 
 void ServerInfo::SetEpgUrl(const common::uri::Url& url) {
   epg_url_ = url;
+}
+
+std::string ServerInfo::GetLockedStreamText() const {
+  return locked_stream_text_;
+}
+
+void ServerInfo::SetLockedStreamText(const std::string& text) {
+  locked_stream_text_ = text;
 }
 
 bool ServerInfo::Equals(const ServerInfo& serv) const {
