@@ -32,6 +32,8 @@ ServerInfo::ServerInfo(const common::uri::Url& epg_url, const std::string& locke
 common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
   const std::string epg_url_str = epg_url_.GetUrl();
   json_object_object_add(deserialized, EPG_URL_FIELD, json_object_new_string(epg_url_str.c_str()));
+  const char* locked = !locked_stream_text_.empty() ? locked_stream_text_.c_str() : nullptr;
+  json_object_object_add(deserialized, LOCKED_STREAM_TEXT_FIELD, json_object_new_string(locked));
   return common::Error();
 }
 
@@ -45,6 +47,12 @@ common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
     if (common::ConvertFromString(epg_url_str, &hs)) {
       inf.epg_url_ = hs;
     }
+  }
+
+  json_object* jlocked = nullptr;
+  json_bool jlocked_exists = json_object_object_get_ex(serialized, LOCKED_STREAM_TEXT_FIELD, &jlocked);
+  if (jlocked_exists) {
+    inf.locked_stream_text_ = json_object_get_string(jlocked);
   }
 
   *this = inf;
