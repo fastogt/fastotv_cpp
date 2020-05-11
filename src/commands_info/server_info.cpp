@@ -26,11 +26,11 @@ namespace commands_info {
 
 ServerInfo::ServerInfo() : epg_url_(), locked_stream_text_() {}
 
-ServerInfo::ServerInfo(const common::uri::Url& epg_url, const std::string& locked_stream_text)
+ServerInfo::ServerInfo(const fastotv::commands_info::ServerInfo::url_t& epg_url, const std::string& locked_stream_text)
     : epg_url_(epg_url), locked_stream_text_(locked_stream_text) {}
 
 common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
-  const std::string epg_url_str = epg_url_.GetUrl();
+  const std::string epg_url_str = epg_url_.spec();
   json_object_object_add(deserialized, EPG_URL_FIELD, json_object_new_string(epg_url_str.c_str()));
   const char* locked = !locked_stream_text_.empty() ? locked_stream_text_.c_str() : nullptr;
   json_object_object_add(deserialized, LOCKED_STREAM_TEXT_FIELD, json_object_new_string(locked));
@@ -43,8 +43,8 @@ common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
   json_bool jepg_url_exists = json_object_object_get_ex(serialized, EPG_URL_FIELD, &jepg_url);
   if (jepg_url_exists) {
     const std::string epg_url_str = json_object_get_string(jepg_url);
-    common::uri::Url hs;
-    if (common::ConvertFromString(epg_url_str, &hs)) {
+    url_t hs(epg_url_str);
+    if (hs.is_valid()) {
       inf.epg_url_ = hs;
     }
   }
@@ -59,11 +59,11 @@ common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-common::uri::Url ServerInfo::GetEpgUrl() const {
+fastotv::commands_info::ServerInfo::url_t ServerInfo::GetEpgUrl() const {
   return epg_url_;
 }
 
-void ServerInfo::SetEpgUrl(const common::uri::Url& url) {
+void ServerInfo::SetEpgUrl(const fastotv::commands_info::ServerInfo::url_t& url) {
   epg_url_ = url;
 }
 

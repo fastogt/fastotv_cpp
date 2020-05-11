@@ -26,13 +26,13 @@
 
 namespace fastotv {
 
-OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
+OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
-OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
+OutputUri::OutputUri(uri_id_t id, const url_t& output)
     : base_class(), id_(id), output_(output), http_root_(), hls_type_() {}
 
 bool OutputUri::IsValid() const {
-  return output_.IsValid();
+  return output_.is_valid();
 }
 
 OutputUri::uri_id_t OutputUri::GetID() const {
@@ -43,11 +43,11 @@ void OutputUri::SetID(uri_id_t id) {
   id_ = id;
 }
 
-common::uri::Url OutputUri::GetOutput() const {
+OutputUri::url_t OutputUri::GetOutput() const {
   return output_;
 }
 
-void OutputUri::SetOutput(const common::uri::Url& uri) {
+void OutputUri::SetOutput(const url_t& uri) {
   output_ = uri;
 }
 
@@ -77,11 +77,15 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   }
 
   std::string url_str;
-  common::uri::Url uri;
   common::Value* url_str_field = hash->Find(URI_FIELD);
-  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
+  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str)) {
     return common::Optional<OutputUri>();
   }
+  url_t uri(url_str);
+  if (!uri.is_valid()) {
+    return common::Optional<OutputUri>();
+  }
+
   common::Value* input_id_field = hash->Find(ID_FIELD);
   int uid;
   if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
@@ -123,7 +127,8 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
 
   OutputUri res;
   res.SetID(json_object_get_int(jid));
-  res.SetOutput(common::uri::Url(json_object_get_string(juri)));
+  url_t url(json_object_get_string(juri));
+  res.SetOutput(url);
 
   json_object* jhttp_root = nullptr;
   json_bool jhttp_root_exists = json_object_object_get_ex(serialized, HTTP_ROOT_FIELD, &jhttp_root);
@@ -149,7 +154,7 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
   }
 
   json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
-  std::string url_str = common::ConvertToString(GetOutput());
+  std::string url_str = output_.spec();
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
   auto ps = GetHttpRoot();
   if (ps) {

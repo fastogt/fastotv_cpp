@@ -17,7 +17,7 @@
 #include <string>
 
 #include <common/serializer/json_serializer.h>
-#include <common/uri/url.h>
+#include <common/uri/gurl.h>
 #include <common/value.h>
 
 namespace fastotv {
@@ -26,16 +26,17 @@ class HttpProxy : public common::serializer::JsonSerializer<HttpProxy> {
  public:
   typedef common::Optional<std::string> password_t;
   typedef common::Optional<std::string> user_id_t;
+  typedef common::uri::GURL url_t;
 
   HttpProxy();
-  explicit HttpProxy(const common::uri::Url& url);
+  explicit HttpProxy(const url_t& url);
 
   bool IsValid() const;
 
   bool Equals(const HttpProxy& proxy) const;
 
-  common::uri::Url GetUrl() const;
-  void SetUrl(const common::uri::Url& url);
+  url_t GetUrl() const;
+  void SetUrl(const url_t& url);
 
   user_id_t GetUserID() const;
   void SetUserID(const user_id_t& sid);
@@ -50,7 +51,7 @@ class HttpProxy : public common::serializer::JsonSerializer<HttpProxy> {
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  common::uri::Url url_;
+  url_t url_;
   user_id_t user_;
   password_t password_;
 };

@@ -29,9 +29,9 @@
 
 namespace fastotv {
 
-InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
+InputUri::InputUri() : InputUri(0, url_t()) {}
 
-InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
+InputUri::InputUri(uri_id_t id, const url_t& input)
     : base_class(),
       id_(id),
       input_(input),
@@ -42,7 +42,7 @@ InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
       iface_() {}
 
 bool InputUri::IsValid() const {
-  return input_.IsValid();
+  return input_.is_valid();
 }
 
 InputUri::uri_id_t InputUri::GetID() const {
@@ -53,11 +53,11 @@ void InputUri::SetID(uri_id_t id) {
   id_ = id;
 }
 
-common::uri::Url InputUri::GetInput() const {
+InputUri::url_t InputUri::GetInput() const {
   return input_;
 }
 
-void InputUri::SetInput(const common::uri::Url& uri) {
+void InputUri::SetInput(const url_t& uri) {
   input_ = uri;
 }
 
@@ -111,11 +111,16 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   std::string url_str;
-  common::uri::Url uri;
   common::Value* url_str_field = hash->Find(URI_FIELD);
-  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
+  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str)) {
     return common::Optional<InputUri>();
   }
+
+  url_t uri(url_str);
+  if (!uri.is_valid()) {
+    return common::Optional<InputUri>();
+  }
+
   common::Value* input_id_field = hash->Find(ID_FIELD);
   int uid;
   if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
@@ -175,7 +180,8 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   }
 
   InputUri res;
-  res.SetInput(common::uri::Url(json_object_get_string(juri)));
+  url_t url(json_object_get_string(juri));
+  res.SetInput(url);
   res.SetID(json_object_get_int(jid));
 
   json_object* juser_agent = nullptr;
@@ -225,7 +231,7 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   }
 
   json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
-  const std::string url_str = common::ConvertToString(GetInput());
+  const std::string url_str = input_.spec();
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
   if (user_agent_) {
     json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(*user_agent_));

@@ -84,7 +84,7 @@ EpgInfo::tvg_id_t EpgInfo::GetTvgID() const {
   return tvg_id_;
 }
 
-void EpgInfo::SetIconUrl(const common::uri::Url& url) {
+void EpgInfo::SetIconUrl(const fastotv::commands_info::EpgInfo::url_t& url) {
   icon_src_ = url;
 }
 
@@ -100,7 +100,7 @@ void EpgInfo::ClearPrograms() {
   programs_.clear();
 }
 
-common::uri::Url EpgInfo::GetIconUrl() const {
+EpgInfo::url_t EpgInfo::GetIconUrl() const {
   return icon_src_;
 }
 
@@ -111,12 +111,12 @@ common::Error EpgInfo::SerializeFields(json_object* deserialized) const {
 
   json_object_object_add(deserialized, EPG_INFO_ID_FIELD, json_object_new_string(tvg_id_.c_str()));
   json_object_object_add(deserialized, EPG_INFO_NAME_FIELD, json_object_new_string(display_name_.c_str()));
-  const std::string icon_url_str = icon_src_.GetUrl();
+  const std::string icon_url_str = icon_src_.spec();
   json_object_object_add(deserialized, EPG_INFO_ICON_FIELD, json_object_new_string(icon_url_str.c_str()));
 
   json_object* jurls = json_object_new_array();
   for (const auto url : uri_) {
-    std::string url_str = url.GetUrl();
+    std::string url_str = url.spec();
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
   }
@@ -151,8 +151,8 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jurl = json_object_array_get_idx(jurls, i);
       const std::string url_str = json_object_get_string(jurl);
-      common::uri::Url url(url_str);
-      if (url.IsValid()) {
+      url_t url(url_str);
+      if (url.is_valid()) {
         urls.push_back(url);
       }
     }
@@ -177,7 +177,7 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
   json_object* jurl_icon = nullptr;
   json_bool jurl_icon_exists = json_object_object_get_ex(serialized, EPG_INFO_ICON_FIELD, &jurl_icon);
   if (jurl_icon_exists) {
-    url.icon_src_ = common::uri::Url(json_object_get_string(jurl_icon));
+    url.icon_src_ = url_t(json_object_get_string(jurl_icon));
   }
 
   json_object* jprogs = nullptr;
@@ -205,12 +205,12 @@ bool EpgInfo::Equals(const EpgInfo& url) const {
   return tvg_id_ == url.tvg_id_ && uri_ == url.uri_ && display_name_ == url.display_name_;
 }
 
-const common::uri::Url& EpgInfo::GetUnknownIconUrl() {
-  static const common::uri::Url url("https://fastocloud.com/images/unknown_channel.png");
+const fastotv::commands_info::EpgInfo::url_t& EpgInfo::GetUnknownIconUrl() {
+  static const url_t url("https://fastocloud.com/images/unknown_channel.png");
   return url;
 }
 
-bool EpgInfo::IsUnknownIconUrl(const common::uri::Url& url) {
+bool EpgInfo::IsUnknownIconUrl(const fastotv::commands_info::EpgInfo::url_t& url) {
   return url == GetUnknownIconUrl();
 }
 

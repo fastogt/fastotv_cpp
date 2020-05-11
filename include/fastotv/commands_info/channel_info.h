@@ -20,8 +20,6 @@
 
 #include <string>
 
-#include <common/uri/url.h>  // for Uri
-
 #include <fastotv/commands_info/epg_info.h>
 #include <fastotv/commands_info/stream_base_info.h>
 

@@ -17,7 +17,7 @@
 #include <string>
 
 #include <common/serializer/json_serializer.h>
-#include <common/uri/url.h>
+#include <common/uri/gurl.h>
 #include <common/value.h>
 
 #include <fastotv/types.h>
@@ -36,17 +36,18 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<HttpProxy> http_proxy_url_t;
   typedef common::Optional<bool> is_stream_url_t;
+  typedef common::uri::GURL url_t;
 
   InputUri();
-  explicit InputUri(uri_id_t id, const common::uri::Url& input);
+  explicit InputUri(uri_id_t id, const url_t& input);
 
   bool IsValid() const;
 
   uri_id_t GetID() const;
   void SetID(uri_id_t id);
 
-  common::uri::Url GetInput() const;
-  void SetInput(const common::uri::Url& uri);
+  url_t GetInput() const;
+  void SetInput(const url_t& uri);
 
   user_agent_t GetUserAgent() const;
   void SetUserAgent(user_agent_t agent);
@@ -74,7 +75,7 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
  private:
   // required
   uri_id_t id_;
-  common::uri::Url input_;
+  url_t input_;
   // http
   user_agent_t user_agent_;
   is_stream_url_t stream_url_;
