@@ -30,7 +30,7 @@ namespace commands_info {
 
 class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
  public:
-  typedef  common::uri::GURL url_t;
+  typedef common::uri::GURL url_t;
   typedef std::vector<url_t> urls_t;
   enum Type { VODS, SERIES };
 

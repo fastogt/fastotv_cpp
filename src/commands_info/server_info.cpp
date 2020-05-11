@@ -63,7 +63,7 @@ fastotv::commands_info::ServerInfo::url_t ServerInfo::GetEpgUrl() const {
   return epg_url_;
 }
 
-void ServerInfo::SetEpgUrl(const fastotv::commands_info::ServerInfo::url_t &url) {
+void ServerInfo::SetEpgUrl(const fastotv::commands_info::ServerInfo::url_t& url) {
   epg_url_ = url;
 }
 
