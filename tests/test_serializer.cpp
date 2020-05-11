@@ -18,12 +18,12 @@
 
 #include <gtest/gtest.h>
 
+#include <common/daemon/commands/ping_info.h>
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/client_info.h>
 #include <fastotv/commands_info/epg_info.h>
-#include <fastotv/commands_info/ping_info.h>
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/server_info.h>
@@ -33,7 +33,7 @@ typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 TEST(ChannelInfo, serialize_deserialize) {
   const std::string name = "alex";
   const fastotv::stream_id_t stream_id = "123";
-  const common::uri::Url url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
+  const common::uri::GURL url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
   const bool enable_video = false;
   const bool enable_audio = true;
 
@@ -52,8 +52,8 @@ TEST(ChannelInfo, serialize_deserialize) {
 
   ASSERT_EQ(epg_info, depg);
 
-  fastotv::commands_info::ChannelInfo http_uri(stream_id, std::string(), 0, false, false, 0, epg_info, enable_audio,
-                                               enable_video);
+  fastotv::commands_info::ChannelInfo http_uri(stream_id, {}, 0, false, false, 0, epg_info, enable_audio, enable_video,
+                                               {}, 0, false);
   ASSERT_EQ(http_uri.GetStreamID(), stream_id);
   ASSERT_EQ(http_uri.IsEnableAudio(), enable_audio);
   ASSERT_EQ(http_uri.IsEnableVideo(), enable_video);
@@ -68,15 +68,15 @@ TEST(ChannelInfo, serialize_deserialize) {
   ASSERT_EQ(http_uri, dhttp_uri);
 
   const std::string channel_inf_json =
-      R""({"audio": true, "video": true, "id": "5d0db38335c23f2dd95e803d", "epg": {"icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Channel_NewsAsia_logo_%28shape_only%29.svg/220px-Channel_NewsAsia_logo_%28shape_only%29.svg.png", "url": "https://drsh196ivjwe8.cloudfront.net/hls/cnai/03.m3u8?fluxustv.m3u8", "display_name": "Channel NewsAsia (Opt-1)", "id": "", "programs": []}})"";
+      R""({"audio": true, "video": true, "id": "5d0db38335c23f2dd95e803d", "epg": {"icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Channel_NewsAsia_logo_%28shape_only%29.svg/220px-Channel_NewsAsia_logo_%28shape_only%29.svg.png", "urls": ["https://drsh196ivjwe8.cloudfront.net/hls/cnai/03.m3u8?fluxustv.m3u8"], "display_name": "Channel NewsAsia (Opt-1)", "id": "", "programs": []}})"";
   fastotv::commands_info::ChannelInfo chan;
   err = chan.DeSerializeFromString(channel_inf_json);
   ASSERT_TRUE(!err);
 }
 
 TEST(ServerInfo, serialize_deserialize) {
-  const common::uri::Url url("http://localhost/index.html");
-  fastotv::commands_info::ServerInfo serv_info(url);
+  const common::uri::GURL url("http://localhost/index.html");
+  fastotv::commands_info::ServerInfo serv_info(url, "");
 
   serialize_t ser;
   common::Error err = serv_info.Serialize(&ser);
@@ -88,7 +88,7 @@ TEST(ServerInfo, serialize_deserialize) {
 
 TEST(EpgInfo, serialize_deserialize) {
   const fastotv::commands_info::EpgInfo::tvg_id_t id = "tid";
-  const common::uri::Url uri("http://fasotgt.com:8080/master.m3u8");
+  const common::uri::GURL uri("http://fasotgt.com:8080/master.m3u8");
   const std::string name = "test";
 
   fastotv::commands_info::EpgInfo::urls_t urls = {uri};
@@ -111,11 +111,11 @@ TEST(EpgInfo, serialize_deserialize) {
 }
 
 TEST(ServerPingInfo, serialize_deserialize) {
-  fastotv::commands_info::ServerPingInfo ping_info;
+  common::daemon::commands::ServerPingInfo ping_info;
   serialize_t ser;
   common::Error err = ping_info.Serialize(&ser);
   ASSERT_TRUE(!err);
-  fastotv::commands_info::ServerPingInfo dser;
+  common::daemon::commands::ServerPingInfo dser;
   err = dser.DeSerialize(ser);
   ASSERT_TRUE(!err);
 
@@ -123,11 +123,11 @@ TEST(ServerPingInfo, serialize_deserialize) {
 }
 
 TEST(ClientPingInfo, serialize_deserialize) {
-  fastotv::commands_info::ClientPingInfo ping_info;
+  common::daemon::commands::ClientPingInfo ping_info;
   serialize_t ser;
   common::Error err = ping_info.Serialize(&ser);
   ASSERT_TRUE(!err);
-  fastotv::commands_info::ClientPingInfo dser;
+  common::daemon::commands::ClientPingInfo dser;
   err = dser.DeSerialize(ser);
   ASSERT_TRUE(!err);
 
@@ -177,7 +177,7 @@ TEST(ClientInfo, serialize_deserialize) {
   ASSERT_EQ(ops.GetRamTotal(), ram_total);
   ASSERT_EQ(ops.GetRamFree(), ram_free);
 
-  fastotv::commands_info::ProjectInfo proj;
+  fastotv::commands_info::ProjectInfo proj("fastocloud", "1.2.3");
 
   fastotv::commands_info::ClientInfo cinf(login, deva, proj, ops, cpu_brand);
   ASSERT_EQ(cinf.GetLogin(), login);
@@ -201,15 +201,15 @@ TEST(ClientInfo, serialize_deserialize) {
 TEST(channels_t, serialize_deserialize) {
   const std::string name = "alex";
   const fastotv::stream_id_t stream_id = "123";
-  const common::uri::Url url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
+  const common::uri::GURL url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
   const bool enable_video = false;
   const bool enable_audio = true;
 
   fastotv::commands_info::EpgInfo::urls_t urls = {url};
   fastotv::commands_info::ChannelsInfo channels;
   fastotv::commands_info::EpgInfo epg_info(stream_id, urls, name);
-  channels.Add(fastotv::commands_info::ChannelInfo(stream_id, std::string(), 0, true, false, 0, epg_info, enable_audio,
-                                                   enable_video));
+  channels.Add(fastotv::commands_info::ChannelInfo(stream_id, {}, 0, true, false, 0, epg_info, enable_audio,
+                                                   enable_video, {}, 0, 0));
   ASSERT_EQ(channels.Get().size(), 1);
 
   serialize_t ser;
