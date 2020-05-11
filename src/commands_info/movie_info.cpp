@@ -47,8 +47,8 @@ MovieInfo::MovieInfo()
 MovieInfo::MovieInfo(const std::string& name,
                      const urls_t& urls,
                      const std::string& description,
-                     const common::uri::Url& preview_icon,
-                     const common::uri::Url& trailer_url,
+                     const fastotv::commands_info::MovieInfo::url_t& preview_icon,
+                     const fastotv::commands_info::MovieInfo::url_t& trailer_url,
                      double user_score,
                      timestamp_t prime_date,
                      const std::string& country,
@@ -93,19 +93,19 @@ std::string MovieInfo::GetDescription() const {
   return description_;
 }
 
-void MovieInfo::SetPreviewIcon(const common::uri::Url& url) {
+void MovieInfo::SetPreviewIcon(const url_t& url) {
   preview_icon_ = url;
 }
 
-common::uri::Url MovieInfo::GetPreviewIcon() const {
+fastotv::commands_info::MovieInfo::url_t MovieInfo::GetPreviewIcon() const {
   return preview_icon_;
 }
 
-void MovieInfo::SetTrailerUrl(const common::uri::Url& url) {
+void MovieInfo::SetTrailerUrl(const url_t& url) {
   trailer_url_ = url;
 }
 
-common::uri::Url MovieInfo::GetTrailerUrl() const {
+MovieInfo::url_t MovieInfo::GetTrailerUrl() const {
   return trailer_url_;
 }
 
@@ -156,10 +156,10 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
 
   json_object_object_add(deserialized, MOVIE_INFO_NAME_FIELD, json_object_new_string(display_name_.c_str()));
   json_object_object_add(deserialized, MOVIE_INFO_DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
-  const std::string icon_url_str = preview_icon_.GetUrl();
+  const std::string icon_url_str = preview_icon_.spec();
   json_object_object_add(deserialized, MOVIE_INFO_PREVIEW_ICON_FIELD, json_object_new_string(icon_url_str.c_str()));
 
-  const std::string trailer_url_str = trailer_url_.GetUrl();
+  const std::string trailer_url_str = trailer_url_.spec();
   json_object_object_add(deserialized, MOVIE_INFO_TRAILER_URL_FIELD, json_object_new_string(trailer_url_str.c_str()));
   json_object_object_add(deserialized, MOVIE_INFO_USER_SCORE_FIELD, json_object_new_double(user_score_));
   json_object_object_add(deserialized, MOVIE_INFO_PRIME_DATE_FIELD, json_object_new_int64(prime_date_));
@@ -168,7 +168,7 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
 
   json_object* jurls = json_object_new_array();
   for (const auto url : urls_) {
-    std::string url_str = url.GetUrl();
+    std::string url_str = url.spec();
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
   }
@@ -189,8 +189,8 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
   for (size_t i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
     const std::string url_str = json_object_get_string(jurl);
-    common::uri::Url url(url_str);
-    if (url.IsValid()) {
+    url_t url(url_str);
+    if (url.is_valid()) {
       urls.push_back(url);
     }
   }
@@ -209,18 +209,18 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
     name = json_object_get_string(jname);
   }
 
-  common::uri::Url preview_icon;
+  url_t preview_icon;
   json_object* jpreview_icon = nullptr;
   json_bool jpreview_icon_exists = json_object_object_get_ex(serialized, MOVIE_INFO_PREVIEW_ICON_FIELD, &jpreview_icon);
   if (jpreview_icon_exists) {
-    preview_icon = common::uri::Url(json_object_get_string(jpreview_icon));
+    preview_icon = url_t(json_object_get_string(jpreview_icon));
   }
 
-  common::uri::Url trailer_url;
+  url_t trailer_url;
   json_object* jtrailer_url = nullptr;
   json_bool jtrailer_url_exists = json_object_object_get_ex(serialized, MOVIE_INFO_TRAILER_URL_FIELD, &jtrailer_url);
   if (jtrailer_url_exists) {
-    trailer_url = common::uri::Url(json_object_get_string(jtrailer_url));
+    trailer_url = url_t(json_object_get_string(jtrailer_url));
   }
 
   double user_score = 0;
@@ -268,12 +268,12 @@ bool MovieInfo::Equals(const MovieInfo& url) const {
          type_ == url.type_;
 }
 
-const common::uri::Url& MovieInfo::GetUnknownIconUrl() {
-  static const common::uri::Url url("https://fastocloud.com/images/unknown_channel.png");
+const MovieInfo::url_t& MovieInfo::GetUnknownIconUrl() {
+  static const url_t url("https://fastocloud.com/images/unknown_channel.png");
   return url;
 }
 
-bool MovieInfo::IsUnknownIconUrl(const common::uri::Url& url) {
+bool MovieInfo::IsUnknownIconUrl(const url_t& url) {
   return url == GetUnknownIconUrl();
 }
 

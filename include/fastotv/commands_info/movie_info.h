@@ -22,7 +22,7 @@
 #include <vector>
 
 #include <common/serializer/json_serializer.h>
-#include <common/uri/url.h>  // for Uri
+#include <common/uri/gurl.h>  // for Uri
 #include <fastotv/types.h>
 
 namespace fastotv {
@@ -30,15 +30,16 @@ namespace commands_info {
 
 class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
  public:
-  typedef std::vector<common::uri::Url> urls_t;
+  typedef  common::uri::GURL url_t;
+  typedef std::vector<url_t> urls_t;
   enum Type { VODS, SERIES };
 
   MovieInfo();
   MovieInfo(const std::string& name,
             const urls_t& urls,
             const std::string& description,
-            const common::uri::Url& preview_icon,
-            const common::uri::Url& trailer_url,
+            const url_t& preview_icon,
+            const url_t& trailer_url,
             double user_score,
             timestamp_t prime_date,
             const std::string& country,
@@ -56,11 +57,11 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   void SetDescription(const std::string& descr);
   std::string GetDescription() const;
 
-  void SetPreviewIcon(const common::uri::Url& url);
-  common::uri::Url GetPreviewIcon() const;
+  void SetPreviewIcon(const url_t& url);
+  url_t GetPreviewIcon() const;
 
-  void SetTrailerUrl(const common::uri::Url& url);
-  common::uri::Url GetTrailerUrl() const;
+  void SetTrailerUrl(const url_t& url);
+  url_t GetTrailerUrl() const;
 
   void SetUserScore(double score);
   double GetUserScore() const;
@@ -79,8 +80,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
 
   bool Equals(const MovieInfo& os) const;
 
-  static const common::uri::Url& GetUnknownIconUrl();
-  static bool IsUnknownIconUrl(const common::uri::Url& url);
+  static const url_t& GetUnknownIconUrl();
+  static bool IsUnknownIconUrl(const url_t& url);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -90,8 +91,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   std::string display_name_;
   urls_t urls_;
   std::string description_;
-  common::uri::Url preview_icon_;
-  common::uri::Url trailer_url_;
+  url_t preview_icon_;
+  url_t trailer_url_;
   double user_score_;
   timestamp_t prime_date_;
   std::string country_;

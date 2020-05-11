@@ -27,23 +27,23 @@
 
 namespace fastotv {
 
-HttpProxy::HttpProxy() : HttpProxy(common::uri::Url()) {}
+HttpProxy::HttpProxy() : HttpProxy(url_t()) {}
 
-HttpProxy::HttpProxy(const common::uri::Url& url) : url_(url), user_(), password_() {}
+HttpProxy::HttpProxy(const url_t& url) : url_(url), user_(), password_() {}
 
 bool HttpProxy::IsValid() const {
-  return url_.IsValid();
+  return url_.is_valid();
 }
 
 bool HttpProxy::Equals(const HttpProxy& proxy) const {
   return url_ == proxy.url_;
 }
 
-common::uri::Url HttpProxy::GetUrl() const {
+fastotv::HttpProxy::url_t HttpProxy::GetUrl() const {
   return url_;
 }
 
-void HttpProxy::SetUrl(const common::uri::Url& path) {
+void HttpProxy::SetUrl(const fastotv::HttpProxy::url_t& path) {
   url_ = path;
 }
 
@@ -71,8 +71,11 @@ common::Optional<HttpProxy> HttpProxy::Make(common::HashValue* hash) {
   HttpProxy res;
   common::Value* url_field = hash->Find(URI_FIELD);
   std::string url_str;
-  common::uri::Url uri;
-  if (!url_field || !url_field->GetAsBasicString(&url_str) || !common::ConvertFromString(url_str, &uri)) {
+  if (!url_field || !url_field->GetAsBasicString(&url_str)) {
+    return common::Optional<HttpProxy>();
+  }
+  url_t uri(url_str);
+  if (!uri.is_valid()) {
     return common::Optional<HttpProxy>();
   }
   res.SetUrl(uri);
@@ -97,7 +100,7 @@ common::Error HttpProxy::DoDeSerialize(json_object* serialized) {
   if (!jurl_exists) {
     return common::make_error_inval();
   }
-  res.SetUrl(common::uri::Url(json_object_get_string(jurl)));
+  res.SetUrl(url_t(json_object_get_string(jurl)));
 
   json_object* juser = nullptr;
   json_object* jpassword = nullptr;
@@ -119,7 +122,7 @@ common::Error HttpProxy::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  const std::string url_path = url_.GetUrl();
+  const std::string url_path = url_.spec();
   json_object_object_add(out, URI_FIELD, json_object_new_string(url_path.c_str()));
   if (user_ && password_) {
     const std::string user_str = *user_;

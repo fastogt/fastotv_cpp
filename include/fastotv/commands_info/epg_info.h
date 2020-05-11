@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include <common/uri/url.h>  // for Uri
+#include <common/uri/gurl.h>  // for Uri
 
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/types.h>
@@ -33,7 +33,8 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
  public:
   typedef std::vector<ProgrammeInfo> programs_t;
   typedef std::string tvg_id_t;
-  typedef std::vector<common::uri::Url> urls_t;
+  typedef common::uri::GURL url_t;
+  typedef std::vector<url_t> urls_t;
 
   EpgInfo();
   EpgInfo(tvg_id_t id, const urls_t& uri, const std::string& name);  // required args
@@ -50,8 +51,8 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
   void SetTvgID(tvg_id_t ch);
   tvg_id_t GetTvgID() const;
 
-  void SetIconUrl(const common::uri::Url& url);
-  common::uri::Url GetIconUrl() const;
+  void SetIconUrl(const url_t& url);
+  url_t GetIconUrl() const;
 
   void SetPrograms(const programs_t& progs);
   programs_t GetPrograms() const;
@@ -59,8 +60,8 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
 
   bool Equals(const EpgInfo& url) const;
 
-  static const common::uri::Url& GetUnknownIconUrl();
-  static bool IsUnknownIconUrl(const common::uri::Url& url);
+  static const url_t& GetUnknownIconUrl();
+  static bool IsUnknownIconUrl(const url_t& url);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -70,7 +71,7 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
   tvg_id_t tvg_id_;
   urls_t uri_;
   std::string display_name_;
-  common::uri::Url icon_src_;
+  url_t icon_src_;
   programs_t programs_;
 };
 

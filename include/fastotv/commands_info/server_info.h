@@ -23,18 +23,19 @@
 #include <common/net/types.h>  // for HostAndPort
 
 #include <common/serializer/json_serializer.h>
-#include <common/uri/url.h>
+#include <common/uri/gurl.h>
 
 namespace fastotv {
 namespace commands_info {
 
 class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
  public:
+  typedef common::uri::GURL url_t;
   ServerInfo();
-  explicit ServerInfo(const common::uri::Url& epg_url, const std::string& locked_stream_text);
+  explicit ServerInfo(const url_t& epg_url, const std::string& locked_stream_text);
 
-  common::uri::Url GetEpgUrl() const;
-  void SetEpgUrl(const common::uri::Url& url);
+  url_t GetEpgUrl() const;
+  void SetEpgUrl(const url_t& url);
 
   std::string GetLockedStreamText() const;
   void SetLockedStreamText(const std::string& text);
@@ -46,7 +47,7 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
   common::Error SerializeFields(json_object* deserialized) const override;
 
  private:
-  common::uri::Url epg_url_;
+  url_t epg_url_;
   std::string locked_stream_text_;
 };
 
