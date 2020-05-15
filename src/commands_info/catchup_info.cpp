@@ -38,6 +38,7 @@ CatchupInfo::CatchupInfo(stream_id_t sid,
                          const parts_t& parts,
                          view_count_t view,
                          bool locked,
+                         const meta_urls_t& urls,
                          timestamp_t start,
                          timestamp_t stop)
     : base_class(sid,
@@ -51,7 +52,8 @@ CatchupInfo::CatchupInfo(stream_id_t sid,
                  enable_video,
                  parts,
                  view,
-                 locked),
+                 locked,
+                 urls),
       start_(start),
       stop_(stop) {}
 

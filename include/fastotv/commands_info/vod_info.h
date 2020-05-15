@@ -42,7 +42,8 @@ class VodInfo : public StreamBaseInfo {
           bool enable_video,
           const parts_t& parts,
           view_count_t view,
-          bool locked);
+          bool locked,
+          const meta_urls_t& urls);
 
   bool IsValid() const;
 

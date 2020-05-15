@@ -42,6 +42,7 @@ class CatchupInfo : public ChannelInfo {
               const parts_t& parts,
               view_count_t view,
               bool locked,
+              const meta_urls_t& urls,
               timestamp_t start,
               timestamp_t stop);
 

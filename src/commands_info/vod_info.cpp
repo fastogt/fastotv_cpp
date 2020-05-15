@@ -36,7 +36,8 @@ VodInfo::VodInfo(stream_id_t sid,
                  bool enable_video,
                  const parts_t& parts,
                  view_count_t view,
-                 bool locked)
+                 bool locked,
+                 const meta_urls_t& urls)
     : base_class(sid,
                  group,
                  iarc,
@@ -47,7 +48,8 @@ VodInfo::VodInfo(stream_id_t sid,
                  enable_video,
                  parts,
                  view,
-                 locked),
+                 locked,
+                 urls),
       movie_(movie) {}
 
 bool VodInfo::IsValid() const {

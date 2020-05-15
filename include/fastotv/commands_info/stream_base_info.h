@@ -24,6 +24,7 @@
 #include <common/serializer/json_serializer.h>
 
 #include <fastotv/types.h>
+#include <fastotv/types/meta_url.h>
 
 namespace fastotv {
 namespace commands_info {
@@ -34,6 +35,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   typedef unsigned int view_count_t;
   typedef std::vector<stream_id_t> parts_t;
   typedef std::vector<std::string> groups_t;
+  typedef MetaUrls meta_urls_t;
   static const iarc_t DEFAULT_IARC = 21;
 
   StreamBaseInfo();
@@ -47,7 +49,8 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
                  bool enable_video,
                  const parts_t& parts,
                  view_count_t view,
-                 bool locked);
+                 bool locked,
+                 const meta_urls_t& urls);
 
   bool IsValid() const;
 
@@ -81,6 +84,9 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   bool GetLocked() const;
   void SetLocked(bool locked);
 
+  meta_urls_t GetMetaUrls() const;
+  void SetMetaUrls(const meta_urls_t& urls);
+
   bool Equals(const StreamBaseInfo& url) const;
 
  protected:
@@ -100,6 +106,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   bool enable_video_;
   parts_t parts_;
   bool locked_;
+  meta_urls_t meta_urls_;
 };
 
 inline bool operator==(const StreamBaseInfo& left, const StreamBaseInfo& right) {

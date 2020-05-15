@@ -29,6 +29,7 @@
 #define CHANNEL_INFO_PARTS_FIELD "parts"
 #define CHANNEL_INFO_VIEW_COUNT_FIELD "view_count"
 #define CHANNEL_INFO_LOCKED_FIELD "locked"
+#define CHANNEL_INFO_META_FIELD "meta"
 
 namespace fastotv {
 namespace commands_info {
@@ -44,7 +45,8 @@ StreamBaseInfo::StreamBaseInfo()
       enable_audio_(true),
       enable_video_(true),
       parts_(),
-      locked_(false) {}
+      locked_(false),
+      meta_urls_() {}
 
 StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                const groups_t& groups,
@@ -56,7 +58,8 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
                                bool enable_video,
                                const parts_t& parts,
                                fastotv::commands_info::StreamBaseInfo::view_count_t view,
-                               bool locked)
+                               bool locked,
+                               const fastotv::commands_info::StreamBaseInfo::meta_urls_t& urls)
     : stream_id_(sid),
       groups_(groups),
       iarc_(iarc),
@@ -67,7 +70,8 @@ StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
       enable_audio_(enable_audio),
       enable_video_(enable_video),
       parts_(parts),
-      locked_(locked) {}
+      locked_(locked),
+      meta_urls_(urls) {}
 
 bool StreamBaseInfo::IsValid() const {
   return stream_id_ != invalid_stream_id;
@@ -153,6 +157,14 @@ void StreamBaseInfo::SetLocked(bool locked) {
   locked_ = locked;
 }
 
+StreamBaseInfo::meta_urls_t StreamBaseInfo::GetMetaUrls() const {
+  return meta_urls_;
+}
+
+void StreamBaseInfo::SetMetaUrls(const meta_urls_t& urls) {
+  meta_urls_ = urls;
+}
+
 common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
   if (!IsValid()) {
     return common::make_error_inval();
@@ -181,6 +193,12 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
     json_object_array_add(jparts, jpart);
   }
   json_object_object_add(deserialized, CHANNEL_INFO_PARTS_FIELD, jparts);
+
+  json_object* jmeta = nullptr;
+  common::Error err = meta_urls_.Serialize(&jmeta);
+  if (!err) {
+    json_object_object_add(deserialized, CHANNEL_INFO_META_FIELD, jmeta);
+  }
   return common::Error();
 }
 
@@ -260,22 +278,29 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  view_count_t view;
+  view_count_t view = 0;
   json_object* jview = nullptr;
   json_bool jview_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_VIEW_COUNT_FIELD, &jview);
   if (jview_exists) {
     view = json_object_get_int(jview);
   }
 
-  bool locked;
+  bool locked = false;
   json_object* jlocked = nullptr;
   json_bool jlocked_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_LOCKED_FIELD, &jlocked);
   if (jlocked_exists) {
     locked = json_object_get_int(jlocked);
   }
 
+  meta_urls_t meta;
+  json_object* jmeta = nullptr;
+  json_bool jmeta_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_LOCKED_FIELD, &jmeta);
+  if (jmeta_exists) {
+    ignore_result(meta.DeSerialize(jmeta));
+  }
+
   StreamBaseInfo url(sid, groups, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts, view,
-                     locked);
+                     locked, meta);
   if (!url.IsValid()) {
     return common::make_error_inval();
   }

@@ -36,7 +36,8 @@ ChannelInfo::ChannelInfo(stream_id_t sid,
                          bool enable_video,
                          const parts_t& parts,
                          view_count_t view,
-                         bool locked)
+                         bool locked,
+                         const meta_urls_t& urls)
     : base_class(sid,
                  groups,
                  iarc,
@@ -47,7 +48,8 @@ ChannelInfo::ChannelInfo(stream_id_t sid,
                  enable_video,
                  parts,
                  view,
-                 locked),
+                 locked,
+                 urls),
       epg_(epg) {}
 
 bool ChannelInfo::IsValid() const {
