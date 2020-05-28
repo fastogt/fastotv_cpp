@@ -34,6 +34,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   typedef unsigned int view_count_t;
   typedef std::vector<stream_id_t> episodes_t;
   typedef std::vector<std::string> groups_t;
+  typedef unsigned int view_count_t;
 
   SerialInfo();
   SerialInfo(serial_id_t sid,
@@ -43,7 +44,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              bool visible,
              const std::string& description,
              size_t season,
-             const episodes_t& episodes);
+             const episodes_t& episodes, view_count_t view);
 
   bool IsValid() const;
 
@@ -61,6 +62,9 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
 
   bool GetVisible() const;
   void SetVisible(bool visible);
+
+  view_count_t GetViewCount() const;
+  void SetViewCount(view_count_t view);
 
   std::string GetDescription() const;
   void SetDescription(const std::string& description);
@@ -86,6 +90,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   std::string description_;
   size_t season_;
   episodes_t episodes_;
+  view_count_t view_count_;
 };
 
 inline bool operator==(const SerialInfo& left, const SerialInfo& right) {

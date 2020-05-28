@@ -18,14 +18,15 @@
 
 #include <fastotv/commands_info/serial_info.h>
 
-#define SERIAL_INFO_ID_FIELD "id"
-#define SERIAL_INFO_NAME_FIELD "name"
-#define SERIAL_INFO_ICON_FIELD "icon"
-#define SERIAL_INFO_GROUPS_FIELD "groups"
-#define SERIAL_INFO_VISIBLE_FIELD "visible"
-#define SERIAL_INFO_DESCRIPTION_FIELD "description"
-#define SERIAL_INFO_SEASON_FIELD "season"
-#define SERIAL_INFO_EPISODES_FIELD "episodes"
+#define ID_FIELD "id"
+#define NAME_FIELD "name"
+#define ICON_FIELD "icon"
+#define GROUPS_FIELD "groups"
+#define VISIBLE_FIELD "visible"
+#define DESCRIPTION_FIELD "description"
+#define SEASON_FIELD "season"
+#define EPISODES_FIELD "episodes"
+#define VIEW_COUNT_FIELD "view_count"
 
 namespace fastotv {
 namespace commands_info {
@@ -38,7 +39,8 @@ SerialInfo::SerialInfo()
                  true,
                  std::string(),
                  0,
-                 episodes_t()) {}
+                 episodes_t(),
+                 0) {}
 
 SerialInfo::SerialInfo(serial_id_t sid,
                        const std::string& name,
@@ -47,7 +49,8 @@ SerialInfo::SerialInfo(serial_id_t sid,
                        bool visible,
                        const std::string& description,
                        size_t season,
-                       const episodes_t& episodes)
+                       const episodes_t& episodes,
+                       view_count_t views)
     : sid_(sid),
       name_(name),
       icon_(icon),
@@ -55,7 +58,8 @@ SerialInfo::SerialInfo(serial_id_t sid,
       visible_(visible),
       description_(description),
       season_(season),
-      episodes_(episodes) {}
+      episodes_(episodes),
+      view_count_(views) {}
 
 bool SerialInfo::IsValid() const {
   return sid_ != invalid_stream_id;
@@ -101,6 +105,14 @@ void SerialInfo::SetVisible(bool visible) {
   visible_ = visible;
 }
 
+SerialInfo::view_count_t SerialInfo::GetViewCount() const {
+  return view_count_;
+}
+
+void SerialInfo::SetViewCount(view_count_t view) {
+  view_count_ = view;
+}
+
 std::string SerialInfo::GetDescription() const {
   return description_;
 }
@@ -130,26 +142,27 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, SERIAL_INFO_ID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, SERIAL_INFO_NAME_FIELD, json_object_new_string(name_.c_str()));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
+  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
   const std::string url_str = icon_.spec();
-  json_object_object_add(deserialized, SERIAL_INFO_ICON_FIELD, json_object_new_string(url_str.c_str()));
+  json_object_object_add(deserialized, ICON_FIELD, json_object_new_string(url_str.c_str()));
   json_object* jgroups = json_object_new_array();
   for (const auto group : groups_) {
     json_object* jgroup = json_object_new_string(group.c_str());
     json_object_array_add(jgroups, jgroup);
   }
-  json_object_object_add(deserialized, SERIAL_INFO_GROUPS_FIELD, jgroups);
-  json_object_object_add(deserialized, SERIAL_INFO_VISIBLE_FIELD, json_object_new_boolean(visible_));
-  json_object_object_add(deserialized, SERIAL_INFO_DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
-  json_object_object_add(deserialized, SERIAL_INFO_SEASON_FIELD, json_object_new_int64(season_));
+  json_object_object_add(deserialized, GROUPS_FIELD, jgroups);
+  json_object_object_add(deserialized, VISIBLE_FIELD, json_object_new_boolean(visible_));
+  json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
+  json_object_object_add(deserialized, SEASON_FIELD, json_object_new_int64(season_));
 
   json_object* jepisodes = json_object_new_array();
   for (const auto episode : episodes_) {
     json_object* jepisode = json_object_new_string(episode.c_str());
     json_object_array_add(jepisodes, jepisode);
   }
-  json_object_object_add(deserialized, SERIAL_INFO_EPISODES_FIELD, jepisodes);
+  json_object_object_add(deserialized, EPISODES_FIELD, jepisodes);
+  json_object_object_add(deserialized, VIEW_COUNT_FIELD, json_object_new_int(view_count_));
 
   return common::Error();
 }
@@ -157,26 +170,26 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
 common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
   SerialInfo result;
   json_object* jsid = nullptr;
-  json_bool jsid_exists = json_object_object_get_ex(serialized, SERIAL_INFO_ID_FIELD, &jsid);
+  json_bool jsid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jsid);
   if (!jsid_exists) {
     return common::make_error_inval();
   }
   result.sid_ = json_object_get_string(jsid);
 
   json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, SERIAL_INFO_NAME_FIELD, &jname);
+  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
   if (!jname_exists) {
     result.name_ = json_object_get_string(jname);
   }
 
   json_object* jicon = nullptr;
-  json_bool jicon_exists = json_object_object_get_ex(serialized, SERIAL_INFO_ICON_FIELD, &jicon);
+  json_bool jicon_exists = json_object_object_get_ex(serialized, ICON_FIELD, &jicon);
   if (!jicon_exists) {
     result.icon_ = common::uri::GURL(json_object_get_string(jicon));
   }
 
   json_object* jgroup = nullptr;
-  json_bool jgroup_exists = json_object_object_get_ex(serialized, SERIAL_INFO_GROUPS_FIELD, &jgroup);
+  json_bool jgroup_exists = json_object_object_get_ex(serialized, GROUPS_FIELD, &jgroup);
   if (jgroup_exists) {
     size_t len = json_object_array_length(jgroup);
     for (size_t i = 0; i < len; ++i) {
@@ -186,31 +199,37 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jvisible = nullptr;
-  json_bool jvisible_exists = json_object_object_get_ex(serialized, SERIAL_INFO_VISIBLE_FIELD, &jvisible);
+  json_bool jvisible_exists = json_object_object_get_ex(serialized, VISIBLE_FIELD, &jvisible);
   if (!jvisible_exists) {
     result.visible_ = json_object_get_boolean(jvisible);
   }
 
   json_object* jdescription = nullptr;
-  json_bool jdescription_exists = json_object_object_get_ex(serialized, SERIAL_INFO_DESCRIPTION_FIELD, &jdescription);
+  json_bool jdescription_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescription);
   if (!jdescription_exists) {
     result.description_ = json_object_get_boolean(jdescription);
   }
 
   json_object* jseason = nullptr;
-  json_bool jseason_exists = json_object_object_get_ex(serialized, SERIAL_INFO_SEASON_FIELD, &jseason);
+  json_bool jseason_exists = json_object_object_get_ex(serialized, SEASON_FIELD, &jseason);
   if (!jseason_exists) {
     result.season_ = json_object_get_int64(jseason);
   }
 
   json_object* jparts = nullptr;
-  json_bool jparts_exists = json_object_object_get_ex(serialized, SERIAL_INFO_EPISODES_FIELD, &jparts);
+  json_bool jparts_exists = json_object_object_get_ex(serialized, EPISODES_FIELD, &jparts);
   if (jparts_exists) {
     size_t len = json_object_array_length(jparts);
     for (size_t i = 0; i < len; ++i) {
       json_object* jpart = json_object_array_get_idx(jparts, i);
       result.episodes_.push_back(json_object_get_string(jpart));
     }
+  }
+
+  json_object* jview = nullptr;
+  json_bool jview_exists = json_object_object_get_ex(serialized, VIEW_COUNT_FIELD, &jview);
+  if (jview_exists) {
+    result.view_count_ = json_object_get_int(jview);
   }
 
   if (!result.IsValid()) {
