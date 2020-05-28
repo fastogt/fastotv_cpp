@@ -30,6 +30,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/http_proxy.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/input_uri.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/stream_link.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/meta_url.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client.h
@@ -74,6 +75,7 @@ SET(PROTOCOL_HEADERS
 SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types.cpp
   ${CMAKE_SOURCE_DIR}/src/types/http_proxy.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/stream_link.cpp
   ${CMAKE_SOURCE_DIR}/src/types/input_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/meta_url.cpp

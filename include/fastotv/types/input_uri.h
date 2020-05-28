@@ -22,6 +22,7 @@
 
 #include <fastotv/types.h>
 #include <fastotv/types/http_proxy.h>
+#include <fastotv/types/stream_link.h>
 
 namespace fastotv {
 
@@ -35,7 +36,7 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<HttpProxy> http_proxy_url_t;
-  typedef common::Optional<bool> is_stream_url_t;
+  typedef common::Optional<StreamLink> stream_url_t;
   typedef common::uri::GURL url_t;
 
   InputUri();
@@ -52,8 +53,8 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   user_agent_t GetUserAgent() const;
   void SetUserAgent(user_agent_t agent);
 
-  is_stream_url_t GetStreamLink() const;
-  void SetStreamLink(is_stream_url_t stream);
+  stream_url_t GetStreamLink() const;
+  void SetStreamLink(stream_url_t stream);
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
@@ -78,7 +79,7 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   url_t input_;
   // http
   user_agent_t user_agent_;
-  is_stream_url_t stream_url_;
+  stream_url_t stream_url_;
   http_proxy_url_t http_proxy_url_;
 
   // udp

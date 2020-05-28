@@ -69,11 +69,11 @@ void InputUri::SetUserAgent(user_agent_t agent) {
   user_agent_ = agent;
 }
 
-InputUri::is_stream_url_t InputUri::GetStreamLink() const {
+InputUri::stream_url_t InputUri::GetStreamLink() const {
   return stream_url_;
 }
 
-void InputUri::SetStreamLink(is_stream_url_t stream) {
+void InputUri::SetStreamLink(fastotv::InputUri::stream_url_t stream) {
   stream_url_ = stream;
 }
 
@@ -137,10 +137,10 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetUserAgent(static_cast<UserAgent>(agent));
   }
 
-  bool streamlink_url;
+  common::HashValue* streamlink_url;
   common::Value* streamlink_url_field = hash->Find(STREAMLINK_URL_FIELD);
-  if (streamlink_url_field && streamlink_url_field->GetAsBoolean(&streamlink_url)) {
-    url.SetStreamLink(streamlink_url);
+  if (streamlink_url_field && streamlink_url_field->GetAsHash(&streamlink_url)) {
+    url.SetStreamLink(StreamLink::Make(streamlink_url));
   }
 
   common::HashValue* http_proxy = nullptr;
@@ -194,8 +194,11 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   json_object* jstream_url = nullptr;
   json_bool jstream_url_exists = json_object_object_get_ex(serialized, STREAMLINK_URL_FIELD, &jstream_url);
   if (jstream_url_exists) {
-    bool sl = json_object_get_boolean(jstream_url);
-    res.SetStreamLink(sl);
+    StreamLink link;
+    common::Error err = link.DeSerialize(jstream_url);
+    if (!err) {
+      res.SetStreamLink(link);
+    }
   }
 
   json_object* jpid = nullptr;
@@ -237,7 +240,11 @@ common::Error InputUri::SerializeFields(json_object* out) const {
     json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
   }
   if (stream_url_) {
-    json_object_object_add(out, STREAMLINK_URL_FIELD, json_object_new_boolean(*stream_url_));
+    json_object* jlink = nullptr;
+    common::Error err = stream_url_->Serialize(&jlink);
+    if (!err) {
+      json_object_object_add(out, STREAMLINK_URL_FIELD, jlink);
+    }
   }
   const auto pid = GetProgramNumber();
   if (pid) {
