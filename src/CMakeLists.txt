@@ -57,6 +57,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/catchups_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/stream_base_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/serial_info.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/series_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/runtime_channel_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/catchup_generate_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/catchup_undo_info.h
