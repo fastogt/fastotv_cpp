@@ -40,7 +40,6 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              const std::string& name,
              const common::uri::GURL& icon,
              const groups_t& groups,
-             bool visible,
              const std::string& description,
              size_t season,
              const episodes_t& episodes,
@@ -86,7 +85,6 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   std::string name_;
   common::uri::GURL icon_;
   groups_t groups_;
-  bool visible_;
   std::string description_;
   size_t season_;
   episodes_t episodes_;

@@ -22,7 +22,6 @@
 #define NAME_FIELD "name"
 #define ICON_FIELD "icon"
 #define GROUPS_FIELD "groups"
-#define VISIBLE_FIELD "visible"
 #define DESCRIPTION_FIELD "description"
 #define SEASON_FIELD "season"
 #define EPISODES_FIELD "episodes"
@@ -32,21 +31,13 @@ namespace fastotv {
 namespace commands_info {
 
 SerialInfo::SerialInfo()
-    : SerialInfo(invalid_stream_id,
-                 std::string(),
-                 common::uri::GURL(),
-                 groups_t(),
-                 true,
-                 std::string(),
-                 0,
-                 episodes_t(),
-                 0) {}
+    : SerialInfo(invalid_stream_id, std::string(), common::uri::GURL(), groups_t(), std::string(), 0, episodes_t(), 0) {
+}
 
 SerialInfo::SerialInfo(serial_id_t sid,
                        const std::string& name,
                        const common::uri::GURL& icon,
                        const groups_t& groups,
-                       bool visible,
                        const std::string& description,
                        size_t season,
                        const episodes_t& episodes,
@@ -55,7 +46,6 @@ SerialInfo::SerialInfo(serial_id_t sid,
       name_(name),
       icon_(icon),
       groups_(groups),
-      visible_(visible),
       description_(description),
       season_(season),
       episodes_(episodes),
@@ -95,14 +85,6 @@ SerialInfo::groups_t SerialInfo::GetGroups() const {
 
 void SerialInfo::SetGroups(const groups_t& groups) {
   groups_ = groups;
-}
-
-bool SerialInfo::GetVisible() const {
-  return visible_;
-}
-
-void SerialInfo::SetVisible(bool visible) {
-  visible_ = visible;
 }
 
 SerialInfo::view_count_t SerialInfo::GetViewCount() const {
@@ -152,7 +134,6 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
     json_object_array_add(jgroups, jgroup);
   }
   json_object_object_add(deserialized, GROUPS_FIELD, jgroups);
-  json_object_object_add(deserialized, VISIBLE_FIELD, json_object_new_boolean(visible_));
   json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
   json_object_object_add(deserialized, SEASON_FIELD, json_object_new_int64(season_));
 
@@ -198,12 +179,6 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  json_object* jvisible = nullptr;
-  json_bool jvisible_exists = json_object_object_get_ex(serialized, VISIBLE_FIELD, &jvisible);
-  if (!jvisible_exists) {
-    result.visible_ = json_object_get_boolean(jvisible);
-  }
-
   json_object* jdescription = nullptr;
   json_bool jdescription_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescription);
   if (!jdescription_exists) {
@@ -242,8 +217,7 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
 
 bool SerialInfo::Equals(const SerialInfo& url) const {
   return sid_ == url.sid_ && name_ == url.name_ && icon_ == url.icon_ && groups_ == url.groups_ &&
-         visible_ == url.visible_ && description_ == url.description_ && season_ == url.season_ &&
-         episodes_ == url.episodes_;
+         description_ == url.description_ && season_ == url.season_ && episodes_ == url.episodes_;
 }
 
 }  // namespace commands_info
