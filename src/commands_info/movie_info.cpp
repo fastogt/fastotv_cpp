@@ -69,6 +69,10 @@ bool MovieInfo::IsValid() const {
   return !urls_.empty();
 }
 
+bool MovieInfo::IsSerial() const {
+  return type_ == SERIES;
+}
+
 void MovieInfo::SetUrls(const urls_t& urls) {
   urls_ = urls;
 }

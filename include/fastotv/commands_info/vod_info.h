@@ -47,6 +47,8 @@ class VodInfo : public StreamBaseInfo {
 
   bool IsValid() const;
 
+  bool IsSerial() const;
+
   MovieInfo GetMovieInfo() const;
   void SetMovieInfo(const MovieInfo& movie);
 

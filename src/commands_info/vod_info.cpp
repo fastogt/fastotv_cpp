@@ -56,6 +56,10 @@ bool VodInfo::IsValid() const {
   return base_class::IsValid() && movie_.IsValid();
 }
 
+bool VodInfo::IsSerial() const {
+  return movie_.IsSerial();
+}
+
 MovieInfo VodInfo::GetMovieInfo() const {
   return movie_;
 }

@@ -48,6 +48,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
 
   bool IsValid() const;
 
+  bool IsSerial() const;
+
   void SetUrls(const urls_t& urls);
   urls_t GetUrls() const;
 
