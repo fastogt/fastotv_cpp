@@ -31,7 +31,7 @@ namespace commands_info {
 
 LoginInfo::LoginInfo() : login_(), password_() {}
 
-LoginInfo::LoginInfo(const login_t& login, const std::string& password) : login_(login), password_(password) {}
+LoginInfo::LoginInfo(login_t login, password_t password) : login_(login), password_(password) {}
 
 bool LoginInfo::IsValid() const {
   return !login_.empty() && !password_.empty();
@@ -69,15 +69,15 @@ login_t LoginInfo::GetLogin() const {
   return login_;
 }
 
-void LoginInfo::SetLogin(const login_t& login) {
+void LoginInfo::SetLogin(login_t login) {
   login_ = login;
 }
 
-std::string LoginInfo::GetPassword() const {
+LoginInfo::password_t LoginInfo::GetPassword() const {
   return password_;
 }
 
-void LoginInfo::SetPassword(const std::string& password) {
+void LoginInfo::SetPassword(password_t password) {
   password_ = password;
 }
 

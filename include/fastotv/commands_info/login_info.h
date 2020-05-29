@@ -29,16 +29,17 @@ namespace commands_info {
 
 class LoginInfo : public common::serializer::JsonSerializer<LoginInfo> {
  public:
+  typedef std::string password_t;
   LoginInfo();
-  LoginInfo(const login_t& login, const std::string& password);
+  LoginInfo(login_t login, password_t password);
 
   bool IsValid() const;
 
   login_t GetLogin() const;
-  void SetLogin(const login_t& login);
+  void SetLogin(login_t login);
 
-  std::string GetPassword() const;
-  void SetPassword(const std::string& password);
+  password_t GetPassword() const;
+  void SetPassword(password_t password);
 
   bool Equals(const LoginInfo& auth) const;
 
@@ -48,7 +49,7 @@ class LoginInfo : public common::serializer::JsonSerializer<LoginInfo> {
 
  private:
   login_t login_;  // unique
-  std::string password_;
+  password_t password_;
 };
 
 inline bool operator==(const LoginInfo& lhs, const LoginInfo& rhs) {
