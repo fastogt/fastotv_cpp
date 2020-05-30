@@ -21,7 +21,6 @@
 #include <common/value.h>
 
 #include <fastotv/types.h>
-#include <fastotv/types/http_proxy.h>
 #include <fastotv/types/stream_link.h>
 
 namespace fastotv {
@@ -35,7 +34,7 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   // optionals
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
-  typedef common::Optional<HttpProxy> http_proxy_url_t;
+  typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<StreamLink> stream_url_t;
   typedef common::uri::GURL url_t;
 

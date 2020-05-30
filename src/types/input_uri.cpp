@@ -143,13 +143,10 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetStreamLink(StreamLink::Make(streamlink_url));
   }
 
-  common::HashValue* http_proxy = nullptr;
+  std::string http_url_str;
   common::Value* http_proxy_field = hash->Find(PROXY_FIELD);
-  if (http_proxy_field && http_proxy_field->GetAsHash(&http_proxy)) {
-    auto proxy = HttpProxy::Make(http_proxy);
-    if (proxy) {
-      url.SetHttpProxyUrl(proxy);
-    }
+  if (http_proxy_field && http_proxy_field->GetAsBasicString(&http_url_str)) {
+    url.SetHttpProxyUrl(url_t(http_url_str));
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
@@ -217,11 +214,7 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   json_object* jhttp_proxy = nullptr;
   json_bool jhttp_proxy_exists = json_object_object_get_ex(serialized, PROXY_FIELD, &jhttp_proxy);
   if (jhttp_proxy_exists) {
-    HttpProxy proxy;
-    common::Error err = proxy.DeSerialize(jhttp_proxy);
-    if (!err) {
-      res.SetHttpProxyUrl(proxy);
-    }
+    res.SetHttpProxyUrl(url_t(json_object_get_string(jhttp_proxy)));
   }
 
   *this = res;
@@ -257,11 +250,8 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   }
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
-    json_object* jhttp_proxy = nullptr;
-    common::Error err = hurl->Serialize(&jhttp_proxy);
-    if (!err) {
-      json_object_object_add(out, PROXY_FIELD, jhttp_proxy);
-    }
+    const std::string proxy = hurl->spec();
+    json_object_object_add(out, PROXY_FIELD, json_object_new_string(proxy.c_str()));
   }
 
   return common::Error();

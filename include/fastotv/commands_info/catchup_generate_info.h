@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <common/serializer/json_serializer.h>
 
