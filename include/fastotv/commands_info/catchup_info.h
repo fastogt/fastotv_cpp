@@ -30,7 +30,7 @@ class CatchupInfo : public ChannelInfo {
   typedef ChannelInfo base_class;
 
   CatchupInfo();
-  CatchupInfo(stream_id_t sid,
+  CatchupInfo(const stream_id_t& sid,
               const groups_t& group,
               iarc_t iarc,
               bool favorite,

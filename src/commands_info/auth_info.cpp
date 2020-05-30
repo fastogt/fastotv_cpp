@@ -23,15 +23,15 @@
 #include <common/convert2string.h>
 #include <common/sprintf.h>
 
-#define AUTH_INFO_DEVICE_ID_FIELD "device_id"
-#define SERVER_AUTH_INFO_EXPIRED_DATE_FIELD "exp_date"
+#define ID_FIELD "device_id"
+#define EXPIRED_DATE_FIELD "exp_date"
 
 namespace fastotv {
 namespace commands_info {
 
-AuthInfo::AuthInfo() : base_class(), device_id_() {}
+AuthInfo::AuthInfo() : AuthInfo(base_class(), std::string()) {}
 
-AuthInfo::AuthInfo(const base_class& login, device_id_t dev) : base_class(login), device_id_(dev) {}
+AuthInfo::AuthInfo(const base_class& login, const device_id_t& dev) : base_class(login), device_id_(dev) {}
 
 bool AuthInfo::IsValid() const {
   return base_class::IsValid() && !device_id_.empty();
@@ -42,7 +42,7 @@ common::Error AuthInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, AUTH_INFO_DEVICE_ID_FIELD, json_object_new_string(device_id_.c_str()));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(device_id_.c_str()));
   return base_class::SerializeFields(deserialized);
 }
 
@@ -54,7 +54,7 @@ common::Error AuthInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jdevid = nullptr;
-  json_bool jdevid_exists = json_object_object_get_ex(serialized, AUTH_INFO_DEVICE_ID_FIELD, &jdevid);
+  json_bool jdevid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jdevid);
   if (!jdevid_exists) {
     return common::make_error_inval();
   }
@@ -68,7 +68,7 @@ device_id_t AuthInfo::GetDeviceID() const {
   return device_id_;
 }
 
-void AuthInfo::SetDeviceID(device_id_t dev) {
+void AuthInfo::SetDeviceID(const device_id_t& dev) {
   device_id_ = dev;
 }
 
@@ -102,7 +102,7 @@ common::Error ServerAuthInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, SERVER_AUTH_INFO_EXPIRED_DATE_FIELD, json_object_new_int64(expired_date_));
+  json_object_object_add(deserialized, EXPIRED_DATE_FIELD, json_object_new_int64(expired_date_));
   return base_class::SerializeFields(deserialized);
 }
 
@@ -114,7 +114,7 @@ common::Error ServerAuthInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jexp = nullptr;
-  json_bool jexp_exists = json_object_object_get_ex(serialized, SERVER_AUTH_INFO_EXPIRED_DATE_FIELD, &jexp);
+  json_bool jexp_exists = json_object_object_get_ex(serialized, EXPIRED_DATE_FIELD, &jexp);
   if (!jexp_exists) {
     return common::make_error_inval();
   }

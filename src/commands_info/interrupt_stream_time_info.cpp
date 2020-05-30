@@ -26,7 +26,8 @@ namespace commands_info {
 
 InterruptStreamTimeInfo::InterruptStreamTimeInfo() : id_(invalid_stream_id), time_(0) {}
 
-InterruptStreamTimeInfo::InterruptStreamTimeInfo(stream_id_t channel, timestamp_t time) : id_(channel), time_(time) {}
+InterruptStreamTimeInfo::InterruptStreamTimeInfo(const stream_id_t& channel, timestamp_t time)
+    : id_(channel), time_(time) {}
 
 bool InterruptStreamTimeInfo::IsValid() const {
   return id_ != invalid_stream_id;
@@ -60,7 +61,7 @@ common::Error InterruptStreamTimeInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-void InterruptStreamTimeInfo::SetChannel(stream_id_t channel) {
+void InterruptStreamTimeInfo::SetChannel(const stream_id_t& channel) {
   id_ = channel;
 }
 

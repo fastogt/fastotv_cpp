@@ -92,7 +92,7 @@ ImageBox make_image_from_json(json_object* obj) {
 
 NotificationInfo::NotificationInfo() : sid_(), images_() {}
 
-NotificationInfo::NotificationInfo(stream_id_t sid, const images_t& images) : sid_(sid), images_(images) {}
+NotificationInfo::NotificationInfo(const stream_id_t& sid, const images_t& images) : sid_(sid), images_(images) {}
 
 NotificationInfo::images_t NotificationInfo::GetImages() const {
   return images_;

@@ -26,7 +26,7 @@ namespace commands_info {
 
 ServerInfo::ServerInfo() : epg_url_(), locked_stream_text_() {}
 
-ServerInfo::ServerInfo(const fastotv::commands_info::ServerInfo::url_t& epg_url, const std::string& locked_stream_text)
+ServerInfo::ServerInfo(const url_t& epg_url, const std::string& locked_stream_text)
     : epg_url_(epg_url), locked_stream_text_(locked_stream_text) {}
 
 common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
@@ -59,11 +59,11 @@ common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-fastotv::commands_info::ServerInfo::url_t ServerInfo::GetEpgUrl() const {
+ServerInfo::url_t ServerInfo::GetEpgUrl() const {
   return epg_url_;
 }
 
-void ServerInfo::SetEpgUrl(const fastotv::commands_info::ServerInfo::url_t& url) {
+void ServerInfo::SetEpgUrl(const url_t& url) {
   epg_url_ = url;
 }
 

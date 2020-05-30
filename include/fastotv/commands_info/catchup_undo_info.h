@@ -30,12 +30,12 @@ namespace commands_info {
 class CatchupUndoInfo : public common::serializer::JsonSerializer<CatchupUndoInfo> {
  public:
   CatchupUndoInfo();
-  explicit CatchupUndoInfo(stream_id_t sid);
+  explicit CatchupUndoInfo(const stream_id_t& sid);
   ~CatchupUndoInfo();
 
   bool IsValid() const;
 
-  void SetStreamID(stream_id_t sid);
+  void SetStreamID(const stream_id_t& sid);
   stream_id_t GetStreamID() const;
 
   bool Equals(const CatchupUndoInfo& inf) const;

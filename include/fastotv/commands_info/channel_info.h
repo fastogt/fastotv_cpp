@@ -31,7 +31,7 @@ class ChannelInfo : public StreamBaseInfo {
   typedef StreamBaseInfo base_class;
 
   ChannelInfo();
-  ChannelInfo(stream_id_t sid,
+  ChannelInfo(const stream_id_t& sid,
               const groups_t& groups,
               iarc_t iarc,
               bool favorite,

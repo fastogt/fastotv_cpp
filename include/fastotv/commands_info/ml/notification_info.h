@@ -36,7 +36,7 @@ class NotificationInfo : public common::serializer::JsonSerializer<NotificationI
   typedef std::vector<ImageBox> images_t;
 
   NotificationInfo();
-  explicit NotificationInfo(fastotv::stream_id_t sid, const images_t& images);
+  explicit NotificationInfo(const stream_id_t& sid, const images_t& images);
 
   images_t GetImages() const;
   void SetImages(const images_t& images);

@@ -32,7 +32,7 @@ class ProgrammeInfo : public common::serializer::JsonSerializer<ProgrammeInfo> {
   typedef common::Optional<std::string> category_t;
 
   ProgrammeInfo();
-  ProgrammeInfo(stream_id_t id,
+  ProgrammeInfo(const stream_id_t& id,
                 timestamp_t start_time,
                 timestamp_t stop_time,
                 const std::string& title,
@@ -40,7 +40,7 @@ class ProgrammeInfo : public common::serializer::JsonSerializer<ProgrammeInfo> {
 
   bool IsValid() const;
 
-  void SetChannel(stream_id_t channel);
+  void SetChannel(const stream_id_t& channel);
   stream_id_t GetChannel() const;
 
   void SetStart(timestamp_t start);  // UTC

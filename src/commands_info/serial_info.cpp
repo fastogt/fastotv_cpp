@@ -37,10 +37,10 @@ SerialInfo::SerialInfo()
 SerialInfo::SerialInfo(serial_id_t sid,
                        const std::string& name,
                        const common::uri::GURL& icon,
-                       const groups_t& groups,
+                       groups_t groups,
                        const std::string& description,
                        size_t season,
-                       const episodes_t& episodes,
+                       episodes_t episodes,
                        view_count_t views)
     : sid_(sid),
       name_(name),
@@ -83,7 +83,7 @@ SerialInfo::groups_t SerialInfo::GetGroups() const {
   return groups_;
 }
 
-void SerialInfo::SetGroups(const groups_t& groups) {
+void SerialInfo::SetGroups(groups_t groups) {
   groups_ = groups;
 }
 
@@ -115,7 +115,7 @@ SerialInfo::episodes_t SerialInfo::GetEpisodes() const {
   return episodes_;
 }
 
-void SerialInfo::SetEpisodes(const episodes_t& episodes) {
+void SerialInfo::SetEpisodes(episodes_t episodes) {
   episodes_ = episodes;
 }
 

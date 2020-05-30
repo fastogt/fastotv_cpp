@@ -28,12 +28,12 @@ class AuthInfo : public LoginInfo {
   typedef LoginInfo base_class;
 
   AuthInfo();
-  AuthInfo(const base_class& login, device_id_t dev);
+  AuthInfo(const base_class& login, const device_id_t& dev);
 
   bool IsValid() const;
 
   device_id_t GetDeviceID() const;
-  void SetDeviceID(device_id_t dev);
+  void SetDeviceID(const device_id_t& dev);
 
   bool Equals(const AuthInfo& auth) const;
 

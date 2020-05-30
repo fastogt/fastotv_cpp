@@ -25,7 +25,7 @@ namespace commands_info {
 
 ChannelInfo::ChannelInfo() : base_class(), epg_() {}
 
-ChannelInfo::ChannelInfo(stream_id_t sid,
+ChannelInfo::ChannelInfo(const stream_id_t& sid,
                          const groups_t& groups,
                          iarc_t iarc,
                          bool favorite,

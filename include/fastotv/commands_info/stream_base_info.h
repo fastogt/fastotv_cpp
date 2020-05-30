@@ -39,7 +39,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   static const iarc_t DEFAULT_IARC = 21;
 
   StreamBaseInfo();
-  StreamBaseInfo(stream_id_t sid,
+  StreamBaseInfo(const stream_id_t& sid,
                  const groups_t& groups,
                  iarc_t iarc,
                  bool favorite,
@@ -55,7 +55,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   bool IsValid() const;
 
   stream_id_t GetStreamID() const;
-  void SetStreamID(const stream_id_t sid);
+  void SetStreamID(const stream_id_t& sid);
 
   groups_t GetGroups() const;
   void SetGroups(const groups_t& groups);

@@ -39,10 +39,10 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   SerialInfo(serial_id_t sid,
              const std::string& name,
              const common::uri::GURL& icon,
-             const groups_t& groups,
+             groups_t groups,
              const std::string& description,
              size_t season,
-             const episodes_t& episodes,
+             episodes_t episodes,
              view_count_t view);
 
   bool IsValid() const;
@@ -57,7 +57,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   void SetIcon(const common::uri::GURL& icon);
 
   groups_t GetGroups() const;
-  void SetGroups(const groups_t& groups);
+  void SetGroups(groups_t groups);
 
   bool GetVisible() const;
   void SetVisible(bool visible);
@@ -72,7 +72,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   void SetSeason(size_t season);
 
   episodes_t GetEpisodes() const;
-  void SetEpisodes(const episodes_t& episodes);
+  void SetEpisodes(episodes_t episodes);
 
   bool Equals(const SerialInfo& url) const;
 

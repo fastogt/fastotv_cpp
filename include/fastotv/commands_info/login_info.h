@@ -30,16 +30,17 @@ namespace commands_info {
 class LoginInfo : public common::serializer::JsonSerializer<LoginInfo> {
  public:
   typedef std::string password_t;
+
   LoginInfo();
-  LoginInfo(login_t login, password_t password);
+  LoginInfo(const login_t& login, const password_t& password);
 
   bool IsValid() const;
 
   login_t GetLogin() const;
-  void SetLogin(login_t login);
+  void SetLogin(const login_t& login);
 
   password_t GetPassword() const;
-  void SetPassword(password_t password);
+  void SetPassword(const password_t& password);
 
   bool Equals(const LoginInfo& auth) const;
 

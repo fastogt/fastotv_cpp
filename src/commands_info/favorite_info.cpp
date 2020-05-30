@@ -26,7 +26,7 @@ namespace commands_info {
 
 FavoriteInfo::FavoriteInfo() : id_(invalid_stream_id), favorite_(false) {}
 
-FavoriteInfo::FavoriteInfo(stream_id_t channel, bool favorite) : id_(channel), favorite_(favorite) {}
+FavoriteInfo::FavoriteInfo(const stream_id_t& channel, bool favorite) : id_(channel), favorite_(favorite) {}
 
 bool FavoriteInfo::IsValid() const {
   return id_ != invalid_stream_id;
@@ -60,7 +60,7 @@ common::Error FavoriteInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-void FavoriteInfo::SetChannel(stream_id_t channel) {
+void FavoriteInfo::SetChannel(const stream_id_t& channel) {
   id_ = channel;
 }
 

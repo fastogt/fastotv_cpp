@@ -23,15 +23,15 @@
 #include <common/convert2string.h>
 #include <common/sprintf.h>
 
-#define AUTH_INFO_LOGIN_FIELD "login"
-#define AUTH_INFO_PASSWORD_FIELD "password"
+#define LOGIN_FIELD "login"
+#define PASSWORD_FIELD "password"
 
 namespace fastotv {
 namespace commands_info {
 
-LoginInfo::LoginInfo() : login_(), password_() {}
+LoginInfo::LoginInfo() : LoginInfo(std::string(), std::string()) {}
 
-LoginInfo::LoginInfo(login_t login, password_t password) : login_(login), password_(password) {}
+LoginInfo::LoginInfo(const login_t& login, const password_t& password) : login_(login), password_(password) {}
 
 bool LoginInfo::IsValid() const {
   return !login_.empty() && !password_.empty();
@@ -42,20 +42,20 @@ common::Error LoginInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, AUTH_INFO_LOGIN_FIELD, json_object_new_string(login_.c_str()));
-  json_object_object_add(deserialized, AUTH_INFO_PASSWORD_FIELD, json_object_new_string(password_.c_str()));
+  json_object_object_add(deserialized, LOGIN_FIELD, json_object_new_string(login_.c_str()));
+  json_object_object_add(deserialized, PASSWORD_FIELD, json_object_new_string(password_.c_str()));
   return common::Error();
 }
 
 common::Error LoginInfo::DoDeSerialize(json_object* serialized) {
   json_object* jlogin = nullptr;
-  json_bool jlogin_exists = json_object_object_get_ex(serialized, AUTH_INFO_LOGIN_FIELD, &jlogin);
+  json_bool jlogin_exists = json_object_object_get_ex(serialized, LOGIN_FIELD, &jlogin);
   if (!jlogin_exists) {
     return common::make_error_inval();
   }
 
   json_object* jpass = nullptr;
-  json_bool jpass_exists = json_object_object_get_ex(serialized, AUTH_INFO_PASSWORD_FIELD, &jpass);
+  json_bool jpass_exists = json_object_object_get_ex(serialized, PASSWORD_FIELD, &jpass);
   if (!jpass_exists) {
     return common::make_error_inval();
   }
@@ -69,7 +69,7 @@ login_t LoginInfo::GetLogin() const {
   return login_;
 }
 
-void LoginInfo::SetLogin(login_t login) {
+void LoginInfo::SetLogin(const login_t& login) {
   login_ = login;
 }
 
@@ -77,7 +77,7 @@ LoginInfo::password_t LoginInfo::GetPassword() const {
   return password_;
 }
 
-void LoginInfo::SetPassword(password_t password) {
+void LoginInfo::SetPassword(const fastotv::commands_info::LoginInfo::password_t& password) {
   password_ = password;
 }
 

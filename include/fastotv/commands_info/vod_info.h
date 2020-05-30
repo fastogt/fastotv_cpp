@@ -31,7 +31,7 @@ class VodInfo : public StreamBaseInfo {
   typedef StreamBaseInfo base_class;
 
   VodInfo();
-  VodInfo(stream_id_t sid,
+  VodInfo(const stream_id_t& sid,
           const groups_t& group,
           iarc_t iarc,
           bool favorite,

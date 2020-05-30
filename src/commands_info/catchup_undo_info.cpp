@@ -25,7 +25,7 @@ namespace commands_info {
 
 CatchupUndoInfo::CatchupUndoInfo() : sid_(invalid_stream_id) {}
 
-CatchupUndoInfo::CatchupUndoInfo(stream_id_t sid) : sid_(sid) {}
+CatchupUndoInfo::CatchupUndoInfo(const stream_id_t& sid) : sid_(sid) {}
 
 CatchupUndoInfo::~CatchupUndoInfo() {}
 
@@ -33,7 +33,7 @@ bool CatchupUndoInfo::IsValid() const {
   return sid_ != invalid_stream_id;
 }
 
-void CatchupUndoInfo::SetStreamID(stream_id_t sid) {
+void CatchupUndoInfo::SetStreamID(const stream_id_t& sid) {
   sid_ = sid;
 }
 

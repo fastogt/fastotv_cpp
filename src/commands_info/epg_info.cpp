@@ -84,7 +84,7 @@ EpgInfo::tvg_id_t EpgInfo::GetTvgID() const {
   return tvg_id_;
 }
 
-void EpgInfo::SetIconUrl(const fastotv::commands_info::EpgInfo::url_t& url) {
+void EpgInfo::SetIconUrl(const url_t& url) {
   icon_src_ = url;
 }
 
@@ -205,12 +205,12 @@ bool EpgInfo::Equals(const EpgInfo& url) const {
   return tvg_id_ == url.tvg_id_ && uri_ == url.uri_ && display_name_ == url.display_name_;
 }
 
-const fastotv::commands_info::EpgInfo::url_t& EpgInfo::GetUnknownIconUrl() {
+const EpgInfo::url_t& EpgInfo::GetUnknownIconUrl() {
   static const url_t url("https://fastocloud.com/images/unknown_channel.png");
   return url;
 }
 
-bool EpgInfo::IsUnknownIconUrl(const fastotv::commands_info::EpgInfo::url_t& url) {
+bool EpgInfo::IsUnknownIconUrl(const EpgInfo::url_t& url) {
   return url == GetUnknownIconUrl();
 }
 

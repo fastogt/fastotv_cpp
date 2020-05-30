@@ -30,11 +30,11 @@ namespace commands_info {
 class FavoriteInfo : public common::serializer::JsonSerializer<FavoriteInfo> {
  public:
   FavoriteInfo();
-  FavoriteInfo(stream_id_t id, bool favorite);
+  FavoriteInfo(const stream_id_t& id, bool favorite);
 
   bool IsValid() const;
 
-  void SetChannel(stream_id_t channel);
+  void SetChannel(const stream_id_t& channel);
   stream_id_t GetChannel() const;
 
   void SetFavorite(bool favorite);

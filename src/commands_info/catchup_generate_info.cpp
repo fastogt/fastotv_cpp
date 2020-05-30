@@ -18,10 +18,10 @@
 
 #include <fastotv/commands_info/catchup_generate_info.h>
 
-#define CATCHUP_REQUEST_INFO_ID_FIELD "id"
-#define CATCHUP_REQUEST_INFO_TITLE_FIELD "title"
-#define CATCHUP_REQUEST_INFO_START_FIELD "start"
-#define CATCHUP_REQUEST_INFO_STOP_FIELD "stop"
+#define ID_FIELD "id"
+#define TITLE_FIELD "title"
+#define START_FIELD "start"
+#define STOP_FIELD "stop"
 
 #define CATCHUP_RESPONSE_INFO_CATCHUP_FIELD "catchup"
 
@@ -30,7 +30,7 @@ namespace commands_info {
 
 CatchupGenerateInfo::CatchupGenerateInfo() : sid_(invalid_stream_id), title_(), start_time_(0), stop_time_(0) {}
 
-CatchupGenerateInfo::CatchupGenerateInfo(stream_id_t sid,
+CatchupGenerateInfo::CatchupGenerateInfo(const stream_id_t& sid,
                                          const std::string& title,
                                          timestamp_t start_time,
                                          timestamp_t stop_time)
@@ -42,7 +42,7 @@ bool CatchupGenerateInfo::IsValid() const {
   return sid_ != invalid_stream_id && start_time_ != 0 && stop_time_ != 0;
 }
 
-void CatchupGenerateInfo::SetStreamID(stream_id_t sid) {
+void CatchupGenerateInfo::SetStreamID(const stream_id_t& sid) {
   sid_ = sid;
 }
 
@@ -81,7 +81,7 @@ bool CatchupGenerateInfo::Equals(const CatchupGenerateInfo& inf) const {
 common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
   CatchupGenerateInfo inf;
   json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, CATCHUP_REQUEST_INFO_ID_FIELD, &jcid);
+  json_bool jcid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jcid);
   if (!jcid_exists) {
     return common::make_error_inval();
   }
@@ -93,21 +93,21 @@ common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
   inf.sid_ = cid;
 
   json_object* jtitle = nullptr;
-  json_bool jtitle_exists = json_object_object_get_ex(serialized, CATCHUP_REQUEST_INFO_TITLE_FIELD, &jtitle);
+  json_bool jtitle_exists = json_object_object_get_ex(serialized, TITLE_FIELD, &jtitle);
   if (!jtitle_exists) {
     return common::make_error_inval();
   }
   inf.title_ = json_object_get_string(jtitle);
 
   json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, CATCHUP_REQUEST_INFO_START_FIELD, &jstart);
+  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
   if (!jstart_exists) {
     return common::make_error_inval();
   }
   inf.start_time_ = json_object_get_int64(jstart);
 
   json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, CATCHUP_REQUEST_INFO_STOP_FIELD, &jstop);
+  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
   if (!jstop_exists) {
     return common::make_error_inval();
   }
@@ -122,16 +122,16 @@ common::Error CatchupGenerateInfo::SerializeFields(json_object* deserialized) co
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, CATCHUP_REQUEST_INFO_ID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, CATCHUP_REQUEST_INFO_TITLE_FIELD, json_object_new_string(title_.c_str()));
-  json_object_object_add(deserialized, CATCHUP_REQUEST_INFO_START_FIELD, json_object_new_int64(start_time_));
-  json_object_object_add(deserialized, CATCHUP_REQUEST_INFO_STOP_FIELD, json_object_new_int64(stop_time_));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
+  json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(title_.c_str()));
+  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_time_));
+  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_time_));
   return common::Error();
 }
 
 CatchupQueueInfo::CatchupQueueInfo() : cinf_() {}
 
-CatchupQueueInfo::CatchupQueueInfo(const fastotv::commands_info::CatchupInfo& info) : cinf_(info) {}
+CatchupQueueInfo::CatchupQueueInfo(const CatchupInfo& info) : cinf_(info) {}
 
 CatchupQueueInfo::~CatchupQueueInfo() {}
 
@@ -139,11 +139,11 @@ bool CatchupQueueInfo::IsValid() const {
   return cinf_.IsValid();
 }
 
-void CatchupQueueInfo::SetCatchup(const fastotv::commands_info::CatchupInfo& info) {
+void CatchupQueueInfo::SetCatchup(const CatchupInfo& info) {
   cinf_ = info;
 }
 
-fastotv::commands_info::CatchupInfo CatchupQueueInfo::GetCatchup() const {
+CatchupInfo CatchupQueueInfo::GetCatchup() const {
   return cinf_;
 }
 
@@ -159,7 +159,7 @@ common::Error CatchupQueueInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  fastotv::commands_info::CatchupInfo cid;
+  CatchupInfo cid;
   common::Error err = cid.DeSerialize(jcid);
   if (err) {
     return err;

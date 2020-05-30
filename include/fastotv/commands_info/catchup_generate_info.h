@@ -19,6 +19,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <common/serializer/json_serializer.h>
 
@@ -30,7 +31,7 @@ namespace commands_info {
 class CatchupGenerateInfo : public common::serializer::JsonSerializer<CatchupGenerateInfo> {
  public:
   CatchupGenerateInfo();
-  explicit CatchupGenerateInfo(stream_id_t sid,
+  explicit CatchupGenerateInfo(const stream_id_t& sid,
                                const std::string& title,
                                timestamp_t start_time,
                                timestamp_t stop_time);
@@ -38,7 +39,7 @@ class CatchupGenerateInfo : public common::serializer::JsonSerializer<CatchupGen
 
   bool IsValid() const;
 
-  void SetStreamID(stream_id_t sid);
+  void SetStreamID(const stream_id_t& sid);
   stream_id_t GetStreamID() const;
 
   void SetStart(timestamp_t start);  // UTC

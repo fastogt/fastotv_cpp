@@ -18,18 +18,18 @@
 
 #include <fastotv/commands_info/stream_base_info.h>
 
-#define CHANNEL_INFO_ID_FIELD "id"
-#define CHANNEL_INFO_GROUPS_FIELD "groups"
-#define CHANNEL_INFO_IARC_FIELD "iarc"
-#define CHANNEL_INFO_VIDEO_ENABLE_FIELD "video"
-#define CHANNEL_INFO_AUDIO_ENABLE_FIELD "audio"
-#define CHANNEL_INFO_FAVORITE_FIELD "favorite"
-#define CHANNEL_INFO_RECENT_FIELD "recent"
-#define CHANNEL_INFO_INTERRUPT_TIME_FIELD "interrupt_time"
-#define CHANNEL_INFO_PARTS_FIELD "parts"
-#define CHANNEL_INFO_VIEW_COUNT_FIELD "view_count"
-#define CHANNEL_INFO_LOCKED_FIELD "locked"
-#define CHANNEL_INFO_META_FIELD "meta"
+#define ID_FIELD "id"
+#define GROUPS_FIELD "groups"
+#define IARC_FIELD "iarc"
+#define VIDEO_ENABLE_FIELD "video"
+#define AUDIO_ENABLE_FIELD "audio"
+#define FAVORITE_FIELD "favorite"
+#define RECENT_FIELD "recent"
+#define INTERRUPT_TIME_FIELD "interrupt_time"
+#define PARTS_FIELD "parts"
+#define VIEW_COUNT_FIELD "view_count"
+#define LOCKED_FIELD "locked"
+#define META_FIELD "meta"
 
 namespace fastotv {
 namespace commands_info {
@@ -48,18 +48,18 @@ StreamBaseInfo::StreamBaseInfo()
       locked_(false),
       meta_urls_() {}
 
-StreamBaseInfo::StreamBaseInfo(stream_id_t sid,
+StreamBaseInfo::StreamBaseInfo(const stream_id_t& sid,
                                const groups_t& groups,
-                               fastotv::commands_info::StreamBaseInfo::iarc_t iarc,
+                               iarc_t iarc,
                                bool favorite,
                                timestamp_t recent,
                                timestamp_t interruption_time,
                                bool enable_audio,
                                bool enable_video,
                                const parts_t& parts,
-                               fastotv::commands_info::StreamBaseInfo::view_count_t view,
+                               view_count_t view,
                                bool locked,
-                               const fastotv::commands_info::StreamBaseInfo::meta_urls_t& urls)
+                               const meta_urls_t& urls)
     : stream_id_(sid),
       groups_(groups),
       iarc_(iarc),
@@ -81,7 +81,7 @@ stream_id_t StreamBaseInfo::GetStreamID() const {
   return stream_id_;
 }
 
-void StreamBaseInfo::SetStreamID(const stream_id_t sid) {
+void StreamBaseInfo::SetStreamID(const stream_id_t& sid) {
   stream_id_ = sid;
 }
 
@@ -176,28 +176,28 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
     json_object_array_add(jgroups, jgroup);
   }
 
-  json_object_object_add(deserialized, CHANNEL_INFO_ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  json_object_object_add(deserialized, CHANNEL_INFO_GROUPS_FIELD, jgroups);
-  json_object_object_add(deserialized, CHANNEL_INFO_IARC_FIELD, json_object_new_int(iarc_));
-  json_object_object_add(deserialized, CHANNEL_INFO_FAVORITE_FIELD, json_object_new_boolean(favorite_));
-  json_object_object_add(deserialized, CHANNEL_INFO_RECENT_FIELD, json_object_new_int64(recent_));
-  json_object_object_add(deserialized, CHANNEL_INFO_INTERRUPT_TIME_FIELD, json_object_new_int64(interruption_time_));
-  json_object_object_add(deserialized, CHANNEL_INFO_AUDIO_ENABLE_FIELD, json_object_new_boolean(enable_audio_));
-  json_object_object_add(deserialized, CHANNEL_INFO_VIDEO_ENABLE_FIELD, json_object_new_boolean(enable_video_));
-  json_object_object_add(deserialized, CHANNEL_INFO_VIEW_COUNT_FIELD, json_object_new_int(view_count_));
-  json_object_object_add(deserialized, CHANNEL_INFO_LOCKED_FIELD, json_object_new_boolean(locked_));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(stream_id_.c_str()));
+  json_object_object_add(deserialized, GROUPS_FIELD, jgroups);
+  json_object_object_add(deserialized, IARC_FIELD, json_object_new_int(iarc_));
+  json_object_object_add(deserialized, FAVORITE_FIELD, json_object_new_boolean(favorite_));
+  json_object_object_add(deserialized, RECENT_FIELD, json_object_new_int64(recent_));
+  json_object_object_add(deserialized, INTERRUPT_TIME_FIELD, json_object_new_int64(interruption_time_));
+  json_object_object_add(deserialized, AUDIO_ENABLE_FIELD, json_object_new_boolean(enable_audio_));
+  json_object_object_add(deserialized, VIDEO_ENABLE_FIELD, json_object_new_boolean(enable_video_));
+  json_object_object_add(deserialized, VIEW_COUNT_FIELD, json_object_new_int(view_count_));
+  json_object_object_add(deserialized, LOCKED_FIELD, json_object_new_boolean(locked_));
 
   json_object* jparts = json_object_new_array();
   for (const auto part : parts_) {
     json_object* jpart = json_object_new_string(part.c_str());
     json_object_array_add(jparts, jpart);
   }
-  json_object_object_add(deserialized, CHANNEL_INFO_PARTS_FIELD, jparts);
+  json_object_object_add(deserialized, PARTS_FIELD, jparts);
 
   json_object* jmeta = nullptr;
   common::Error err = meta_urls_.Serialize(&jmeta);
   if (!err) {
-    json_object_object_add(deserialized, CHANNEL_INFO_META_FIELD, jmeta);
+    json_object_object_add(deserialized, META_FIELD, jmeta);
   }
   return common::Error();
 }
@@ -205,7 +205,7 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
 common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
   stream_id_t sid;
   json_object* jsid = nullptr;
-  json_bool jsid_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_ID_FIELD, &jsid);
+  json_bool jsid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jsid);
   if (!jsid_exists) {
     return common::make_error_inval();
   }
@@ -213,7 +213,7 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   groups_t groups;
   json_object* jgroup = nullptr;
-  json_bool jgroup_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_GROUPS_FIELD, &jgroup);
+  json_bool jgroup_exists = json_object_object_get_ex(serialized, GROUPS_FIELD, &jgroup);
   if (jgroup_exists) {
     size_t len = json_object_array_length(jgroup);
     for (size_t i = 0; i < len; ++i) {
@@ -224,21 +224,21 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   iarc_t iart = DEFAULT_IARC;
   json_object* jiart = nullptr;
-  json_bool jiart_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_IARC_FIELD, &jgroup);
+  json_bool jiart_exists = json_object_object_get_ex(serialized, IARC_FIELD, &jgroup);
   if (jiart_exists) {
     iart = json_object_get_int(jiart);
   }
 
   bool favorite = false;
   json_object* jfavorite = nullptr;
-  json_bool jfavorite_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_AUDIO_ENABLE_FIELD, &jfavorite);
+  json_bool jfavorite_exists = json_object_object_get_ex(serialized, AUDIO_ENABLE_FIELD, &jfavorite);
   if (jfavorite_exists) {
     favorite = json_object_get_boolean(jfavorite);
   }
 
   timestamp_t recent = false;
   json_object* jrecent = nullptr;
-  json_bool jrecent_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_RECENT_FIELD, &jrecent);
+  json_bool jrecent_exists = json_object_object_get_ex(serialized, RECENT_FIELD, &jrecent);
   if (jrecent_exists) {
     recent = json_object_get_int64(jrecent);
   }
@@ -246,30 +246,28 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
   timestamp_t interruption_time = 0;
   json_object* jinterruption_time = nullptr;
   json_bool jinterruption_time_exists =
-      json_object_object_get_ex(serialized, CHANNEL_INFO_INTERRUPT_TIME_FIELD, &jinterruption_time);
+      json_object_object_get_ex(serialized, INTERRUPT_TIME_FIELD, &jinterruption_time);
   if (jinterruption_time_exists) {
     interruption_time = json_object_get_int64(jinterruption_time);
   }
 
   bool enable_audio = true;
   json_object* jenable_audio = nullptr;
-  json_bool jenable_audio_exists =
-      json_object_object_get_ex(serialized, CHANNEL_INFO_AUDIO_ENABLE_FIELD, &jenable_audio);
+  json_bool jenable_audio_exists = json_object_object_get_ex(serialized, AUDIO_ENABLE_FIELD, &jenable_audio);
   if (jenable_audio_exists) {
     enable_audio = json_object_get_boolean(jenable_audio);
   }
 
   bool enable_video = true;
   json_object* jdisable_video = nullptr;
-  json_bool jdisable_video_exists =
-      json_object_object_get_ex(serialized, CHANNEL_INFO_VIDEO_ENABLE_FIELD, &jdisable_video);
+  json_bool jdisable_video_exists = json_object_object_get_ex(serialized, VIDEO_ENABLE_FIELD, &jdisable_video);
   if (jdisable_video_exists) {
     enable_video = json_object_get_boolean(jdisable_video);
   }
 
   parts_t parts;
   json_object* jparts = nullptr;
-  json_bool jparts_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_PARTS_FIELD, &jparts);
+  json_bool jparts_exists = json_object_object_get_ex(serialized, PARTS_FIELD, &jparts);
   if (jparts_exists) {
     size_t len = json_object_array_length(jparts);
     for (size_t i = 0; i < len; ++i) {
@@ -280,21 +278,21 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   view_count_t view = 0;
   json_object* jview = nullptr;
-  json_bool jview_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_VIEW_COUNT_FIELD, &jview);
+  json_bool jview_exists = json_object_object_get_ex(serialized, VIEW_COUNT_FIELD, &jview);
   if (jview_exists) {
     view = json_object_get_int(jview);
   }
 
   bool locked = false;
   json_object* jlocked = nullptr;
-  json_bool jlocked_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_LOCKED_FIELD, &jlocked);
+  json_bool jlocked_exists = json_object_object_get_ex(serialized, LOCKED_FIELD, &jlocked);
   if (jlocked_exists) {
     locked = json_object_get_int(jlocked);
   }
 
   meta_urls_t meta;
   json_object* jmeta = nullptr;
-  json_bool jmeta_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_LOCKED_FIELD, &jmeta);
+  json_bool jmeta_exists = json_object_object_get_ex(serialized, LOCKED_FIELD, &jmeta);
   if (jmeta_exists) {
     ignore_result(meta.DeSerialize(jmeta));
   }

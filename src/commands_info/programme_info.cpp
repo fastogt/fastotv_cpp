@@ -42,7 +42,7 @@ namespace commands_info {
 
 ProgrammeInfo::ProgrammeInfo() : channel_(invalid_stream_id), start_time_(0), stop_time_(0), title_(), category_() {}
 
-ProgrammeInfo::ProgrammeInfo(stream_id_t channel,
+ProgrammeInfo::ProgrammeInfo(const stream_id_t& channel,
                              timestamp_t start,
                              timestamp_t stop,
                              const std::string& title,
@@ -106,7 +106,7 @@ common::Error ProgrammeInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-void ProgrammeInfo::SetChannel(stream_id_t channel) {
+void ProgrammeInfo::SetChannel(const stream_id_t& channel) {
   channel_ = channel;
 }
 

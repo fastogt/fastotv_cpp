@@ -18,15 +18,15 @@
 
 #include <fastotv/commands_info/catchup_info.h>
 
-#define CATCHUP_INFO_START_FIELD "start"
-#define CATCHUP_INFO_STOP_FIELD "stop"
+#define START_FIELD "start"
+#define STOP_FIELD "stop"
 
 namespace fastotv {
 namespace commands_info {
 
 CatchupInfo::CatchupInfo() : base_class(), start_(0), stop_(0) {}
 
-CatchupInfo::CatchupInfo(stream_id_t sid,
+CatchupInfo::CatchupInfo(const stream_id_t& sid,
                          const groups_t& groups,
                          iarc_t iarc,
                          bool favorite,
@@ -87,8 +87,8 @@ common::Error CatchupInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, CATCHUP_INFO_START_FIELD, json_object_new_int64(start_));
-  json_object_object_add(deserialized, CATCHUP_INFO_STOP_FIELD, json_object_new_int64(stop_));
+  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_));
+  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_));
   return common::Error();
 }
 
@@ -100,14 +100,14 @@ common::Error CatchupInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, CATCHUP_INFO_START_FIELD, &jstart);
+  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
   if (!jstart_exists) {
     return common::make_error_inval();
   }
   inf.start_ = json_object_get_int64(jstart);
 
   json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, CATCHUP_INFO_STOP_FIELD, &jstop);
+  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
   if (!jstop_exists) {
     return common::make_error_inval();
   }

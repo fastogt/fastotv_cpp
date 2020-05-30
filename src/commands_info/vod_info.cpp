@@ -18,18 +18,18 @@
 
 #include <fastotv/commands_info/vod_info.h>
 
-#define CHANNEL_INFO_MOVIE_FIELD "vod"
+#define MOVIE_FIELD "vod"
 
 namespace fastotv {
 namespace commands_info {
 
 VodInfo::VodInfo() : base_class(), movie_() {}
 
-VodInfo::VodInfo(stream_id_t sid,
+VodInfo::VodInfo(const stream_id_t& sid,
                  const groups_t& group,
                  iarc_t iarc,
                  bool favorite,
-                 fastotv::timestamp_t recent,
+                 timestamp_t recent,
                  timestamp_t interruption_time,
                  const MovieInfo& movie,
                  bool enable_audio,
@@ -84,7 +84,7 @@ common::Error VodInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, CHANNEL_INFO_MOVIE_FIELD, jmovie);
+  json_object_object_add(deserialized, MOVIE_FIELD, jmovie);
   return common::Error();
 }
 
@@ -95,19 +95,19 @@ common::Error VodInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jepg = nullptr;
-  json_bool jepg_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_MOVIE_FIELD, &jepg);
+  json_object* jmovie = nullptr;
+  json_bool jepg_exists = json_object_object_get_ex(serialized, MOVIE_FIELD, &jmovie);
   if (!jepg_exists) {
     return common::make_error_inval();
   }
 
-  MovieInfo epg;
-  err = epg.DeSerialize(jepg);
+  MovieInfo movie;
+  err = movie.DeSerialize(jmovie);
   if (err) {
     return err;
   }
 
-  inf.movie_ = epg;
+  inf.movie_ = movie;
   *this = inf;
   return common::Error();
 }

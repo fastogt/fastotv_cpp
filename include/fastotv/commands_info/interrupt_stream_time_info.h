@@ -30,11 +30,11 @@ namespace commands_info {
 class InterruptStreamTimeInfo : public common::serializer::JsonSerializer<InterruptStreamTimeInfo> {
  public:
   InterruptStreamTimeInfo();
-  InterruptStreamTimeInfo(stream_id_t id, timestamp_t time);
+  InterruptStreamTimeInfo(const stream_id_t& id, timestamp_t time);
 
   bool IsValid() const;
 
-  void SetChannel(stream_id_t channel);
+  void SetChannel(const stream_id_t& channel);
   stream_id_t GetChannel() const;
 
   void SetTime(timestamp_t time);
