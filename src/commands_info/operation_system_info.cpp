@@ -20,11 +20,11 @@
 
 #include <common/system_info/system_info.h>
 
-#define OPERATION_SYSTEM_NAME "name"
-#define OPERATION_SYSTEM_VERSION "version"
-#define OPERATION_SYSTEM_ARCH "arch"
-#define OPERATION_SYSTEM_RAM_TOTAL "ram_total"
-#define OPERATION_SYSTEM_RAM_FREE "ram_free"
+#define NAME_FIELD "name"
+#define VERSION_FIELD "version"
+#define ARCH_FIELD "arch"
+#define RAM_TOTAL_FIELD "ram_total"
+#define RAM_FREE_FIELD "ram_free"
 
 namespace fastotv {
 namespace commands_info {
@@ -96,45 +96,45 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, OPERATION_SYSTEM_NAME, json_object_new_string(name_.c_str()));
-  json_object_object_add(deserialized, OPERATION_SYSTEM_VERSION, json_object_new_string(version_.c_str()));
-  json_object_object_add(deserialized, OPERATION_SYSTEM_ARCH, json_object_new_string(arch_.c_str()));
-  json_object_object_add(deserialized, OPERATION_SYSTEM_RAM_TOTAL, json_object_new_int64(ram_total_));
-  json_object_object_add(deserialized, OPERATION_SYSTEM_RAM_FREE, json_object_new_int64(ram_free_));
+  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
+  json_object_object_add(deserialized, VERSION_FIELD, json_object_new_string(version_.c_str()));
+  json_object_object_add(deserialized, ARCH_FIELD, json_object_new_string(arch_.c_str()));
+  json_object_object_add(deserialized, RAM_TOTAL_FIELD, json_object_new_int64(ram_total_));
+  json_object_object_add(deserialized, RAM_FREE_FIELD, json_object_new_int64(ram_free_));
   return common::Error();
 }
 
 common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
   OperationSystemInfo inf;
   json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, OPERATION_SYSTEM_NAME, &jname);
+  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
   if (!jname_exists) {
     return common::make_error_inval();
   }
   inf.name_ = json_object_get_string(jname);
 
   json_object* jversion = nullptr;
-  json_bool jversion_exists = json_object_object_get_ex(serialized, OPERATION_SYSTEM_VERSION, &jversion);
+  json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
   if (!jversion_exists) {
     return common::make_error_inval();
   }
   inf.version_ = json_object_get_string(jversion);
 
   json_object* jarch = nullptr;
-  json_bool jarch_exists = json_object_object_get_ex(serialized, OPERATION_SYSTEM_ARCH, &jarch);
+  json_bool jarch_exists = json_object_object_get_ex(serialized, ARCH_FIELD, &jarch);
   if (!jarch_exists) {
     return common::make_error_inval();
   }
   inf.arch_ = json_object_get_string(jarch);
 
   json_object* jram_total = nullptr;
-  json_bool jram_total_exists = json_object_object_get_ex(serialized, OPERATION_SYSTEM_RAM_TOTAL, &jram_total);
+  json_bool jram_total_exists = json_object_object_get_ex(serialized, RAM_TOTAL_FIELD, &jram_total);
   if (jram_total_exists) {
     inf.ram_total_ = json_object_get_int64(jram_total);
   }
 
   json_object* jram_free = nullptr;
-  json_bool jram_free_exists = json_object_object_get_ex(serialized, OPERATION_SYSTEM_RAM_FREE, &jram_free);
+  json_bool jram_free_exists = json_object_object_get_ex(serialized, RAM_FREE_FIELD, &jram_free);
   if (jram_free_exists) {
     inf.ram_free_ = json_object_get_int64(jram_free);
   }

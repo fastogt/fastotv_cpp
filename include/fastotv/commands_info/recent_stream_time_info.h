@@ -30,11 +30,11 @@ namespace commands_info {
 class RecentStreamTimeInfo : public common::serializer::JsonSerializer<RecentStreamTimeInfo> {
  public:
   RecentStreamTimeInfo();
-  RecentStreamTimeInfo(stream_id_t id, timestamp_t time);
+  RecentStreamTimeInfo(const stream_id_t& id, timestamp_t time);
 
   bool IsValid() const;
 
-  void SetChannel(stream_id_t channel);
+  void SetChannel(const stream_id_t& channel);
   stream_id_t GetChannel() const;
 
   void SetTimestamp(timestamp_t time);

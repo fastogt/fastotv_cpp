@@ -18,7 +18,7 @@
 
 #include <fastotv/commands_info/catchup_undo_info.h>
 
-#define CATCHUP_REQUEST_UNDO_INFO_ID_FIELD "id"
+#define ID_FIELD "id"
 
 namespace fastotv {
 namespace commands_info {
@@ -48,7 +48,7 @@ bool CatchupUndoInfo::Equals(const CatchupUndoInfo& inf) const {
 common::Error CatchupUndoInfo::DoDeSerialize(json_object* serialized) {
   CatchupUndoInfo inf;
   json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, CATCHUP_REQUEST_UNDO_INFO_ID_FIELD, &jcid);
+  json_bool jcid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jcid);
   if (!jcid_exists) {
     return common::make_error_inval();
   }
@@ -68,7 +68,7 @@ common::Error CatchupUndoInfo::SerializeFields(json_object* deserialized) const 
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, CATCHUP_REQUEST_UNDO_INFO_ID_FIELD, json_object_new_string(sid_.c_str()));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
   return common::Error();
 }
 

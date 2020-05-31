@@ -18,7 +18,7 @@
 
 #include <fastotv/commands_info/channel_info.h>
 
-#define CHANNEL_INFO_EPG_FIELD "epg"
+#define EPG_FIELD "epg"
 
 namespace fastotv {
 namespace commands_info {
@@ -80,7 +80,7 @@ common::Error ChannelInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, CHANNEL_INFO_EPG_FIELD, jepg);
+  json_object_object_add(deserialized, EPG_FIELD, jepg);
   return common::Error();
 }
 
@@ -92,7 +92,7 @@ common::Error ChannelInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jepg = nullptr;
-  json_bool jepg_exists = json_object_object_get_ex(serialized, CHANNEL_INFO_EPG_FIELD, &jepg);
+  json_bool jepg_exists = json_object_object_get_ex(serialized, EPG_FIELD, &jepg);
   if (!jepg_exists) {
     return common::make_error_inval();
   }

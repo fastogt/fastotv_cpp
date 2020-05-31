@@ -31,11 +31,11 @@ have everyone listening!</desc>
 </programme>
 */
 
-#define PROGRAMME_INFO_CHANNEL_FIELD "channel"
-#define PROGRAMME_INFO_START_FIELD "start"
-#define PROGRAMME_INFO_STOP_FIELD "stop"
-#define PROGRAMME_INFO_TITLE_FIELD "title"
-#define PROGRAMME_INFO_CATEGORY_FIELD "category"
+#define CHANNEL_FIELD "channel"
+#define START_FIELD "start"
+#define STOP_FIELD "stop"
+#define TITLE_FIELD "title"
+#define CATEGORY_FIELD "category"
 
 namespace fastotv {
 namespace commands_info {
@@ -58,44 +58,44 @@ common::Error ProgrammeInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, PROGRAMME_INFO_CHANNEL_FIELD, json_object_new_string(channel_.c_str()));
-  json_object_object_add(deserialized, PROGRAMME_INFO_START_FIELD, json_object_new_int64(start_time_));
-  json_object_object_add(deserialized, PROGRAMME_INFO_STOP_FIELD, json_object_new_int64(stop_time_));
-  json_object_object_add(deserialized, PROGRAMME_INFO_TITLE_FIELD, json_object_new_string(title_.c_str()));
+  json_object_object_add(deserialized, CHANNEL_FIELD, json_object_new_string(channel_.c_str()));
+  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_time_));
+  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_time_));
+  json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(title_.c_str()));
   if (category_) {
-    json_object_object_add(deserialized, PROGRAMME_INFO_CATEGORY_FIELD, json_object_new_string(category_->c_str()));
+    json_object_object_add(deserialized, CATEGORY_FIELD, json_object_new_string(category_->c_str()));
   }
   return common::Error();
 }
 
 common::Error ProgrammeInfo::DoDeSerialize(json_object* serialized) {
   json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, PROGRAMME_INFO_CHANNEL_FIELD, &jchannel);
+  json_bool jchannel_exists = json_object_object_get_ex(serialized, CHANNEL_FIELD, &jchannel);
   if (!jchannel_exists) {
     return common::make_error_inval();
   }
 
   json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, PROGRAMME_INFO_START_FIELD, &jstart);
+  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
   if (!jstart_exists) {
     return common::make_error_inval();
   }
 
   json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, PROGRAMME_INFO_STOP_FIELD, &jstop);
+  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
   if (!jstop_exists) {
     return common::make_error_inval();
   }
 
   json_object* jtitle = nullptr;
-  json_bool jtitle_exists = json_object_object_get_ex(serialized, PROGRAMME_INFO_TITLE_FIELD, &jtitle);
+  json_bool jtitle_exists = json_object_object_get_ex(serialized, TITLE_FIELD, &jtitle);
   if (!jtitle_exists) {
     return common::make_error_inval();
   }
 
   json_object* jcategory = nullptr;
   category_t category;
-  json_bool jcategory_exists = json_object_object_get_ex(serialized, PROGRAMME_INFO_CATEGORY_FIELD, &jcategory);
+  json_bool jcategory_exists = json_object_object_get_ex(serialized, CATEGORY_FIELD, &jcategory);
   if (jcategory_exists) {
     category = std::string(json_object_get_string(jcategory));
   }

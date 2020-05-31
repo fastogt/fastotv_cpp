@@ -18,15 +18,15 @@
 
 #include <fastotv/commands_info/runtime_channel_info.h>
 
-#define RUNTIME_CHANNEL_INFO_STREAM_ID_FIELD "id"
-#define RUNTIME_CHANNEL_INFO_WATCHERS_FIELD "watchers"
+#define STREAM_ID_FIELD "id"
+#define WATCHERS_FIELD "watchers"
 
 namespace fastotv {
 namespace commands_info {
 
 RuntimeChannelLiteInfo::RuntimeChannelLiteInfo() : RuntimeChannelLiteInfo(invalid_stream_id) {}
 
-RuntimeChannelLiteInfo::RuntimeChannelLiteInfo(stream_id_t sid) : sid_(sid) {}
+RuntimeChannelLiteInfo::RuntimeChannelLiteInfo(const fastotv::stream_id_t& sid) : sid_(sid) {}
 
 RuntimeChannelLiteInfo::~RuntimeChannelLiteInfo() {}
 
@@ -34,7 +34,7 @@ bool RuntimeChannelLiteInfo::IsValid() const {
   return sid_ != invalid_stream_id;
 }
 
-void RuntimeChannelLiteInfo::SetStreamID(stream_id_t sid) {
+void RuntimeChannelLiteInfo::SetStreamID(const fastotv::stream_id_t& sid) {
   sid_ = sid;
 }
 
@@ -49,7 +49,7 @@ bool RuntimeChannelLiteInfo::Equals(const RuntimeChannelLiteInfo& inf) const {
 common::Error RuntimeChannelLiteInfo::DoDeSerialize(json_object* serialized) {
   RuntimeChannelLiteInfo inf;
   json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, RUNTIME_CHANNEL_INFO_STREAM_ID_FIELD, &jcid);
+  json_bool jcid_exists = json_object_object_get_ex(serialized, STREAM_ID_FIELD, &jcid);
   if (!jcid_exists) {
     return common::make_error_inval();
   }
@@ -69,13 +69,13 @@ common::Error RuntimeChannelLiteInfo::SerializeFields(json_object* deserialized)
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, RUNTIME_CHANNEL_INFO_STREAM_ID_FIELD, json_object_new_string(sid_.c_str()));
+  json_object_object_add(deserialized, STREAM_ID_FIELD, json_object_new_string(sid_.c_str()));
   return common::Error();
 }
 
 RuntimeChannelInfo::RuntimeChannelInfo() : base_class(), watchers_(0) {}
 
-RuntimeChannelInfo::RuntimeChannelInfo(stream_id_t channel_id, size_t watchers)
+RuntimeChannelInfo::RuntimeChannelInfo(const stream_id_t& channel_id, size_t watchers)
     : base_class(channel_id), watchers_(watchers) {}
 
 RuntimeChannelInfo::~RuntimeChannelInfo() {}
@@ -94,7 +94,7 @@ common::Error RuntimeChannelInfo::SerializeFields(json_object* deserialized) con
     return err;
   }
 
-  json_object_object_add(deserialized, RUNTIME_CHANNEL_INFO_WATCHERS_FIELD, json_object_new_int(watchers_));
+  json_object_object_add(deserialized, WATCHERS_FIELD, json_object_new_int(watchers_));
   return common::Error();
 }
 
@@ -106,7 +106,7 @@ common::Error RuntimeChannelInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jwatchers = nullptr;
-  json_bool jwatchers_exists = json_object_object_get_ex(serialized, RUNTIME_CHANNEL_INFO_WATCHERS_FIELD, &jwatchers);
+  json_bool jwatchers_exists = json_object_object_get_ex(serialized, WATCHERS_FIELD, &jwatchers);
   if (jwatchers_exists) {
     inf.watchers_ = json_object_get_int64(jwatchers);
   }

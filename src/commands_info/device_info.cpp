@@ -26,13 +26,13 @@ namespace commands_info {
 
 DeviceInfo::DeviceInfo() : DeviceInfo(invalid_device_id, std::string()) {}
 
-DeviceInfo::DeviceInfo(device_id_t did, const std::string& name) : did_(did), name_(name) {}
+DeviceInfo::DeviceInfo(const device_id_t& did, const std::string& name) : did_(did), name_(name) {}
 
 bool DeviceInfo::IsValid() const {
   return did_ != invalid_device_id && !name_.empty();
 }
 
-void DeviceInfo::SetDeviceID(device_id_t did) {
+void DeviceInfo::SetDeviceID(const device_id_t& did) {
   did_ = did;
 }
 

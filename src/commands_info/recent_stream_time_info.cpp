@@ -18,15 +18,15 @@
 
 #include <fastotv/commands_info/recent_stream_time_info.h>
 
-#define RECENT_STREAM_TIME_INFO_ID_FIELD "id"
-#define RECENT_STREAM_TIME_INFO_TIME_FIELD "time"
+#define ID_FIELD "id"
+#define TIME_FIELD "time"
 
 namespace fastotv {
 namespace commands_info {
 
 RecentStreamTimeInfo::RecentStreamTimeInfo() : id_(invalid_stream_id), timestamp_utc_(0) {}
 
-RecentStreamTimeInfo::RecentStreamTimeInfo(stream_id_t channel, timestamp_t time)
+RecentStreamTimeInfo::RecentStreamTimeInfo(const stream_id_t& channel, timestamp_t time)
     : id_(channel), timestamp_utc_(time) {}
 
 bool RecentStreamTimeInfo::IsValid() const {
@@ -38,20 +38,20 @@ common::Error RecentStreamTimeInfo::SerializeFields(json_object* deserialized) c
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, RECENT_STREAM_TIME_INFO_ID_FIELD, json_object_new_string(id_.c_str()));
-  json_object_object_add(deserialized, RECENT_STREAM_TIME_INFO_TIME_FIELD, json_object_new_boolean(timestamp_utc_));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(id_.c_str()));
+  json_object_object_add(deserialized, TIME_FIELD, json_object_new_boolean(timestamp_utc_));
   return common::Error();
 }
 
 common::Error RecentStreamTimeInfo::DoDeSerialize(json_object* serialized) {
   json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, RECENT_STREAM_TIME_INFO_ID_FIELD, &jchannel);
+  json_bool jchannel_exists = json_object_object_get_ex(serialized, ID_FIELD, &jchannel);
   if (!jchannel_exists) {
     return common::make_error_inval();
   }
 
   json_object* jtime = nullptr;
-  json_bool jtime_exists = json_object_object_get_ex(serialized, RECENT_STREAM_TIME_INFO_TIME_FIELD, &jtime);
+  json_bool jtime_exists = json_object_object_get_ex(serialized, TIME_FIELD, &jtime);
   if (!jtime_exists) {
     return common::make_error_inval();
   }
@@ -61,7 +61,7 @@ common::Error RecentStreamTimeInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-void RecentStreamTimeInfo::SetChannel(stream_id_t channel) {
+void RecentStreamTimeInfo::SetChannel(const stream_id_t& channel) {
   id_ = channel;
 }
 

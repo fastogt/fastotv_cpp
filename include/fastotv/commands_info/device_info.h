@@ -30,11 +30,11 @@ namespace commands_info {
 class DeviceInfo : public common::serializer::JsonSerializer<DeviceInfo> {
  public:
   DeviceInfo();
-  DeviceInfo(device_id_t did, const std::string& name);
+  DeviceInfo(const device_id_t& did, const std::string& name);
 
   bool IsValid() const;
 
-  void SetDeviceID(device_id_t did);
+  void SetDeviceID(const device_id_t& did);
   device_id_t GetDeviceID() const;
 
   void SetName(const std::string& name);

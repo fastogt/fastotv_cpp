@@ -18,8 +18,8 @@
 
 #include <fastotv/commands_info/project_info.h>
 
-#define PROJECT_INFO_NAME_FIELD "name"
-#define PROJECT_INFO_VERSION_FIELD "version"
+#define NAME_FIELD "name"
+#define VERSION_FIELD "version"
 
 namespace fastotv {
 namespace commands_info {
@@ -38,20 +38,20 @@ common::Error ProjectInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, PROJECT_INFO_NAME_FIELD, json_object_new_string(name_.c_str()));
-  json_object_object_add(deserialized, PROJECT_INFO_VERSION_FIELD, json_object_new_string(version_.c_str()));
+  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
+  json_object_object_add(deserialized, VERSION_FIELD, json_object_new_string(version_.c_str()));
   return common::Error();
 }
 
 common::Error ProjectInfo::DoDeSerialize(json_object* serialized) {
   json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, PROJECT_INFO_NAME_FIELD, &jname);
+  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
   if (!jname_exists) {
     return common::make_error_inval();
   }
 
   json_object* jversion = nullptr;
-  json_bool jversion_exists = json_object_object_get_ex(serialized, PROJECT_INFO_VERSION_FIELD, &jversion);
+  json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
   if (!jversion_exists) {
     return common::make_error_inval();
   }

@@ -18,8 +18,8 @@
 
 #include <fastotv/commands_info/favorite_info.h>
 
-#define FAVORITE_INFO_ID_FIELD "id"
-#define FAVORITE_INFO_FAVORITE_FIELD "favorite"
+#define ID_FIELD "id"
+#define FAVORITE_FIELD "favorite"
 
 namespace fastotv {
 namespace commands_info {
@@ -37,20 +37,20 @@ common::Error FavoriteInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, FAVORITE_INFO_ID_FIELD, json_object_new_string(id_.c_str()));
-  json_object_object_add(deserialized, FAVORITE_INFO_FAVORITE_FIELD, json_object_new_boolean(favorite_));
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(id_.c_str()));
+  json_object_object_add(deserialized, FAVORITE_FIELD, json_object_new_boolean(favorite_));
   return common::Error();
 }
 
 common::Error FavoriteInfo::DoDeSerialize(json_object* serialized) {
   json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, FAVORITE_INFO_ID_FIELD, &jchannel);
+  json_bool jchannel_exists = json_object_object_get_ex(serialized, ID_FIELD, &jchannel);
   if (!jchannel_exists) {
     return common::make_error_inval();
   }
 
   json_object* jfavorite = nullptr;
-  json_bool jfavorite_exists = json_object_object_get_ex(serialized, FAVORITE_INFO_FAVORITE_FIELD, &jfavorite);
+  json_bool jfavorite_exists = json_object_object_get_ex(serialized, FAVORITE_FIELD, &jfavorite);
   if (!jfavorite_exists) {
     return common::make_error_inval();
   }

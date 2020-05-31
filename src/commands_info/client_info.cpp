@@ -18,11 +18,11 @@
 
 #include <fastotv/commands_info/client_info.h>
 
-#define CLIENT_INFO_LOGIN_FIELD "login"
-#define CLIENT_INFO_DEVICE_ID_FIELD "device_id"
-#define CLIENT_INFO_PROJECT_FIELD "project"
-#define CLIENT_INFO_OS_FIELD "os"
-#define CLIENT_INFO_CPU_FIELD "cpu"
+#define LOGIN_FIELD "login"
+#define DEVICE_ID_FIELD "device_id"
+#define PROJECT_FIELD "project"
+#define OS_FIELD "os"
+#define CPU_FIELD "cpu"
 
 namespace fastotv {
 namespace commands_info {
@@ -57,18 +57,18 @@ common::Error ClientInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, CLIENT_INFO_LOGIN_FIELD, json_object_new_string(login_.c_str()));
-  json_object_object_add(deserialized, CLIENT_INFO_DEVICE_ID_FIELD, json_object_new_string(device_id_.c_str()));
-  json_object_object_add(deserialized, CLIENT_INFO_PROJECT_FIELD, proj);
-  json_object_object_add(deserialized, CLIENT_INFO_OS_FIELD, os);
-  json_object_object_add(deserialized, CLIENT_INFO_CPU_FIELD, json_object_new_string(cpu_brand_.c_str()));
+  json_object_object_add(deserialized, LOGIN_FIELD, json_object_new_string(login_.c_str()));
+  json_object_object_add(deserialized, DEVICE_ID_FIELD, json_object_new_string(device_id_.c_str()));
+  json_object_object_add(deserialized, PROJECT_FIELD, proj);
+  json_object_object_add(deserialized, OS_FIELD, os);
+  json_object_object_add(deserialized, CPU_FIELD, json_object_new_string(cpu_brand_.c_str()));
   return common::Error();
 }
 
 common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   ClientInfo inf;
   json_object* jlogin = nullptr;
-  json_bool jlogin_exists = json_object_object_get_ex(serialized, CLIENT_INFO_LOGIN_FIELD, &jlogin);
+  json_bool jlogin_exists = json_object_object_get_ex(serialized, LOGIN_FIELD, &jlogin);
   if (!jlogin_exists) {
     return common::make_error_inval();
   }
@@ -80,14 +80,14 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   inf.login_ = login;
 
   json_object* jdevice_id = nullptr;
-  json_bool jdevice_id_exists = json_object_object_get_ex(serialized, CLIENT_INFO_DEVICE_ID_FIELD, &jdevice_id);
+  json_bool jdevice_id_exists = json_object_object_get_ex(serialized, DEVICE_ID_FIELD, &jdevice_id);
   if (!jdevice_id_exists) {
     return common::make_error_inval();
   }
   inf.device_id_ = json_object_get_string(jdevice_id);
 
   json_object* jproj = nullptr;
-  json_bool jproj_exists = json_object_object_get_ex(serialized, CLIENT_INFO_PROJECT_FIELD, &jproj);
+  json_bool jproj_exists = json_object_object_get_ex(serialized, PROJECT_FIELD, &jproj);
   if (!jproj_exists) {
     return common::make_error_inval();
   }
@@ -100,7 +100,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   inf.proj_ = proj;
 
   json_object* jos = nullptr;
-  json_bool jos_exists = json_object_object_get_ex(serialized, CLIENT_INFO_OS_FIELD, &jos);
+  json_bool jos_exists = json_object_object_get_ex(serialized, OS_FIELD, &jos);
   if (!jos_exists) {
     return common::make_error_inval();
   }
@@ -113,7 +113,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   inf.os_ = os;
 
   json_object* jcpu = nullptr;
-  json_bool jcpu_exists = json_object_object_get_ex(serialized, CLIENT_INFO_CPU_FIELD, &jcpu);
+  json_bool jcpu_exists = json_object_object_get_ex(serialized, CPU_FIELD, &jcpu);
   if (jcpu_exists) {
     inf.cpu_brand_ = json_object_get_string(jcpu);
   }

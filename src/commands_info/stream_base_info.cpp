@@ -292,7 +292,7 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   meta_urls_t meta;
   json_object* jmeta = nullptr;
-  json_bool jmeta_exists = json_object_object_get_ex(serialized, LOCKED_FIELD, &jmeta);
+  json_bool jmeta_exists = json_object_object_get_ex(serialized, META_FIELD, &jmeta);
   if (jmeta_exists) {
     ignore_result(meta.DeSerialize(jmeta));
   }

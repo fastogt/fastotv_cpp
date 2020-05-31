@@ -20,9 +20,9 @@
 
 #include <string>  // for string
 
-#define NOTIFICATION_TEXT_INFO_TEXT_FIELD "message"
-#define NOTIFICATION_TEXT_INFO_TEXT_TYPE_FIELD "type"
-#define NOTIFICATION_TEXT_INFO_SHOW_TIME_FIELD "show_time"
+#define TEXT_FIELD "message"
+#define TEXT_TYPE_FIELD "type"
+#define SHOW_TIME_FIELD "show_time"
 
 namespace fastotv {
 namespace commands_info {
@@ -33,29 +33,28 @@ NotificationTextInfo::NotificationTextInfo(const std::string& text, MessageType 
     : text_(text), type_(type), show_time_(show_time) {}
 
 common::Error NotificationTextInfo::SerializeFields(json_object* deserialized) const {
-  json_object_object_add(deserialized, NOTIFICATION_TEXT_INFO_TEXT_FIELD, json_object_new_string(text_.c_str()));
-  json_object_object_add(deserialized, NOTIFICATION_TEXT_INFO_TEXT_TYPE_FIELD, json_object_new_int(type_));
-  json_object_object_add(deserialized, NOTIFICATION_TEXT_INFO_SHOW_TIME_FIELD, json_object_new_int64(show_time_));
+  json_object_object_add(deserialized, TEXT_FIELD, json_object_new_string(text_.c_str()));
+  json_object_object_add(deserialized, TEXT_TYPE_FIELD, json_object_new_int(type_));
+  json_object_object_add(deserialized, SHOW_TIME_FIELD, json_object_new_int64(show_time_));
   return common::Error();
 }
 
 common::Error NotificationTextInfo::DoDeSerialize(json_object* serialized) {
   json_object* jtext = nullptr;
-  json_bool jtext_exists = json_object_object_get_ex(serialized, NOTIFICATION_TEXT_INFO_TEXT_FIELD, &jtext);
+  json_bool jtext_exists = json_object_object_get_ex(serialized, TEXT_FIELD, &jtext);
   if (!jtext_exists) {
     return common::make_error_inval();
   }
 
   MessageType type = TEXT;
   json_object* jtype = nullptr;
-  json_bool jtype_exists = json_object_object_get_ex(serialized, NOTIFICATION_TEXT_INFO_TEXT_TYPE_FIELD, &jtype);
+  json_bool jtype_exists = json_object_object_get_ex(serialized, TEXT_TYPE_FIELD, &jtype);
   if (jtype_exists) {
     type = static_cast<MessageType>(json_object_get_int(jtype));
   }
 
   json_object* jshow_time = nullptr;
-  json_bool jshow_time_exists =
-      json_object_object_get_ex(serialized, NOTIFICATION_TEXT_INFO_SHOW_TIME_FIELD, &jshow_time);
+  json_bool jshow_time_exists = json_object_object_get_ex(serialized, SHOW_TIME_FIELD, &jshow_time);
   if (!jshow_time_exists) {
     return common::make_error_inval();
   }

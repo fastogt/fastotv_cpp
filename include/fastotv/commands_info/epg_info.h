@@ -37,7 +37,7 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
   typedef std::vector<url_t> urls_t;
 
   EpgInfo();
-  EpgInfo(tvg_id_t id, const urls_t& uri, const std::string& name);  // required args
+  EpgInfo(const tvg_id_t& id, const urls_t& uri, const std::string& name);  // required args
 
   bool IsValid() const;
   bool FindProgrammeByTime(timestamp_t time, ProgrammeInfo* inf) const;
@@ -48,7 +48,7 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
   void SetDisplayName(const std::string& name);
   std::string GetDisplayName() const;
 
-  void SetTvgID(tvg_id_t ch);
+  void SetTvgID(const tvg_id_t& ch);
   tvg_id_t GetTvgID() const;
 
   void SetIconUrl(const url_t& url);
