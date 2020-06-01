@@ -29,13 +29,15 @@ namespace commands_info {
 
 class DeviceInfo : public common::serializer::JsonSerializer<DeviceInfo> {
  public:
+  typedef common::Optional<device_id_t> device_t;
+
   DeviceInfo();
-  DeviceInfo(const device_id_t& did, const std::string& name);
+  DeviceInfo(const device_t& did, const std::string& name);
 
   bool IsValid() const;
 
-  void SetDeviceID(const device_id_t& did);
-  device_id_t GetDeviceID() const;
+  void SetDeviceID(const device_t& did);
+  device_t GetDeviceID() const;
 
   void SetName(const std::string& name);
   std::string GetName() const;
@@ -47,7 +49,7 @@ class DeviceInfo : public common::serializer::JsonSerializer<DeviceInfo> {
   common::Error SerializeFields(json_object* deserialized) const override;
 
  private:
-  device_id_t did_;
+  device_t did_;
   std::string name_;
 };
 

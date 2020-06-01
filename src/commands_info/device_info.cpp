@@ -24,19 +24,19 @@
 namespace fastotv {
 namespace commands_info {
 
-DeviceInfo::DeviceInfo() : DeviceInfo(invalid_device_id, std::string()) {}
+DeviceInfo::DeviceInfo() : DeviceInfo(device_t(), std::string()) {}
 
-DeviceInfo::DeviceInfo(const device_id_t& did, const std::string& name) : did_(did), name_(name) {}
+DeviceInfo::DeviceInfo(const device_t& did, const std::string& name) : did_(did), name_(name) {}
 
 bool DeviceInfo::IsValid() const {
-  return did_ != invalid_device_id && !name_.empty();
+  return did_ && !name_.empty();
 }
 
-void DeviceInfo::SetDeviceID(const device_id_t& did) {
+void DeviceInfo::SetDeviceID(const device_t& did) {
   did_ = did;
 }
 
-device_id_t DeviceInfo::GetDeviceID() const {
+DeviceInfo::device_t DeviceInfo::GetDeviceID() const {
   return did_;
 }
 
@@ -53,7 +53,8 @@ common::Error DeviceInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, DEVICE_INFO_ID_FIELD, json_object_new_string(did_.c_str()));
+  const std::string did = *did_;
+  json_object_object_add(deserialized, DEVICE_INFO_ID_FIELD, json_object_new_string(did.c_str()));
   json_object_object_add(deserialized, DEVICE_INFO_NAME_FIELD, json_object_new_string(name_.c_str()));
   return common::Error();
 }

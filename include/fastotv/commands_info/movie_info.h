@@ -23,6 +23,7 @@
 
 #include <common/serializer/json_serializer.h>
 #include <common/uri/gurl.h>  // for Uri
+
 #include <fastotv/types.h>
 
 namespace fastotv {

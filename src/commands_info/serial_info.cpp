@@ -34,10 +34,10 @@ SerialInfo::SerialInfo()
     : SerialInfo(invalid_stream_id, std::string(), common::uri::GURL(), groups_t(), std::string(), 0, episodes_t(), 0) {
 }
 
-SerialInfo::SerialInfo(serial_id_t sid,
+SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        const std::string& name,
                        const common::uri::GURL& icon,
-                       groups_t groups,
+                       const groups_t& groups,
                        const std::string& description,
                        size_t season,
                        episodes_t episodes,
@@ -59,7 +59,7 @@ serial_id_t SerialInfo::GetSerialID() const {
   return sid_;
 }
 
-void SerialInfo::SetSerialID(serial_id_t sid) {
+void SerialInfo::SetSerialID(const serial_id_t& sid) {
   sid_ = sid;
 }
 

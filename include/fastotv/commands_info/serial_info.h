@@ -36,10 +36,10 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   typedef std::vector<std::string> groups_t;
 
   SerialInfo();
-  SerialInfo(serial_id_t sid,
+  SerialInfo(const serial_id_t& sid,
              const std::string& name,
              const common::uri::GURL& icon,
-             groups_t groups,
+             const groups_t& groups,
              const std::string& description,
              size_t season,
              episodes_t episodes,
@@ -48,7 +48,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   bool IsValid() const;
 
   serial_id_t GetSerialID() const;
-  void SetSerialID(serial_id_t sid);
+  void SetSerialID(const serial_id_t& sid);
 
   std::string GetName() const;
   void SetName(const std::string& name);

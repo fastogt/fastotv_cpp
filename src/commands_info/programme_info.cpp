@@ -46,7 +46,7 @@ ProgrammeInfo::ProgrammeInfo(const stream_id_t& channel,
                              timestamp_t start,
                              timestamp_t stop,
                              const std::string& title,
-                             category_t category)
+                             const category_t& category)
     : channel_(channel), start_time_(start), stop_time_(stop), title_(title), category_(category) {}
 
 bool ProgrammeInfo::IsValid() const {
@@ -138,7 +138,7 @@ std::string ProgrammeInfo::GetTitle() const {
   return title_;
 }
 
-void ProgrammeInfo::SetCategory(category_t category) {
+void ProgrammeInfo::SetCategory(const category_t& category) {
   category_ = category;
 }
 

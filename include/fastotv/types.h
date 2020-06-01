@@ -35,8 +35,6 @@ typedef std::string user_id_t;         // mongodb id in json
 typedef size_t bandwidth_t;            // bytes/s
 typedef common::time64_t timestamp_t;  // millisecond
 
-static const device_id_t invalid_device_id = device_id_t();
-
 enum StreamType : int {
   PROXY = 0,
   VOD_PROXY = 1,

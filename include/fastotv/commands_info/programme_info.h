@@ -36,7 +36,7 @@ class ProgrammeInfo : public common::serializer::JsonSerializer<ProgrammeInfo> {
                 timestamp_t start_time,
                 timestamp_t stop_time,
                 const std::string& title,
-                category_t category);
+                const category_t& category);
 
   bool IsValid() const;
 
@@ -52,7 +52,7 @@ class ProgrammeInfo : public common::serializer::JsonSerializer<ProgrammeInfo> {
   void SetTitle(const std::string& title);
   std::string GetTitle() const;
 
-  void SetCategory(category_t category);
+  void SetCategory(const category_t& category);
   category_t GetCategory() const;
 
   bool Equals(const ProgrammeInfo& prog) const;
