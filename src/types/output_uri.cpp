@@ -118,6 +118,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetHlsType(static_cast<HlsType>(hls_type));
   }
 
+  int srt_mode;
+  common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
+  if (srt_mode_field && srt_mode_field->GetAsInteger(&srt_mode)) {
+    url.SetSrtMode(static_cast<SrtMode>(srt_mode));
+  }
+
   return url;
 }
 
