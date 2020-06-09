@@ -23,13 +23,14 @@
 #define URI_FIELD "uri"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
+#define SRT_MODE_FIELD "srt_mode"
 
 namespace fastotv {
 
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
 OutputUri::OutputUri(uri_id_t id, const url_t& output)
-    : base_class(), id_(id), output_(output), http_root_(), hls_type_() {}
+    : base_class(), id_(id), output_(output), http_root_(), hls_type_(), srt_mode_() {}
 
 bool OutputUri::IsValid() const {
   return output_.is_valid();
@@ -65,6 +66,14 @@ OutputUri::hls_t OutputUri::GetHlsType() const {
 
 void OutputUri::SetHlsType(hls_t type) {
   hls_type_ = type;
+}
+
+OutputUri::srt_mode_t OutputUri::GetSrtMode() const {
+  return srt_mode_;
+}
+
+void OutputUri::SetSrtMode(srt_mode_t mode) {
+  srt_mode_ = mode;
 }
 
 bool OutputUri::Equals(const OutputUri& inf) const {
@@ -144,6 +153,12 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     res.SetHlsType(static_cast<HlsType>(json_object_get_int(jhls_type)));
   }
 
+  json_object* jsrt_mode = nullptr;
+  json_bool jsrt_mode_exists = json_object_object_get_ex(serialized, SRT_MODE_FIELD, &jsrt_mode);
+  if (jsrt_mode_exists) {
+    res.SetSrtMode(static_cast<SrtMode>(json_object_get_int(jsrt_mode)));
+  }
+
   *this = res;
   return common::Error();
 }
@@ -163,6 +178,9 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
   }
   if (hls_type_) {
     json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
+  }
+  if (srt_mode_) {
+    json_object_object_add(out, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
   }
   return common::Error();
 }
