@@ -38,6 +38,7 @@ void StreamLink::SetHttp(const http_proxy_t& url) {
 StreamLink::https_proxy_t StreamLink::GetHttps() const {
   return https_proxy_;
 }
+
 void StreamLink::SetHttps(const https_proxy_t& url) {
   https_proxy_ = url;
 }

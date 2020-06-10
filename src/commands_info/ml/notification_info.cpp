@@ -20,8 +20,8 @@
 
 #include <string>  // for string
 
-#define NOTIFICATION_INFO_SID_FIELD "id"
-#define NOTIFICATION_INFO_IMAGES_FIELD "images"
+#define ID_FIELD "id"
+#define IMAGES_FIELD "images"
 
 #define IMAGE_BOX_LABEL_FIELD "label"
 #define IMAGE_BOX_PROB_FIELD "prob"
@@ -116,20 +116,20 @@ common::Error NotificationInfo::SerializeFields(json_object* deserialized) const
     json_object* jimage = make_json_from_image(image);
     json_object_array_add(jimages, jimage);
   }
-  json_object_object_add(deserialized, NOTIFICATION_INFO_SID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, NOTIFICATION_INFO_IMAGES_FIELD, jimages);
+  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
+  json_object_object_add(deserialized, IMAGES_FIELD, jimages);
   return common::Error();
 }
 
 common::Error NotificationInfo::DoDeSerialize(json_object* serialized) {
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, NOTIFICATION_INFO_SID_FIELD, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
   if (!jid_exists) {
     return common::make_error_inval();
   }
 
   json_object* jimages = nullptr;
-  json_bool jimages_exists = json_object_object_get_ex(serialized, NOTIFICATION_INFO_IMAGES_FIELD, &jimages);
+  json_bool jimages_exists = json_object_object_get_ex(serialized, IMAGES_FIELD, &jimages);
   if (!jimages_exists) {
     return common::make_error_inval();
   }
