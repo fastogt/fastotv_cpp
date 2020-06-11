@@ -159,13 +159,13 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
 
   json_object* jname = nullptr;
   json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists) {
+  if (jname_exists) {
     result.name_ = json_object_get_string(jname);
   }
 
   json_object* jicon = nullptr;
   json_bool jicon_exists = json_object_object_get_ex(serialized, ICON_FIELD, &jicon);
-  if (!jicon_exists) {
+  if (jicon_exists) {
     result.icon_ = common::uri::GURL(json_object_get_string(jicon));
   }
 
@@ -181,13 +181,13 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
 
   json_object* jdescription = nullptr;
   json_bool jdescription_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescription);
-  if (!jdescription_exists) {
-    result.description_ = json_object_get_boolean(jdescription);
+  if (jdescription_exists) {
+    result.description_ = json_object_get_string(jdescription);
   }
 
   json_object* jseason = nullptr;
   json_bool jseason_exists = json_object_object_get_ex(serialized, SEASON_FIELD, &jseason);
-  if (!jseason_exists) {
+  if (jseason_exists) {
     result.season_ = json_object_get_int64(jseason);
   }
 

@@ -27,6 +27,7 @@
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/server_info.h>
+#include <fastotv/commands_info/serial_info.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
@@ -255,4 +256,32 @@ TEST(RuntimeChannelInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(SerialInfo, serialize_deserialize) {
+  const std::string sid = "1234";
+  const std::string name = "Termiantor";
+  const common::uri::GURL icon("http://localhost:8080/hls/69_avformat_test_alex_2/play.png");
+  const fastotv::commands_info::SerialInfo::groups_t groups ={"Movie"};
+  const std::string descr = "Description";
+  const size_t season = 3;
+  const fastotv::commands_info::SerialInfo::episodes_t epis = {"1234", "4543"};
+  const size_t views = 11;
+  fastotv::commands_info::SerialInfo serial(sid, name, icon, groups, descr, season, epis, views);
+  ASSERT_EQ(serial.GetSerialID(), sid);
+  ASSERT_EQ(serial.GetIcon(), icon);
+  ASSERT_EQ(serial.GetGroups(), groups);
+  ASSERT_EQ(serial.GetDescription(), descr);
+  ASSERT_EQ(serial.GetSeason(), season);
+  ASSERT_EQ(serial.GetEpisodes(), epis);
+  ASSERT_EQ(serial.GetViewCount(), views);
+
+  serialize_t ser;
+  common::Error err = serial.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::SerialInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(serial, dser);
 }
