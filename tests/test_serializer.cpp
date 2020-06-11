@@ -26,8 +26,8 @@
 #include <fastotv/commands_info/epg_info.h>
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
-#include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/serial_info.h>
+#include <fastotv/commands_info/server_info.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
@@ -262,7 +262,7 @@ TEST(SerialInfo, serialize_deserialize) {
   const std::string sid = "1234";
   const std::string name = "Termiantor";
   const common::uri::GURL icon("http://localhost:8080/hls/69_avformat_test_alex_2/play.png");
-  const fastotv::commands_info::SerialInfo::groups_t groups ={"Movie"};
+  const fastotv::commands_info::SerialInfo::groups_t groups = {"Movie"};
   const std::string descr = "Description";
   const size_t season = 3;
   const fastotv::commands_info::SerialInfo::episodes_t epis = {"1234", "4543"};
