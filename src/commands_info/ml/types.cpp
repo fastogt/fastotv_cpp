@@ -18,13 +18,19 @@
 
 #include <fastotv/commands_info/ml/types.h>
 
+#include <ostream>
+
 namespace fastotv {
 namespace commands_info {
 namespace ml {
 
 bool ImageBox::Equals(const ImageBox& box) const {
-  return label == box.label && prob == box.prob && x == box.x && y == box.y && width == box.width &&
-         height == box.height;
+  return class_id == box.class_id && confidence == box.confidence && start == box.start && size == box.size;
+}
+
+std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
+  return out << "Class id: " << box.class_id << ", Confidence: " << box.confidence << ", Position: " << box.start
+             << ", Size: " << box.size;
 }
 
 }  // namespace ml

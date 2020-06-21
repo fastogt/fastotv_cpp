@@ -23,12 +23,12 @@
 #define ID_FIELD "id"
 #define IMAGES_FIELD "images"
 
-#define IMAGE_BOX_LABEL_FIELD "label"
-#define IMAGE_BOX_PROB_FIELD "prob"
-#define IMAGE_BOX_X_FIELD "x"
-#define IMAGE_BOX_Y_FIELD "y"
-#define IMAGE_BOX_WIDTH_FIELD "width"
-#define IMAGE_BOX_HEIGHT_FIELD "height"
+#define CLASS_ID_FIELD "class_id"
+#define CONFIDENCE_FIELD "confidence"
+#define LEFT_FIELD "left"
+#define TOP_FIELD "top"
+#define WIDTH_FIELD "width"
+#define HEIGHT_FIELD "height"
 
 namespace fastotv {
 namespace commands_info {
@@ -38,12 +38,12 @@ namespace {
 json_object* make_json_from_image(const ImageBox& box) {
   json_object* jimage = json_object_new_object();
 
-  json_object_object_add(jimage, IMAGE_BOX_LABEL_FIELD, json_object_new_int(box.label));
-  json_object_object_add(jimage, IMAGE_BOX_PROB_FIELD, json_object_new_double(box.prob));
-  json_object_object_add(jimage, IMAGE_BOX_X_FIELD, json_object_new_double(box.x));
-  json_object_object_add(jimage, IMAGE_BOX_Y_FIELD, json_object_new_double(box.y));
-  json_object_object_add(jimage, IMAGE_BOX_WIDTH_FIELD, json_object_new_double(box.width));
-  json_object_object_add(jimage, IMAGE_BOX_HEIGHT_FIELD, json_object_new_double(box.height));
+  json_object_object_add(jimage, CLASS_ID_FIELD, json_object_new_int(box.class_id));
+  json_object_object_add(jimage, CONFIDENCE_FIELD, json_object_new_double(box.confidence));
+  json_object_object_add(jimage, LEFT_FIELD, json_object_new_int(box.start.x));
+  json_object_object_add(jimage, TOP_FIELD, json_object_new_int(box.start.y));
+  json_object_object_add(jimage, WIDTH_FIELD, json_object_new_int(box.size.width()));
+  json_object_object_add(jimage, HEIGHT_FIELD, json_object_new_int(box.size.height()));
 
   return jimage;
 }
@@ -51,39 +51,39 @@ json_object* make_json_from_image(const ImageBox& box) {
 ImageBox make_image_from_json(json_object* obj) {
   ImageBox image;
   json_object* jlabel = nullptr;
-  json_bool jlabel_exists = json_object_object_get_ex(obj, IMAGE_BOX_LABEL_FIELD, &jlabel);
+  json_bool jlabel_exists = json_object_object_get_ex(obj, CLASS_ID_FIELD, &jlabel);
   if (jlabel_exists) {
-    image.label = json_object_get_int(jlabel);
+    image.class_id = json_object_get_int(jlabel);
   }
 
   json_object* jprob = nullptr;
-  json_bool jprob_exists = json_object_object_get_ex(obj, IMAGE_BOX_PROB_FIELD, &jprob);
+  json_bool jprob_exists = json_object_object_get_ex(obj, CONFIDENCE_FIELD, &jprob);
   if (jprob_exists) {
-    image.prob = json_object_get_double(jprob);
+    image.confidence = json_object_get_double(jprob);
   }
 
   json_object* jx = nullptr;
-  json_bool jx_exists = json_object_object_get_ex(obj, IMAGE_BOX_X_FIELD, &jx);
+  json_bool jx_exists = json_object_object_get_ex(obj, LEFT_FIELD, &jx);
   if (jx_exists) {
-    image.x = json_object_get_double(jx);
+    image.start.x = json_object_get_int(jx);
   }
 
   json_object* jy = nullptr;
-  json_bool jy_exists = json_object_object_get_ex(obj, IMAGE_BOX_Y_FIELD, &jy);
+  json_bool jy_exists = json_object_object_get_ex(obj, TOP_FIELD, &jy);
   if (jy_exists) {
-    image.y = json_object_get_double(jy);
+    image.start.y = json_object_get_int(jy);
   }
 
   json_object* jwidth = nullptr;
-  json_bool jwidth_exists = json_object_object_get_ex(obj, IMAGE_BOX_WIDTH_FIELD, &jwidth);
+  json_bool jwidth_exists = json_object_object_get_ex(obj, WIDTH_FIELD, &jwidth);
   if (jwidth_exists) {
-    image.width = json_object_get_double(jwidth);
+    image.size.set_width(json_object_get_int(jwidth));
   }
 
   json_object* jheight = nullptr;
-  json_bool jheight_exists = json_object_object_get_ex(obj, IMAGE_BOX_HEIGHT_FIELD, &jheight);
+  json_bool jheight_exists = json_object_object_get_ex(obj, HEIGHT_FIELD, &jheight);
   if (jheight_exists) {
-    image.y = json_object_get_double(jheight);
+    image.size.set_height(json_object_get_int(jheight));
   }
 
   return image;

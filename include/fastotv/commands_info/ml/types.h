@@ -18,19 +18,17 @@
 
 #pragma once
 
-#include <string>
+#include <common/draw/types.h>
 
 namespace fastotv {
 namespace commands_info {
 namespace ml {
 
 struct ImageBox {
-  int label;
-  double prob;
-  double x;
-  double y;
-  double width;
-  double height;
+  int class_id;
+  float confidence;
+  common::draw::Point start;
+  common::draw::Size size;
 
   bool Equals(const ImageBox& box) const;
 };
@@ -42,6 +40,8 @@ inline bool operator==(const ImageBox& lhs, const ImageBox& rhs) {
 inline bool operator!=(const ImageBox& x, const ImageBox& y) {
   return !(x == y);
 }
+
+std::ostream& operator<<(std::ostream& out, const ImageBox& box);
 
 }  // namespace ml
 }  // namespace commands_info
