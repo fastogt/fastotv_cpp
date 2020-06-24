@@ -67,6 +67,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/notification_text_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/notification_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/types.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/machine_learning.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/protocol/types.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/protocol/protocol.h
   ${PROTOCOL_CONFIG_GEN_PATH}
@@ -107,6 +108,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/commands_info/notification_text_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/notification_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/types.cpp
+  ${CMAKE_SOURCE_DIR}/src/commands_info/ml/machine_learning.cpp
   ${CMAKE_SOURCE_DIR}/src/protocol/types.cpp
   ${CMAKE_SOURCE_DIR}/src/protocol/protocol.cpp
 )
