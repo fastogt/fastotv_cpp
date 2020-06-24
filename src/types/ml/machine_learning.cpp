@@ -12,7 +12,7 @@
     along with fastocloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/commands_info/ml/machine_learning.h>
+#include <fastotv/types/ml/machine_learning.h>
 
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
@@ -25,7 +25,6 @@
 #define DEEP_LEARNING_OVERLAY_FIELD "overlay"
 
 namespace fastotv {
-namespace commands_info {
 namespace ml {
 
 MachineLearning::MachineLearning() : backend_(NVIDIA), model_path_(), overlay_(false) {}
@@ -118,5 +117,4 @@ common::Error MachineLearning::SerializeFields(json_object* out) const {
 }
 
 }  // namespace ml
-}  // namespace commands_info
 }  // namespace fastotv

@@ -22,7 +22,6 @@
 #include <common/value.h>
 
 namespace fastotv {
-namespace commands_info {
 namespace ml {
 
 enum SupportedBackends { NVIDIA = 0 };
@@ -58,5 +57,4 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
 };
 
 }  // namespace ml
-}  // namespace commands_info
 }  // namespace fastotv

@@ -32,6 +32,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/stream_link.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/meta_url.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/machine_learning.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands/commands.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client/commands_factory.h
@@ -67,7 +68,6 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/notification_text_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/notification_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/types.h
-  ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/machine_learning.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/protocol/types.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/protocol/protocol.h
   ${PROTOCOL_CONFIG_GEN_PATH}
@@ -78,6 +78,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/input_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/meta_url.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/ml/machine_learning.cpp
   ${CMAKE_SOURCE_DIR}/src/client.cpp
   ${CMAKE_SOURCE_DIR}/src/commands/commands.cpp
   ${CMAKE_SOURCE_DIR}/src/client/commands_factory.cpp
@@ -108,7 +109,6 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/commands_info/notification_text_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/notification_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/types.cpp
-  ${CMAKE_SOURCE_DIR}/src/commands_info/ml/machine_learning.cpp
   ${CMAKE_SOURCE_DIR}/src/protocol/types.cpp
   ${CMAKE_SOURCE_DIR}/src/protocol/protocol.cpp
 )
