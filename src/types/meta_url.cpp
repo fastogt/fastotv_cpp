@@ -14,11 +14,6 @@
 
 #include <fastotv/types/meta_url.h>
 
-#include <string>
-
-#include <json-c/json_object.h>
-#include <json-c/json_tokener.h>
-
 #define NAME_FIELD "name"
 #define URL_FIELD "url"
 

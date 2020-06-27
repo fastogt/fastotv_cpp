@@ -14,11 +14,6 @@
 
 #include <fastotv/types/input_uri.h>
 
-#include <string>
-
-#include <json-c/json_object.h>
-#include <json-c/json_tokener.h>
-
 #define ID_FIELD "id"
 #define URI_FIELD "uri"
 #define USER_AGENT_FIELD "user_agent"

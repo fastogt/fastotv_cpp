@@ -18,7 +18,6 @@
 
 #include <gtest/gtest.h>
 
-#include <common/daemon/commands/ping_info.h>
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
@@ -109,30 +108,6 @@ TEST(EpgInfo, serialize_deserialize) {
   ASSERT_EQ(epg.GetUrls(), dser.GetUrls());
   ASSERT_EQ(epg.GetDisplayName(), dser.GetDisplayName());
   ASSERT_EQ(epg, dser);
-}
-
-TEST(ServerPingInfo, serialize_deserialize) {
-  common::daemon::commands::ServerPingInfo ping_info;
-  serialize_t ser;
-  common::Error err = ping_info.Serialize(&ser);
-  ASSERT_TRUE(!err);
-  common::daemon::commands::ServerPingInfo dser;
-  err = dser.DeSerialize(ser);
-  ASSERT_TRUE(!err);
-
-  ASSERT_EQ(ping_info.GetTimeStamp(), dser.GetTimeStamp());
-}
-
-TEST(ClientPingInfo, serialize_deserialize) {
-  common::daemon::commands::ClientPingInfo ping_info;
-  serialize_t ser;
-  common::Error err = ping_info.Serialize(&ser);
-  ASSERT_TRUE(!err);
-  common::daemon::commands::ClientPingInfo dser;
-  err = dser.DeSerialize(ser);
-  ASSERT_TRUE(!err);
-
-  ASSERT_EQ(ping_info.GetTimeStamp(), dser.GetTimeStamp());
 }
 
 TEST(ProgrammeInfo, serialize_deserialize) {

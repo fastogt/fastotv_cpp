@@ -14,11 +14,6 @@
 
 #include <fastotv/types/output_uri.h>
 
-#include <string>
-
-#include <json-c/json_object.h>
-#include <json-c/json_tokener.h>
-
 #define ID_FIELD "id"
 #define URI_FIELD "uri"
 #define HTTP_ROOT_FIELD "http_root"
