@@ -40,10 +40,12 @@ json_object* make_json_from_image(const ImageBox& box) {
 
   json_object_object_add(jimage, CLASS_ID_FIELD, json_object_new_int(box.class_id));
   json_object_object_add(jimage, CONFIDENCE_FIELD, json_object_new_double(box.confidence));
-  json_object_object_add(jimage, LEFT_FIELD, json_object_new_int(box.start.x));
-  json_object_object_add(jimage, TOP_FIELD, json_object_new_int(box.start.y));
-  json_object_object_add(jimage, WIDTH_FIELD, json_object_new_int(box.size.width()));
-  json_object_object_add(jimage, HEIGHT_FIELD, json_object_new_int(box.size.height()));
+  const auto point = box.rect.origin();
+  json_object_object_add(jimage, LEFT_FIELD, json_object_new_int(point.x()));
+  json_object_object_add(jimage, TOP_FIELD, json_object_new_int(point.y()));
+  const auto size = box.rect.size();
+  json_object_object_add(jimage, WIDTH_FIELD, json_object_new_int(size.width()));
+  json_object_object_add(jimage, HEIGHT_FIELD, json_object_new_int(size.height()));
 
   return jimage;
 }
@@ -65,25 +67,25 @@ ImageBox make_image_from_json(json_object* obj) {
   json_object* jx = nullptr;
   json_bool jx_exists = json_object_object_get_ex(obj, LEFT_FIELD, &jx);
   if (jx_exists) {
-    image.start.x = json_object_get_int(jx);
+    image.rect.set_x(json_object_get_int(jx));
   }
 
   json_object* jy = nullptr;
   json_bool jy_exists = json_object_object_get_ex(obj, TOP_FIELD, &jy);
   if (jy_exists) {
-    image.start.y = json_object_get_int(jy);
+    image.rect.set_y(json_object_get_int(jy));
   }
 
   json_object* jwidth = nullptr;
   json_bool jwidth_exists = json_object_object_get_ex(obj, WIDTH_FIELD, &jwidth);
   if (jwidth_exists) {
-    image.size.set_width(json_object_get_int(jwidth));
+    image.rect.set_width(json_object_get_int(jwidth));
   }
 
   json_object* jheight = nullptr;
   json_bool jheight_exists = json_object_object_get_ex(obj, HEIGHT_FIELD, &jheight);
   if (jheight_exists) {
-    image.size.set_height(json_object_get_int(jheight));
+    image.rect.set_height(json_object_get_int(jheight));
   }
 
   return image;

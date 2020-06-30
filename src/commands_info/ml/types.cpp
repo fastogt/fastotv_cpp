@@ -25,12 +25,14 @@ namespace commands_info {
 namespace ml {
 
 bool ImageBox::Equals(const ImageBox& box) const {
-  return class_id == box.class_id && confidence == box.confidence && start == box.start && size == box.size;
+  return class_id == box.class_id && confidence == box.confidence && unique_component_id == box.unique_component_id &&
+         object_id == box.object_id && rect == box.rect;
 }
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
-  return out << "Class id: " << box.class_id << ", Confidence: " << box.confidence << ", Position: " << box.start
-             << ", Size: " << box.size;
+  return out << "Class id: " << box.class_id << ", Confidence: " << box.confidence
+             << ", Object id: " << box.unique_component_id << ", Object id: " << box.object_id
+             << ", Rect: " << box.rect.ToString();
 }
 
 }  // namespace ml

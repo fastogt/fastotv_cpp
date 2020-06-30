@@ -18,17 +18,18 @@
 
 #pragma once
 
-#include <common/draw/types.h>
+#include <common/draw/rect.h>
 
 namespace fastotv {
 namespace commands_info {
 namespace ml {
 
 struct ImageBox {
-  int class_id;
+  int32_t unique_component_id;
+  int32_t class_id;
+  uint64_t object_id;
   float confidence;
-  common::draw::Point start;
-  common::draw::Size size;
+  common::draw::Rect rect;
 
   bool Equals(const ImageBox& box) const;
 };
