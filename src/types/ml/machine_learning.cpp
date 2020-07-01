@@ -84,7 +84,7 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
   res.SetModelPath(common::uri::GURL(model_path_str));
 
   bool tracking;
-  common::Value* tracking_field = hash->Find(OVERLAY_FIELD);
+  common::Value* tracking_field = hash->Find(TRACKING_FIELD);
   if (!tracking_field || !tracking_field->GetAsBoolean(&tracking)) {
     return common::Optional<MachineLearning>();
   }
