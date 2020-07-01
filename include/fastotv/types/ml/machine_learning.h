@@ -41,6 +41,9 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
   model_path_t GetModelPath() const;
   void SetModelPath(const model_path_t& path);
 
+  bool GetNeedTracking() const;
+  void SetNeedTracking(bool tracking);
+
   bool GetNeedOverlay() const;
   void SetNeedOverlay(bool overlay);
 
@@ -53,6 +56,7 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
  private:
   SupportedBackends backend_;
   model_path_t model_path_;
+  bool tracking_;
   bool overlay_;
 };
 
