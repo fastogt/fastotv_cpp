@@ -27,6 +27,7 @@
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
 #include <fastotv/commands_info/server_info.h>
+#include <fastotv/commands_info/device_info.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
@@ -231,6 +232,22 @@ TEST(RuntimeChannelInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(DeviceInfo, serialize_deserialize) {
+  const std::string did = "1234";
+  const std::string name = "Android";
+  fastotv::commands_info::DeviceInfo devi_info(did, name);
+  ASSERT_EQ(devi_info.GetDeviceID(), did);
+  ASSERT_EQ(devi_info.GetName(), name);
+  serialize_t ser;
+  common::Error err = devi_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::DeviceInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(devi_info, dser);
 }
 
 TEST(SerialInfo, serialize_deserialize) {

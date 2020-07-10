@@ -74,7 +74,7 @@ common::Error DeviceInfo::DoDeSerialize(json_object* serialized) {
   if (!jname_exists) {
     return common::make_error_inval();
   }
-  name = json_object_get_string(jdid);
+  name = json_object_get_string(jname);
 
   DeviceInfo dev(did, name);
   if (!dev.IsValid()) {
