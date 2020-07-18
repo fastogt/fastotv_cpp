@@ -64,6 +64,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/catchup_undo_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/channels_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/server_info.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/machine_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/project_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/notification_text_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/notification_info.h
@@ -105,6 +106,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/commands_info/serial_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/runtime_channel_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/server_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/commands_info/machine_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/project_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/notification_text_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/notification_info.cpp

@@ -22,12 +22,12 @@
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/client_info.h>
+#include <fastotv/commands_info/device_info.h>
 #include <fastotv/commands_info/epg_info.h>
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
 #include <fastotv/commands_info/server_info.h>
-#include <fastotv/commands_info/device_info.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
