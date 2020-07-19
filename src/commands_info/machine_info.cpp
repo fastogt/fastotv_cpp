@@ -14,20 +14,23 @@
 
 #include <fastotv/commands_info/machine_info.h>
 
-#define STATISTIC_SERVICE_INFO_UPTIME_FIELD "uptime"
-#define STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD "timestamp"
-#define STATISTIC_SERVICE_INFO_CPU_FIELD "cpu"
-#define STATISTIC_SERVICE_INFO_GPU_FIELD "gpu"
-#define STATISTIC_SERVICE_INFO_MEMORY_TOTAL_FIELD "memory_total"
-#define STATISTIC_SERVICE_INFO_MEMORY_FREE_FIELD "memory_free"
+#define UPTIME_FIELD "uptime"
+#define TIMESTAMP_FIELD "timestamp"
+#define CPU_FIELD "cpu"
+#define GPU_FIELD "gpu"
+#define MEMORY_TOTAL_FIELD "memory_total"
+#define MEMORY_FREE_FIELD "memory_free"
 
-#define STATISTIC_SERVICE_INFO_HDD_TOTAL_FIELD "hdd_total"
-#define STATISTIC_SERVICE_INFO_HDD_FREE_FIELD "hdd_free"
+#define HDD_TOTAL_FIELD "hdd_total"
+#define HDD_FREE_FIELD "hdd_free"
 
-#define STATISTIC_SERVICE_INFO_LOAD_AVERAGE_FIELD "load_average"
+#define LOAD_AVERAGE_FIELD "load_average"
 
-#define STATISTIC_SERVICE_INFO_BANDWIDTH_IN_FIELD "bandwidth_in"
-#define STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD "bandwidth_out"
+#define BANDWIDTH_IN_FIELD "bandwidth_in"
+#define BANDWIDTH_OUT_FIELD "bandwidth_out"
+
+#define TOTAL_BYTES_IN_FIELD "total_bytes_in"
+#define TOTAL_BYTES_OUT_FIELD "total_bytes_out"
 
 namespace fastotv {
 namespace commands_info {
@@ -44,7 +47,9 @@ MachineInfo::MachineInfo()
       net_bytes_recv_(),
       net_bytes_send_(),
       current_ts_(),
-      uptime_() {}
+      uptime_(),
+      net_total_bytes_recv_(),
+      net_total_bytes_send_() {}
 
 MachineInfo::MachineInfo(cpu_load_t cpu_load,
                          gpu_load_t gpu_load,
@@ -56,7 +61,9 @@ MachineInfo::MachineInfo(cpu_load_t cpu_load,
                          fastotv::bandwidth_t net_bytes_recv,
                          fastotv::bandwidth_t net_bytes_send,
                          time_t uptime,
-                         fastotv::timestamp_t timestamp)
+                         fastotv::timestamp_t timestamp,
+                         size_t net_total_bytes_recv,
+                         size_t net_total_bytes_send)
     : base_class(),
       cpu_load_(cpu_load),
       gpu_load_(gpu_load),
@@ -68,20 +75,24 @@ MachineInfo::MachineInfo(cpu_load_t cpu_load,
       net_bytes_recv_(net_bytes_recv),
       net_bytes_send_(net_bytes_send),
       current_ts_(timestamp),
-      uptime_(uptime) {}
+      uptime_(uptime),
+      net_total_bytes_recv_(net_total_bytes_recv),
+      net_total_bytes_send_(net_total_bytes_send) {}
 
 common::Error MachineInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_CPU_FIELD, json_object_new_double(cpu_load_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_GPU_FIELD, json_object_new_double(gpu_load_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_LOAD_AVERAGE_FIELD, json_object_new_string(load_average_.c_str()));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_MEMORY_TOTAL_FIELD, json_object_new_int64(ram_bytes_total_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_MEMORY_FREE_FIELD, json_object_new_int64(ram_bytes_free_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_HDD_TOTAL_FIELD, json_object_new_int64(hdd_bytes_total_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_HDD_FREE_FIELD, json_object_new_int64(hdd_bytes_free_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_BANDWIDTH_IN_FIELD, json_object_new_int64(net_bytes_recv_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD, json_object_new_int64(net_bytes_send_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_UPTIME_FIELD, json_object_new_int64(uptime_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD, json_object_new_int64(current_ts_));
+  json_object_object_add(out, CPU_FIELD, json_object_new_double(cpu_load_));
+  json_object_object_add(out, GPU_FIELD, json_object_new_double(gpu_load_));
+  json_object_object_add(out, LOAD_AVERAGE_FIELD, json_object_new_string(load_average_.c_str()));
+  json_object_object_add(out, MEMORY_TOTAL_FIELD, json_object_new_uint64(ram_bytes_total_));
+  json_object_object_add(out, MEMORY_FREE_FIELD, json_object_new_uint64(ram_bytes_free_));
+  json_object_object_add(out, HDD_TOTAL_FIELD, json_object_new_uint64(hdd_bytes_total_));
+  json_object_object_add(out, HDD_FREE_FIELD, json_object_new_uint64(hdd_bytes_free_));
+  json_object_object_add(out, BANDWIDTH_IN_FIELD, json_object_new_int64(net_bytes_recv_));
+  json_object_object_add(out, BANDWIDTH_OUT_FIELD, json_object_new_int64(net_bytes_send_));
+  json_object_object_add(out, UPTIME_FIELD, json_object_new_int64(uptime_));
+  json_object_object_add(out, TIMESTAMP_FIELD, json_object_new_int64(current_ts_));
+  json_object_object_add(out, TOTAL_BYTES_IN_FIELD, json_object_new_uint64(net_total_bytes_recv_));
+  json_object_object_add(out, TOTAL_BYTES_OUT_FIELD, json_object_new_uint64(net_total_bytes_send_));
   return common::Error();
 }
 
@@ -89,74 +100,83 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   MachineInfo inf;
 
   json_object* jcpu_load = nullptr;
-  json_bool jcpu_load_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_CPU_FIELD, &jcpu_load);
+  json_bool jcpu_load_exists = json_object_object_get_ex(serialized, CPU_FIELD, &jcpu_load);
   if (jcpu_load_exists) {
     inf.cpu_load_ = json_object_get_double(jcpu_load);
   }
 
   json_object* jgpu_load = nullptr;
-  json_bool jgpu_load_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_GPU_FIELD, &jgpu_load);
+  json_bool jgpu_load_exists = json_object_object_get_ex(serialized, GPU_FIELD, &jgpu_load);
   if (jgpu_load_exists) {
     inf.gpu_load_ = json_object_get_double(jgpu_load);
   }
 
   json_object* juptime = nullptr;
-  json_bool juptime_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_LOAD_AVERAGE_FIELD, &juptime);
+  json_bool juptime_exists = json_object_object_get_ex(serialized, LOAD_AVERAGE_FIELD, &juptime);
   if (juptime_exists) {
     inf.load_average_ = json_object_get_string(juptime);
   }
 
   json_object* jmemory_total = nullptr;
-  json_bool jmemory_total_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_MEMORY_TOTAL_FIELD, &jmemory_total);
+  json_bool jmemory_total_exists = json_object_object_get_ex(serialized, MEMORY_TOTAL_FIELD, &jmemory_total);
   if (jmemory_total_exists) {
-    inf.ram_bytes_total_ = json_object_get_int64(jmemory_total);
+    inf.ram_bytes_total_ = json_object_get_uint64(jmemory_total);
   }
 
   json_object* jmemory_avail = nullptr;
-  json_bool jmemory_avail_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_MEMORY_FREE_FIELD, &jmemory_avail);
+  json_bool jmemory_avail_exists = json_object_object_get_ex(serialized, MEMORY_FREE_FIELD, &jmemory_avail);
   if (jmemory_avail_exists) {
-    inf.ram_bytes_free_ = json_object_get_int64(jmemory_avail);
+    inf.ram_bytes_free_ = json_object_get_uint64(jmemory_avail);
   }
 
   json_object* jhdd_total = nullptr;
-  json_bool jhdd_total_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_HDD_TOTAL_FIELD, &jhdd_total);
+  json_bool jhdd_total_exists = json_object_object_get_ex(serialized, HDD_TOTAL_FIELD, &jhdd_total);
   if (jhdd_total_exists) {
-    inf.hdd_bytes_total_ = json_object_get_int64(jhdd_total);
+    inf.hdd_bytes_total_ = json_object_get_uint64(jhdd_total);
   }
 
   json_object* jhdd_free = nullptr;
-  json_bool jhdd_free_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_HDD_FREE_FIELD, &jhdd_free);
+  json_bool jhdd_free_exists = json_object_object_get_ex(serialized, HDD_FREE_FIELD, &jhdd_free);
   if (jhdd_free_exists) {
-    inf.hdd_bytes_free_ = json_object_get_int64(jhdd_free);
+    inf.hdd_bytes_free_ = json_object_get_uint64(jhdd_free);
   }
 
   json_object* jnet_bytes_recv = nullptr;
-  json_bool jnet_bytes_recv_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_BANDWIDTH_IN_FIELD, &jnet_bytes_recv);
+  json_bool jnet_bytes_recv_exists = json_object_object_get_ex(serialized, BANDWIDTH_IN_FIELD, &jnet_bytes_recv);
   if (jnet_bytes_recv_exists) {
     inf.net_bytes_recv_ = json_object_get_int64(jnet_bytes_recv);
   }
 
   json_object* jnet_bytes_send = nullptr;
-  json_bool jnet_bytes_send_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD, &jnet_bytes_send);
+  json_bool jnet_bytes_send_exists = json_object_object_get_ex(serialized, BANDWIDTH_OUT_FIELD, &jnet_bytes_send);
   if (jnet_bytes_send_exists) {
     inf.net_bytes_send_ = json_object_get_int64(jnet_bytes_send);
   }
 
   json_object* jsys_stamp = nullptr;
-  json_bool jsys_stamp_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_UPTIME_FIELD, &jsys_stamp);
+  json_bool jsys_stamp_exists = json_object_object_get_ex(serialized, UPTIME_FIELD, &jsys_stamp);
   if (jsys_stamp_exists) {
     inf.uptime_ = json_object_get_int64(jsys_stamp);
   }
 
   json_object* jcur_ts = nullptr;
-  json_bool jcur_ts_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD, &jcur_ts);
+  json_bool jcur_ts_exists = json_object_object_get_ex(serialized, TIMESTAMP_FIELD, &jcur_ts);
   if (jcur_ts_exists) {
     inf.current_ts_ = json_object_get_int64(jcur_ts);
+  }
+
+  json_object* jnet_total_bytes_recv = nullptr;
+  json_bool jnet_total_bytes_recv_exists =
+      json_object_object_get_ex(serialized, TOTAL_BYTES_IN_FIELD, &jnet_total_bytes_recv);
+  if (jnet_total_bytes_recv_exists) {
+    inf.net_total_bytes_recv_ = json_object_get_uint64(jnet_total_bytes_recv);
+  }
+
+  json_object* jnet_total_bytes_send = nullptr;
+  json_bool jnet_total_bytes_send_exists =
+      json_object_object_get_ex(serialized, TOTAL_BYTES_OUT_FIELD, &jnet_total_bytes_send);
+  if (jnet_total_bytes_send_exists) {
+    inf.net_total_bytes_recv_ = json_object_get_uint64(jnet_total_bytes_send);
   }
 
   *this = inf;

@@ -41,7 +41,9 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
               fastotv::bandwidth_t net_bytes_recv,
               fastotv::bandwidth_t net_bytes_send,
               time_t uptime,
-              fastotv::timestamp_t timestamp);
+              fastotv::timestamp_t timestamp,
+              size_t net_total_bytes_recv,
+              size_t net_total_bytes_send);
 
   cpu_load_t GetCpuLoad() const;
   gpu_load_t GetGpuLoad() const;
@@ -66,6 +68,8 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   fastotv::bandwidth_t net_bytes_send_;
   fastotv::timestamp_t current_ts_;
   time_t uptime_;
+  size_t net_total_bytes_recv_;
+  size_t net_total_bytes_send_;
 };
 
 }  // namespace commands_info
