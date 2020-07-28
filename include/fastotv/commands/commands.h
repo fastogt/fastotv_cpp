@@ -30,6 +30,7 @@
 #define CLIENT_SET_FAVORITE "set_favorite"
 #define CLIENT_SET_RECENT "set_recent"
 #define CLIENT_INTERRUPT_STREAM_TIME "interrupt_time"
+#define CLIENT_REQUEST_CONTENT "request_content"
 
 // server commands
 #define SERVER_PING "server_ping"  // ping client
