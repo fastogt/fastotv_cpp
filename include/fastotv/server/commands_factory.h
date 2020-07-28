@@ -28,6 +28,7 @@
 #include <fastotv/commands_info/catchup_generate_info.h>
 #include <fastotv/commands_info/catchups_info.h>
 #include <fastotv/commands_info/channels_info.h>
+#include <fastotv/commands_info/content_requests_info.h>
 #include <fastotv/commands_info/devices_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/series_info.h>
@@ -78,6 +79,7 @@ common::Error GetChannelsResponseSuccess(protocol::sequance_id_t id,
                                          const commands_info::VodsInfo& private_vods,
                                          const commands_info::CatchupsInfo& catchups,
                                          const commands_info::SeriesInfo& series,
+                                         const commands_info::ContentRequestsInfo& requests,
                                          protocol::response_t* resp);
 common::Error GetChannelsResponseFail(protocol::sequance_id_t id,
                                       const std::string& error_text,
