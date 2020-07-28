@@ -259,5 +259,26 @@ common::ErrnoError Client::CatchupUndoSuccess(protocol::sequance_id_t id) {
   return WriteResponse(resp);
 }
 
+common::ErrnoError Client::ContentRequestFail(protocol::sequance_id_t id, common::Error err) {
+  const std::string error_str = err->GetDescription();
+  protocol::response_t resp;
+  common::Error err_ser = ContentRequestResponseFail(id, error_str, &resp);
+  if (err_ser) {
+    return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
+  }
+
+  return WriteResponse(resp);
+}
+
+common::ErrnoError Client::ContentRequestSuccess(protocol::sequance_id_t id) {
+  protocol::response_t resp;
+  common::Error err_ser = ContentRequestResponseSuccess(id, &resp);
+  if (err_ser) {
+    return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
+  }
+
+  return WriteResponse(resp);
+}
+
 }  // namespace server
 }  // namespace fastotv

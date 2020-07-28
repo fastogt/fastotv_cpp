@@ -87,6 +87,9 @@ class Client : public ProtocoledClient {
 
   common::ErrnoError CatchupUndoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
   common::ErrnoError CatchupUndoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+
+  common::ErrnoError ContentRequestFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
+  common::ErrnoError ContentRequestSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
 };
 
 }  // namespace server

@@ -102,6 +102,12 @@ common::Error CatchupUndoResponseFail(protocol::sequance_id_t id,
                                       const std::string& error_text,
                                       protocol::response_t* resp);
 
+// content request
+common::Error ContentRequestResponseSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
+common::Error ContentRequestResponseFail(protocol::sequance_id_t id,
+                                         const std::string& error_text,
+                                         protocol::response_t* resp);
+
 common::Error FavoriteSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
 common::Error RecentSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
 common::Error InterruptStreamTimeSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
