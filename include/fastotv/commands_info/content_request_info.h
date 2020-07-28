@@ -29,9 +29,10 @@ namespace commands_info {
 class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequestInfo> {
  public:
   enum ContentType { LIVE = 0, VODS = 1, SERIAL = 2 };
+  enum RequestStatus { NEW = 0, IN_PROGRESS = 1, DONE = 2 };
 
   ContentRequestInfo();
-  ContentRequestInfo(const std::string& text, ContentType type);
+  ContentRequestInfo(const std::string& text, ContentType type, RequestStatus status);
 
   std::string GetText() const;
   void SetText(const std::string& text);
@@ -42,6 +43,9 @@ class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequ
   ContentType GetType() const;
   void SetType(ContentType type);
 
+  RequestStatus GetStatus() const;
+  void SetStatus(RequestStatus status);
+
   bool Equals(const ContentRequestInfo& auth) const;
 
  protected:
@@ -51,6 +55,7 @@ class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequ
  private:
   std::string text_;
   ContentType type_;
+  RequestStatus status_;
 };
 
 inline bool operator==(const ContentRequestInfo& lhs, const ContentRequestInfo& rhs) {
