@@ -23,16 +23,18 @@
 #include <common/serializer/json_serializer.h>
 #include <common/time.h>
 
+#include <fastotv/types.h>
+
 namespace fastotv {
 namespace commands_info {
 
-class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequestInfo> {
+class CreateContentRequestInfo : public common::serializer::JsonSerializer<CreateContentRequestInfo> {
  public:
   enum ContentType { LIVE = 0, VODS = 1, SERIAL = 2 };
   enum RequestStatus { NEW = 0, IN_PROGRESS = 1, DONE = 2 };
 
-  ContentRequestInfo();
-  ContentRequestInfo(const std::string& text, ContentType type, RequestStatus status);
+  CreateContentRequestInfo();
+  CreateContentRequestInfo(const std::string& text, ContentType type, RequestStatus status);
 
   std::string GetText() const;
   void SetText(const std::string& text);
@@ -46,7 +48,7 @@ class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequ
   RequestStatus GetStatus() const;
   void SetStatus(RequestStatus status);
 
-  bool Equals(const ContentRequestInfo& auth) const;
+  bool Equals(const CreateContentRequestInfo& auth) const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -57,6 +59,33 @@ class ContentRequestInfo : public common::serializer::JsonSerializer<ContentRequ
   ContentType type_;
   RequestStatus status_;
 };
+
+class ContentRequestInfo : public CreateContentRequestInfo {
+ public:
+  typedef CreateContentRequestInfo base_class;
+
+  ContentRequestInfo();
+  ContentRequestInfo(const content_request_id_t& rid, const std::string& text, ContentType type, RequestStatus status);
+
+  bool IsValid() const;
+
+  bool Equals(const ContentRequestInfo& auth) const;
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* deserialized) const override;
+
+ private:
+  content_request_id_t rid_;
+};
+
+inline bool operator==(const CreateContentRequestInfo& lhs, const CreateContentRequestInfo& rhs) {
+  return lhs.Equals(rhs);
+}
+
+inline bool operator!=(const CreateContentRequestInfo& x, const CreateContentRequestInfo& y) {
+  return !(x == y);
+}
 
 inline bool operator==(const ContentRequestInfo& lhs, const ContentRequestInfo& rhs) {
   return lhs.Equals(rhs);

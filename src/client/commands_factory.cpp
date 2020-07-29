@@ -173,9 +173,9 @@ common::Error CatchupUndoRequest(protocol::sequance_id_t id,
   return common::Error();
 }
 
-common::Error ContentRequest(protocol::sequance_id_t id,
-                             const commands_info::ContentRequestInfo& params,
-                             protocol::request_t* req) {
+common::Error CreateContentRequest(protocol::sequance_id_t id,
+                                   const commands_info::CreateContentRequestInfo& params,
+                                   protocol::request_t* req) {
   if (!req) {
     return common::make_error_inval();
   }

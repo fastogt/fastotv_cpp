@@ -54,9 +54,9 @@ common::Error CatchupUndoRequest(protocol::sequance_id_t id,
                                  const commands_info::CatchupUndoInfo& params,
                                  protocol::request_t* req);
 
-common::Error ContentRequest(protocol::sequance_id_t id,
-                             const commands_info::ContentRequestInfo& params,
-                             protocol::request_t* req);
+common::Error CreateContentRequest(protocol::sequance_id_t id,
+                                   const commands_info::CreateContentRequestInfo& params,
+                                   protocol::request_t* req);
 
 // response
 common::Error PingResponseSuccess(protocol::sequance_id_t id,
