@@ -36,18 +36,26 @@ have everyone listening!</desc>
 #define STOP_FIELD "stop"
 #define TITLE_FIELD "title"
 #define CATEGORY_FIELD "category"
+#define DESCRIPTION_FIELD "desc"
 
 namespace fastotv {
 namespace commands_info {
 
-ProgrammeInfo::ProgrammeInfo() : channel_(invalid_stream_id), start_time_(0), stop_time_(0), title_(), category_() {}
+ProgrammeInfo::ProgrammeInfo()
+    : channel_(invalid_stream_id), start_time_(0), stop_time_(0), title_(), category_(), description_() {}
 
 ProgrammeInfo::ProgrammeInfo(const stream_id_t& channel,
                              timestamp_t start,
                              timestamp_t stop,
                              const std::string& title,
-                             const category_t& category)
-    : channel_(channel), start_time_(start), stop_time_(stop), title_(title), category_(category) {}
+                             const category_t& category,
+                             const description_t& descr)
+    : channel_(channel),
+      start_time_(start),
+      stop_time_(stop),
+      title_(title),
+      category_(category),
+      description_(descr) {}
 
 bool ProgrammeInfo::IsValid() const {
   return channel_ != invalid_stream_id && !title_.empty();
@@ -64,6 +72,9 @@ common::Error ProgrammeInfo::SerializeFields(json_object* deserialized) const {
   json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(title_.c_str()));
   if (category_) {
     json_object_object_add(deserialized, CATEGORY_FIELD, json_object_new_string(category_->c_str()));
+  }
+  if (description_) {
+    json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_->c_str()));
   }
   return common::Error();
 }
@@ -100,8 +111,15 @@ common::Error ProgrammeInfo::DoDeSerialize(json_object* serialized) {
     category = std::string(json_object_get_string(jcategory));
   }
 
+  json_object* jdescr = nullptr;
+  description_t descr;
+  json_bool jdescr_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescr);
+  if (jdescr_exists) {
+    descr = std::string(json_object_get_string(jdescr));
+  }
+
   ProgrammeInfo prog(json_object_get_string(jchannel), json_object_get_int64(jstart), json_object_get_int64(jstop),
-                     json_object_get_string(jtitle), category);
+                     json_object_get_string(jtitle), category, descr);
   *this = prog;
   return common::Error();
 }
@@ -146,9 +164,17 @@ ProgrammeInfo::category_t ProgrammeInfo::GetCategory() const {
   return category_;
 }
 
+void ProgrammeInfo::SetDescription(const description_t& description) {
+  description_ = description;
+}
+
+ProgrammeInfo::description_t ProgrammeInfo::GetDescription() const {
+  return description_;
+}
+
 bool ProgrammeInfo::Equals(const ProgrammeInfo& prog) const {
   return channel_ == prog.channel_ && start_time_ == prog.start_time_ && stop_time_ == prog.stop_time_ &&
-         title_ == prog.title_;
+         title_ == prog.title_ && description_ == prog.description_;
 }
 
 }  // namespace commands_info

@@ -117,7 +117,7 @@ TEST(ProgrammeInfo, serialize_deserialize) {
   const fastotv::timestamp_t stop_time = 123;
   const std::string title = "tit";
 
-  fastotv::commands_info::ProgrammeInfo prog(id, start_time, stop_time, title, std::string());
+  fastotv::commands_info::ProgrammeInfo prog(id, start_time, stop_time, title, std::string(), std::string());
   ASSERT_TRUE(prog.IsValid());
   ASSERT_EQ(prog.GetChannel(), id);
   ASSERT_EQ(prog.GetStart(), start_time);
