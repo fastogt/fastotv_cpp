@@ -32,6 +32,7 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
 
   typedef fastotv::channel_id_t uri_id_t;
   typedef common::Optional<HlsType> hls_t;
+  typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
   typedef common::uri::GURL url_t;
 
@@ -48,6 +49,9 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
 
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
+
+  chunk_duration_t GetChunkDuration() const;
+  void SetChunkDuration(chunk_duration_t duration);
 
   hls_t GetHlsType() const;
   void SetHlsType(hls_t type);
@@ -70,6 +74,7 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   // http
   http_root_t http_root_;
   hls_t hls_type_;
+  chunk_duration_t chunk_duration_;
   // srt
   srt_mode_t srt_mode_;
 };

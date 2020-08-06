@@ -18,6 +18,7 @@
 #define URI_FIELD "uri"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
+#define CHUNK_DURATION_FIELD "chunk_duration"
 #define SRT_MODE_FIELD "srt_mode"
 
 namespace fastotv {
@@ -25,7 +26,7 @@ namespace fastotv {
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
 OutputUri::OutputUri(uri_id_t id, const url_t& output)
-    : base_class(), id_(id), output_(output), http_root_(), hls_type_(), srt_mode_() {}
+    : base_class(), id_(id), output_(output), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
 
 bool OutputUri::IsValid() const {
   return output_.is_valid();
@@ -53,6 +54,14 @@ OutputUri::http_root_t OutputUri::GetHttpRoot() const {
 
 void OutputUri::SetHttpRoot(const http_root_t& root) {
   http_root_ = root;
+}
+
+OutputUri::chunk_duration_t OutputUri::GetChunkDuration() const {
+  return chunk_duration_;
+}
+
+void OutputUri::SetChunkDuration(chunk_duration_t duration) {
+  chunk_duration_ = duration;
 }
 
 OutputUri::hls_t OutputUri::GetHlsType() const {
@@ -113,6 +122,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetHlsType(static_cast<HlsType>(hls_type));
   }
 
+  int chunk_duration;
+  common::Value* chunk_duration_field = hash->Find(CHUNK_DURATION_FIELD);
+  if (chunk_duration_field && chunk_duration_field->GetAsInteger(&chunk_duration)) {
+    url.SetChunkDuration(chunk_duration);
+  }
+
   int srt_mode;
   common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
   if (srt_mode_field && srt_mode_field->GetAsInteger(&srt_mode)) {
@@ -154,6 +169,12 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     res.SetHlsType(static_cast<HlsType>(json_object_get_int(jhls_type)));
   }
 
+  json_object* jchunk_duration = nullptr;
+  json_bool jchunk_duration_exists = json_object_object_get_ex(serialized, CHUNK_DURATION_FIELD, &jchunk_duration);
+  if (jchunk_duration_exists) {
+    res.SetChunkDuration(json_object_get_int(jchunk_duration));
+  }
+
   json_object* jsrt_mode = nullptr;
   json_bool jsrt_mode_exists = json_object_object_get_ex(serialized, SRT_MODE_FIELD, &jsrt_mode);
   if (jsrt_mode_exists) {
@@ -179,6 +200,9 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
   }
   if (hls_type_) {
     json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
+  }
+  if (chunk_duration_) {
+    json_object_object_add(out, CHUNK_DURATION_FIELD, json_object_new_int(*chunk_duration_));
   }
   if (srt_mode_) {
     json_object_object_add(out, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
