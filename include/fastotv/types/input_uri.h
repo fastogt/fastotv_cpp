@@ -14,21 +14,15 @@
 
 #pragma once
 
-#include <string>
+#include <fastotv/types/input_url.h>
 
-#include <common/serializer/json_serializer.h>
-#include <common/uri/gurl.h>
-#include <common/value.h>
-
-#include <fastotv/types.h>
 #include <fastotv/types/stream_link.h>
 
 namespace fastotv {
 
-class InputUri : public common::serializer::JsonSerializer<InputUri> {
+class InputUri : public InputUrl {
  public:
-  typedef JsonSerializer<InputUri> base_class;
-  typedef fastotv::channel_id_t uri_id_t;
+  typedef InputUrl base_class;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
   typedef common::Optional<UserAgent> user_agent_t;
   // optionals
@@ -36,18 +30,11 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<StreamLink> stream_url_t;
-  typedef common::uri::GURL url_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
 
   bool IsValid() const;
-
-  uri_id_t GetID() const;
-  void SetID(uri_id_t id);
-
-  url_t GetInput() const;
-  void SetInput(const url_t& uri);
 
   user_agent_t GetUserAgent() const;
   void SetUserAgent(user_agent_t agent);
@@ -70,12 +57,9 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* out) const override;
+  common::Error SerializeFields(json_object* deserialized) const override;
 
  private:
-  // required
-  uri_id_t id_;
-  url_t input_;
   // http
   user_agent_t user_agent_;
   stream_url_t stream_url_;

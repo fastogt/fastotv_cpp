@@ -14,8 +14,6 @@
 
 #include <fastotv/types/input_uri.h>
 
-#define ID_FIELD "id"
-#define URI_FIELD "uri"
 #define USER_AGENT_FIELD "user_agent"
 #define STREAMLINK_URL_FIELD "stream_link"
 #define PROXY_FIELD "proxy"
@@ -27,33 +25,10 @@ namespace fastotv {
 InputUri::InputUri() : InputUri(0, url_t()) {}
 
 InputUri::InputUri(uri_id_t id, const url_t& input)
-    : base_class(),
-      id_(id),
-      input_(input),
-      user_agent_(),
-      stream_url_(),
-      http_proxy_url_(),
-      program_number_(),
-      iface_() {}
+    : base_class(id, input), user_agent_(), stream_url_(), http_proxy_url_(), program_number_(), iface_() {}
 
 bool InputUri::IsValid() const {
-  return input_.is_valid();
-}
-
-InputUri::uri_id_t InputUri::GetID() const {
-  return id_;
-}
-
-void InputUri::SetID(uri_id_t id) {
-  id_ = id;
-}
-
-InputUri::url_t InputUri::GetInput() const {
-  return input_;
-}
-
-void InputUri::SetInput(const url_t& uri) {
-  input_ = uri;
+  return base_class::IsValid();
 }
 
 InputUri::user_agent_t InputUri::GetUserAgent() const {
@@ -97,7 +72,7 @@ void InputUri::SetMulticastIface(multicast_iface_t iface) {
 }
 
 bool InputUri::Equals(const InputUri& inf) const {
-  return id_ == inf.id_ && input_ == inf.input_;
+  return base_class::Equals(inf);
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -105,27 +80,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     return common::Optional<InputUri>();
   }
 
-  std::string url_str;
-  common::Value* url_str_field = hash->Find(URI_FIELD);
-  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str)) {
+  common::Optional<InputUrl> base = base_class::Make(hash);
+  if (!base) {
     return common::Optional<InputUri>();
   }
 
-  url_t uri(url_str);
-  if (!uri.is_valid()) {
-    return common::Optional<InputUri>();
-  }
-
-  common::Value* input_id_field = hash->Find(ID_FIELD);
-  int uid;
-  if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
-    return common::Optional<InputUri>();
-  }
-
-  InputUri url;
-  url.SetInput(uri);
-  url.SetID(uid);
-
+  InputUri url(base->GetID(), base->GetUrl());
   int agent;
   common::Value* agent_field = hash->Find(USER_AGENT_FIELD);
   if (agent_field && agent_field->GetAsInteger(&agent)) {
@@ -159,22 +119,11 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
 }
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
-  if (!juri_exists) {
-    return common::make_error_inval();
-  }
-
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (!jid_exists || !json_object_is_type(jid, json_type_int)) {
-    return common::make_error_inval();
-  }
-
   InputUri res;
-  url_t url(json_object_get_string(juri));
-  res.SetInput(url);
-  res.SetID(json_object_get_int(jid));
+  common::Error err = res.base_class::DoDeSerialize(serialized);
+  if (err) {
+    return err;
+  }
 
   json_object* juser_agent = nullptr;
   json_bool juser_agent_exists = json_object_object_get_ex(serialized, USER_AGENT_FIELD, &juser_agent);
@@ -216,37 +165,39 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-common::Error InputUri::SerializeFields(json_object* out) const {
+common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (!IsValid()) {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
-  const std::string url_str = input_.spec();
-  json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
+  common::Error err = base_class::SerializeFields(deserialized);
+  if (err) {
+    return err;
+  }
+
   if (user_agent_) {
-    json_object_object_add(out, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
+    json_object_object_add(deserialized, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
   }
   if (stream_url_) {
     json_object* jlink = nullptr;
     common::Error err = stream_url_->Serialize(&jlink);
     if (!err) {
-      json_object_object_add(out, STREAMLINK_URL_FIELD, jlink);
+      json_object_object_add(deserialized, STREAMLINK_URL_FIELD, jlink);
     }
   }
   const auto pid = GetProgramNumber();
   if (pid) {
-    json_object_object_add(out, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
+    json_object_object_add(deserialized, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
   }
   const auto iface = GetMulticastIface();
   if (iface) {
     const std::string iface_str = *iface;
-    json_object_object_add(out, MULTICAST_IFACE, json_object_new_string(iface_str.c_str()));
+    json_object_object_add(deserialized, MULTICAST_IFACE, json_object_new_string(iface_str.c_str()));
   }
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
     const std::string proxy = hurl->spec();
-    json_object_object_add(out, PROXY_FIELD, json_object_new_string(proxy.c_str()));
+    json_object_object_add(deserialized, PROXY_FIELD, json_object_new_string(proxy.c_str()));
   }
 
   return common::Error();
