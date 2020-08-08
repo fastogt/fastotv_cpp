@@ -15,37 +15,26 @@
 #pragma once
 
 #include <common/file_system/path.h>
-#include <common/serializer/json_serializer.h>
-#include <common/uri/gurl.h>
-#include <common/value.h>
 
-#include <fastotv/types.h>
+#include <fastotv/types/output_url.h>
 
 namespace fastotv {
 
-class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
+class OutputUri : public OutputUrl {
  public:
-  typedef JsonSerializer<OutputUri> base_class;
+  typedef OutputUrl base_class;
   typedef common::Optional<common::file_system::ascii_directory_string_path> http_root_t;
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
 
-  typedef fastotv::channel_id_t uri_id_t;
   typedef common::Optional<HlsType> hls_t;
   typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
-  typedef common::uri::GURL url_t;
 
   OutputUri();
-  explicit OutputUri(uri_id_t id, const url_t& output);
+  explicit OutputUri(uri_id_t id, const url_t& url);
 
   bool IsValid() const;
-
-  uri_id_t GetID() const;
-  void SetID(uri_id_t id);
-
-  url_t GetOutput() const;
-  void SetOutput(const url_t& uri);
 
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
@@ -59,18 +48,15 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   srt_mode_t GetSrtMode() const;
   void SetSrtMode(srt_mode_t mode);
 
-  bool Equals(const OutputUri& inf) const;
+  bool Equals(const OutputUri& url) const;
 
   static common::Optional<OutputUri> Make(common::HashValue* hash);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* out) const override;
+  common::Error SerializeFields(json_object* deserialized) const override;
 
  private:
-  // required
-  uri_id_t id_;
-  url_t output_;
   // http
   http_root_t http_root_;
   hls_t hls_type_;

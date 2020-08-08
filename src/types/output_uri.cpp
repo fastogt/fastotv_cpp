@@ -14,8 +14,6 @@
 
 #include <fastotv/types/output_uri.h>
 
-#define ID_FIELD "id"
-#define URI_FIELD "uri"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
 #define CHUNK_DURATION_FIELD "chunk_duration"
@@ -25,27 +23,11 @@ namespace fastotv {
 
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
-OutputUri::OutputUri(uri_id_t id, const url_t& output)
-    : base_class(), id_(id), output_(output), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
+OutputUri::OutputUri(uri_id_t id, const url_t& url)
+    : base_class(id, url), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
 
 bool OutputUri::IsValid() const {
-  return output_.is_valid();
-}
-
-OutputUri::uri_id_t OutputUri::GetID() const {
-  return id_;
-}
-
-void OutputUri::SetID(uri_id_t id) {
-  id_ = id;
-}
-
-OutputUri::url_t OutputUri::GetOutput() const {
-  return output_;
-}
-
-void OutputUri::SetOutput(const url_t& uri) {
-  output_ = uri;
+  return base_class::IsValid();
 }
 
 OutputUri::http_root_t OutputUri::GetHttpRoot() const {
@@ -80,8 +62,8 @@ void OutputUri::SetSrtMode(srt_mode_t mode) {
   srt_mode_ = mode;
 }
 
-bool OutputUri::Equals(const OutputUri& inf) const {
-  return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_;
+bool OutputUri::Equals(const OutputUri& url) const {
+  return base_class::Equals(url) && http_root_ == url.http_root_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -89,26 +71,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     return common::Optional<OutputUri>();
   }
 
-  std::string url_str;
-  common::Value* url_str_field = hash->Find(URI_FIELD);
-  if (!url_str_field || !url_str_field->GetAsBasicString(&url_str)) {
-    return common::Optional<OutputUri>();
-  }
-  url_t uri(url_str);
-  if (!uri.is_valid()) {
+  common::Optional<OutputUrl> base = base_class::Make(hash);
+  if (!base) {
     return common::Optional<OutputUri>();
   }
 
-  common::Value* input_id_field = hash->Find(ID_FIELD);
-  int uid;
-  if (!input_id_field || !input_id_field->GetAsInteger(&uid)) {
-    return common::Optional<OutputUri>();
-  }
-
-  OutputUri url;
-  url.SetOutput(uri);
-  url.SetID(uid);
-
+  OutputUri url(base->GetID(), base->GetUrl());
   std::string http_root_str;
   common::Value* http_root_str_field = hash->Find(HTTP_ROOT_FIELD);
   if (http_root_str_field && http_root_str_field->GetAsBasicString(&http_root_str)) {
@@ -138,22 +106,11 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 }
 
 common::Error OutputUri::DoDeSerialize(json_object* serialized) {
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
-  if (!juri_exists) {
-    return common::make_error_inval();
-  }
-
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (!jid_exists || !json_object_is_type(jid, json_type_int)) {
-    return common::make_error_inval();
-  }
-
   OutputUri res;
-  res.SetID(json_object_get_int(jid));
-  url_t url(json_object_get_string(juri));
-  res.SetOutput(url);
+  common::Error err = res.base_class::DoDeSerialize(serialized);
+  if (err) {
+    return err;
+  }
 
   json_object* jhttp_root = nullptr;
   json_bool jhttp_root_exists = json_object_object_get_ex(serialized, HTTP_ROOT_FIELD, &jhttp_root);
@@ -185,27 +142,29 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-common::Error OutputUri::SerializeFields(json_object* out) const {
+common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   if (!IsValid()) {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
-  std::string url_str = output_.spec();
-  json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
+  common::Error err = base_class::SerializeFields(deserialized);
+  if (err) {
+    return err;
+  }
+
   auto ps = GetHttpRoot();
   if (ps) {
     const std::string http_root_str = ps->GetPath();
-    json_object_object_add(out, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
+    json_object_object_add(deserialized, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
   }
   if (hls_type_) {
-    json_object_object_add(out, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
+    json_object_object_add(deserialized, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
   }
   if (chunk_duration_) {
-    json_object_object_add(out, CHUNK_DURATION_FIELD, json_object_new_int(*chunk_duration_));
+    json_object_object_add(deserialized, CHUNK_DURATION_FIELD, json_object_new_int(*chunk_duration_));
   }
   if (srt_mode_) {
-    json_object_object_add(out, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
+    json_object_object_add(deserialized, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
   }
   return common::Error();
 }
