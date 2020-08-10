@@ -27,6 +27,7 @@
 #define CATCHUPS_FIELD "catchups"
 #define SERIES_FIELD "series"
 #define CONTENT_REQUESTS_FIELD "content_requests"
+#define DEVICES_FILED "devices"
 
 namespace fastotv {
 namespace server {
@@ -78,7 +79,7 @@ common::Error ActivateDeviceResponseSuccess(protocol::sequance_id_t id,
   }
 
   json_object* parent = json_object_new_object();
-  json_object_object_add(parent, "devices", obj);
+  json_object_object_add(parent, DEVICES_FILED, obj);
   const std::string devices_json = json_object_get_string(parent);
   json_object_put(parent);
 

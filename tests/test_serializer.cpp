@@ -81,10 +81,13 @@ TEST(ServerInfo, serialize_deserialize) {
 
   serialize_t ser;
   common::Error err = serv_info.Serialize(&ser);
-  ASSERT_TRUE(!err);
+  ASSERT_FALSE(err);
   fastotv::commands_info::ServerInfo dser;
   err = dser.DeSerialize(ser);
-  ASSERT_TRUE(!err);
+  ASSERT_FALSE(err);
+  std::string out;
+  err = dser.SerializeToString(&out);
+  ASSERT_FALSE(err);
 }
 
 TEST(EpgInfo, serialize_deserialize) {
