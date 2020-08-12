@@ -28,6 +28,7 @@ class OutputUri : public OutputUrl {
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
 
   typedef common::Optional<HlsType> hls_t;
+  typedef common::Optional<common::uri::GURL> playlist_root_t;
   typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
 
@@ -48,6 +49,9 @@ class OutputUri : public OutputUrl {
   srt_mode_t GetSrtMode() const;
   void SetSrtMode(srt_mode_t mode);
 
+  playlist_root_t GetPlaylistRoot() const;
+  void SetPlaylistRoot(const playlist_root_t& playlist);
+
   bool Equals(const OutputUri& url) const;
 
   static common::Optional<OutputUri> Make(common::HashValue* hash);
@@ -61,6 +65,7 @@ class OutputUri : public OutputUrl {
   http_root_t http_root_;
   hls_t hls_type_;
   chunk_duration_t chunk_duration_;
+  playlist_root_t playlist_root_;
   // srt
   srt_mode_t srt_mode_;
 };

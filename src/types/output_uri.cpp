@@ -17,6 +17,7 @@
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
 #define CHUNK_DURATION_FIELD "chunk_duration"
+#define PLAYLIST_ROOT_FIELD "playlist_root"
 #define SRT_MODE_FIELD "srt_mode"
 
 namespace fastotv {
@@ -62,6 +63,14 @@ void OutputUri::SetSrtMode(srt_mode_t mode) {
   srt_mode_ = mode;
 }
 
+OutputUri::playlist_root_t OutputUri::GetPlaylistRoot() const {
+  return playlist_root_;
+}
+
+void OutputUri::SetPlaylistRoot(const OutputUri::playlist_root_t& playlist) {
+  playlist_root_ = playlist;
+}
+
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && http_root_ == url.http_root_;
 }
@@ -94,6 +103,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* chunk_duration_field = hash->Find(CHUNK_DURATION_FIELD);
   if (chunk_duration_field && chunk_duration_field->GetAsInteger(&chunk_duration)) {
     url.SetChunkDuration(chunk_duration);
+  }
+
+  std::string playlist_root;
+  common::Value* playlist_field = hash->Find(PLAYLIST_ROOT_FIELD);
+  if (playlist_field && playlist_field->GetAsBasicString(&playlist_root)) {
+    url.SetPlaylistRoot(common::uri::GURL(playlist_root));
   }
 
   int srt_mode;
@@ -162,6 +177,10 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   }
   if (chunk_duration_) {
     json_object_object_add(deserialized, CHUNK_DURATION_FIELD, json_object_new_int(*chunk_duration_));
+  }
+  if (playlist_root_) {
+    const std::string root = playlist_root_->spec();
+    json_object_object_add(deserialized, PLAYLIST_ROOT_FIELD, json_object_new_string(root.c_str()));
   }
   if (srt_mode_) {
     json_object_object_add(deserialized, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
