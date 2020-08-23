@@ -45,11 +45,11 @@ class OperationSystemInfo : public common::serializer::JsonSerializer<OperationS
   std::string GetArch() const;
   void SetArch(const std::string& arch);
 
-  size_t GetRamTotal() const;
-  void SetRamTotal(size_t ram);
+  size_t GetRamBytesTotal() const;
+  void SetRamBytesTotal(size_t ram);
 
-  size_t GetRamFree() const;
-  void SetRamFree(size_t size);
+  size_t GetRamBytesFree() const;
+  void SetRamBytesFree(size_t size);
 
   static OperationSystemInfo MakeOSSnapshot();
 
@@ -64,8 +64,8 @@ class OperationSystemInfo : public common::serializer::JsonSerializer<OperationS
   std::string version_;
   std::string arch_;
 
-  size_t ram_total_;
-  size_t ram_free_;
+  size_t ram_bytes_total_;
+  size_t ram_bytes_free_;
 };
 
 inline bool operator==(const OperationSystemInfo& left, const OperationSystemInfo& right) {

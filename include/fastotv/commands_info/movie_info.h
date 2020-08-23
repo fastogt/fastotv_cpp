@@ -54,8 +54,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   void SetUrls(const urls_t& urls);
   urls_t GetUrls() const;
 
-  void SetDisplayName(const std::string& name);
-  std::string GetDisplayName() const;
+  void SetName(const std::string& name);
+  std::string GetName() const;
 
   void SetDescription(const std::string& descr);
   std::string GetDescription() const;

@@ -48,7 +48,7 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   cpu_load_t GetCpuLoad() const;
   gpu_load_t GetGpuLoad() const;
   std::string GetLoadAverage() const;
-  size_t GetRamBytesTotal()  const;
+  size_t GetRamBytesTotal() const;
   size_t GetRamBytesFree() const;
   size_t GetHddBytesTotal() const;
   size_t GetHddBytesFree() const;

@@ -33,6 +33,7 @@
 #include <fastotv/commands_info/machine_info.h>
 #include <fastotv/commands_info/movie_info.h>
 #include <fastotv/commands_info/notification_text_info.h>
+#include <fastotv/commands_info/operation_system_info.h>
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
@@ -163,8 +164,8 @@ TEST(ClientInfo, serialize_deserialize) {
   const int64_t ram_free = 2;
 
   fastotv::commands_info::OperationSystemInfo ops(os, os_version, arch, ram_total, ram_free);
-  ASSERT_EQ(ops.GetRamTotal(), ram_total);
-  ASSERT_EQ(ops.GetRamFree(), ram_free);
+  ASSERT_EQ(ops.GetRamBytesTotal(), ram_total);
+  ASSERT_EQ(ops.GetRamBytesFree(), ram_free);
 
   fastotv::commands_info::ProjectInfo proj("fastocloud", "1.2.3");
 
@@ -482,7 +483,7 @@ TEST(MovieInfo, serialize_deserialize) {
 
   fastotv::commands_info::MovieInfo rinf_info(name, urls, description, preview_icon, trailer_url, user_score,
                                               prime_date, country, duration, type);
-  ASSERT_EQ(rinf_info.GetDisplayName(), name);
+  ASSERT_EQ(rinf_info.GetName(), name);
   ASSERT_EQ(rinf_info.GetUrls(), urls);
   ASSERT_EQ(rinf_info.GetDescription(), description);
   ASSERT_EQ(rinf_info.GetPreviewIcon(), preview_icon);
@@ -504,7 +505,8 @@ TEST(MovieInfo, serialize_deserialize) {
 
 TEST(NotificationTextInfo, serialize_deserialize) {
   const std::string msg = "1234";
-  const fastotv::commands_info::NotificationTextInfo::MessageType mt = fastotv::commands_info::NotificationTextInfo::HYPERLINK;
+  const fastotv::commands_info::NotificationTextInfo::MessageType mt =
+      fastotv::commands_info::NotificationTextInfo::HYPERLINK;
   const common::time64_t sh = 1000;
   fastotv::commands_info::NotificationTextInfo rinf_info(msg, mt, sh);
   ASSERT_EQ(rinf_info.GetText(), msg);
@@ -514,6 +516,29 @@ TEST(NotificationTextInfo, serialize_deserialize) {
   common::Error err = rinf_info.Serialize(&ser);
   ASSERT_TRUE(!err);
   fastotv::commands_info::NotificationTextInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(OperationSystemInfo, serialize_deserialize) {
+  const std::string name = "Windows";
+  const std::string version = "4.3";
+  const std::string arch = "arm";
+  size_t ram_total = 12354;
+  size_t ram_free = 3244;
+
+  fastotv::commands_info::OperationSystemInfo rinf_info(name, version, arch, ram_total, ram_free);
+  ASSERT_EQ(rinf_info.GetName(), name);
+  ASSERT_EQ(rinf_info.GetVersion(), version);
+  ASSERT_EQ(rinf_info.GetArch(), arch);
+  ASSERT_EQ(rinf_info.GetRamBytesTotal(), ram_total);
+  ASSERT_EQ(rinf_info.GetRamBytesFree(), ram_free);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::OperationSystemInfo dser;
   err = dser.DeSerialize(ser);
   ASSERT_TRUE(!err);
 

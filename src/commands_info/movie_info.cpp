@@ -81,11 +81,11 @@ MovieInfo::urls_t MovieInfo::GetUrls() const {
   return urls_;
 }
 
-void MovieInfo::SetDisplayName(const std::string& name) {
+void MovieInfo::SetName(const std::string& name) {
   display_name_ = name;
 }
 
-std::string MovieInfo::GetDisplayName() const {
+std::string MovieInfo::GetName() const {
   return display_name_;
 }
 

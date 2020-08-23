@@ -36,7 +36,7 @@ OperationSystemInfo::OperationSystemInfo(const std::string& name,
                                          const std::string& arch,
                                          size_t ram_total,
                                          size_t ram_free)
-    : name_(name), version_(version), arch_(arch), ram_total_(ram_total), ram_free_(ram_free) {}
+    : name_(name), version_(version), arch_(arch), ram_bytes_total_(ram_total), ram_bytes_free_(ram_free) {}
 
 std::string OperationSystemInfo::GetName() const {
   return name_;
@@ -62,20 +62,20 @@ void OperationSystemInfo::SetArch(const std::string& arch) {
   arch_ = arch;
 }
 
-size_t OperationSystemInfo::GetRamTotal() const {
-  return ram_total_;
+size_t OperationSystemInfo::GetRamBytesTotal() const {
+  return ram_bytes_total_;
 }
 
-void OperationSystemInfo::SetRamTotal(size_t ram) {
-  ram_total_ = ram;
+void OperationSystemInfo::SetRamBytesTotal(size_t ram) {
+  ram_bytes_total_ = ram;
 }
 
-size_t OperationSystemInfo::GetRamFree() const {
-  return ram_free_;
+size_t OperationSystemInfo::GetRamBytesFree() const {
+  return ram_bytes_free_;
 }
 
-void OperationSystemInfo::SetRamFree(size_t size) {
-  ram_total_ = size;
+void OperationSystemInfo::SetRamBytesFree(size_t size) {
+  ram_bytes_total_ = size;
 }
 
 OperationSystemInfo OperationSystemInfo::MakeOSSnapshot() {
@@ -99,8 +99,8 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
   json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
   json_object_object_add(deserialized, VERSION_FIELD, json_object_new_string(version_.c_str()));
   json_object_object_add(deserialized, ARCH_FIELD, json_object_new_string(arch_.c_str()));
-  json_object_object_add(deserialized, RAM_TOTAL_FIELD, json_object_new_int64(ram_total_));
-  json_object_object_add(deserialized, RAM_FREE_FIELD, json_object_new_int64(ram_free_));
+  json_object_object_add(deserialized, RAM_TOTAL_FIELD, json_object_new_int64(ram_bytes_total_));
+  json_object_object_add(deserialized, RAM_FREE_FIELD, json_object_new_int64(ram_bytes_free_));
   return common::Error();
 }
 
@@ -130,21 +130,21 @@ common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
   json_object* jram_total = nullptr;
   json_bool jram_total_exists = json_object_object_get_ex(serialized, RAM_TOTAL_FIELD, &jram_total);
   if (jram_total_exists) {
-    inf.ram_total_ = json_object_get_int64(jram_total);
+    inf.ram_bytes_total_ = json_object_get_int64(jram_total);
   }
 
   json_object* jram_free = nullptr;
   json_bool jram_free_exists = json_object_object_get_ex(serialized, RAM_FREE_FIELD, &jram_free);
   if (jram_free_exists) {
-    inf.ram_free_ = json_object_get_int64(jram_free);
+    inf.ram_bytes_free_ = json_object_get_int64(jram_free);
   }
   *this = inf;
   return common::Error();
 }
 
 bool OperationSystemInfo::Equals(const OperationSystemInfo& os) const {
-  return name_ == os.name_ && version_ == os.version_ && arch_ == os.arch_ && ram_free_ == os.ram_free_ &&
-         ram_total_ == os.ram_total_;
+  return name_ == os.name_ && version_ == os.version_ && arch_ == os.arch_ && ram_bytes_free_ == os.ram_bytes_free_ &&
+         ram_bytes_total_ == os.ram_bytes_total_;
 }
 
 }  // namespace commands_info
