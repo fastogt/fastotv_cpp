@@ -176,7 +176,7 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   json_bool jnet_total_bytes_send_exists =
       json_object_object_get_ex(serialized, TOTAL_BYTES_OUT_FIELD, &jnet_total_bytes_send);
   if (jnet_total_bytes_send_exists) {
-    inf.net_total_bytes_recv_ = json_object_get_uint64(jnet_total_bytes_send);
+    inf.net_total_bytes_send_ = json_object_get_uint64(jnet_total_bytes_send);
   }
 
   *this = inf;
@@ -195,6 +195,22 @@ std::string MachineInfo::GetLoadAverage() const {
   return load_average_;
 }
 
+size_t MachineInfo::GetRamBytesTotal() const {
+  return ram_bytes_total_;
+}
+
+size_t MachineInfo::GetRamBytesFree() const {
+  return ram_bytes_free_;
+}
+
+size_t MachineInfo::GetHddBytesTotal() const {
+  return hdd_bytes_total_;
+}
+
+size_t MachineInfo::GetHddBytesFree() const {
+  return hdd_bytes_free_;
+}
+
 fastotv::bandwidth_t MachineInfo::GetNetBytesRecv() const {
   return net_bytes_recv_;
 }
@@ -203,8 +219,29 @@ fastotv::bandwidth_t MachineInfo::GetNetBytesSend() const {
   return net_bytes_send_;
 }
 
+time_t MachineInfo::GetUptime() {
+  return uptime_;
+}
+
 fastotv::timestamp_t MachineInfo::GetTimestamp() const {
   return current_ts_;
+}
+
+size_t MachineInfo::GetNetTotalBytesRecv() const {
+  return net_total_bytes_recv_;
+}
+
+size_t MachineInfo::GetNetTotalBytesSend() const {
+  return net_total_bytes_send_;
+}
+
+bool MachineInfo::Equals(const MachineInfo& mach) const {
+  return mach.cpu_load_ == cpu_load_ && mach.gpu_load_ == gpu_load_ && mach.load_average_ == load_average_ &&
+         mach.ram_bytes_total_ == ram_bytes_total_ && mach.ram_bytes_free_ == ram_bytes_free_ &&
+         mach.hdd_bytes_total_ == hdd_bytes_total_ && mach.hdd_bytes_free_ == hdd_bytes_free_ &&
+         mach.net_bytes_recv_ == net_bytes_recv_ && mach.net_bytes_send_ == net_bytes_send_ &&
+         mach.uptime_ == uptime_ && mach.current_ts_ == current_ts_ &&
+         mach.net_total_bytes_recv_ == net_total_bytes_recv_ && mach.net_total_bytes_send_ == net_total_bytes_send_;
 }
 
 }  // namespace commands_info

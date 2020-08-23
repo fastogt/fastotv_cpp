@@ -63,7 +63,7 @@ common::Error CreateContentRequestInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  ainf.status_ = static_cast<RequestStatus>(json_object_get_int(jtype));
+  ainf.status_ = static_cast<RequestStatus>(json_object_get_int(jstatus));
   *this = ainf;
   return common::Error();
 }

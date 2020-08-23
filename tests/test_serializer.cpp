@@ -21,11 +21,18 @@
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
 #include <fastotv/commands_info/catchup_info.h>
+#include <fastotv/commands_info/catchup_undo_info.h>
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/client_info.h>
+#include <fastotv/commands_info/content_request_info.h>
 #include <fastotv/commands_info/device_info.h>
 #include <fastotv/commands_info/epg_info.h>
+#include <fastotv/commands_info/favorite_info.h>
+#include <fastotv/commands_info/interrupt_stream_time_info.h>
+#include <fastotv/commands_info/machine_info.h>
+#include <fastotv/commands_info/movie_info.h>
+#include <fastotv/commands_info/notification_text_info.h>
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
@@ -348,4 +355,167 @@ TEST(CatchupInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(cat_info, dser);
+}
+
+TEST(CatchupUndoInfo, serialize_deserialize) {
+  const fastotv::stream_id_t channel_id = "1234";
+  fastotv::commands_info::CatchupUndoInfo rinf_info(channel_id);
+  ASSERT_EQ(rinf_info.GetStreamID(), channel_id);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::CatchupUndoInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(CreateContentRequestInfo, serialize_deserialize) {
+  const std::string text = "Test";
+  const fastotv::commands_info::CreateContentRequestInfo::ContentType cont =
+      fastotv::commands_info::CreateContentRequestInfo::VODS;
+  const fastotv::commands_info::CreateContentRequestInfo::RequestStatus res =
+      fastotv::commands_info::CreateContentRequestInfo::DONE;
+
+  fastotv::commands_info::CreateContentRequestInfo rinf_info(text, cont, res);
+  ASSERT_EQ(rinf_info.GetText(), text);
+  ASSERT_EQ(rinf_info.GetType(), cont);
+  ASSERT_EQ(rinf_info.GetStatus(), res);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::CreateContentRequestInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(FavoriteInfo, serialize_deserialize) {
+  const fastotv::stream_id_t channel_id = "1234";
+  const bool fav = false;
+  fastotv::commands_info::FavoriteInfo rinf_info(channel_id, fav);
+  ASSERT_EQ(rinf_info.GetChannel(), channel_id);
+  ASSERT_EQ(rinf_info.GetFavorite(), fav);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::FavoriteInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(InterruptStreamTimeInfo, serialize_deserialize) {
+  const fastotv::stream_id_t channel_id = "1234";
+  const fastotv::timestamp_t ts = 1234;
+  fastotv::commands_info::InterruptStreamTimeInfo rinf_info(channel_id, ts);
+  ASSERT_EQ(rinf_info.GetChannel(), channel_id);
+  ASSERT_EQ(rinf_info.GetTime(), ts);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::InterruptStreamTimeInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(MachineInfo, serialize_deserialize) {
+  fastotv::commands_info::MachineInfo::cpu_load_t cpu_load = 0.1;
+  fastotv::commands_info::MachineInfo::gpu_load_t gpu_load = 3.33;
+  const std::string load_average = "123 333 555";
+  size_t ram_bytes_total = 100;
+  size_t ram_bytes_free = 223;
+  size_t hdd_bytes_total = 555;
+  size_t hdd_bytes_free = 45;
+  fastotv::bandwidth_t net_bytes_recv = 11;
+  fastotv::bandwidth_t net_bytes_send = 53;
+  time_t uptime = 2334;
+  fastotv::timestamp_t timestamp = 122355;
+  size_t net_total_bytes_recv = 54431;
+  size_t net_total_bytes_send = 324;
+  fastotv::commands_info::MachineInfo rinf_info(cpu_load, gpu_load, load_average, ram_bytes_total, ram_bytes_free,
+                                                hdd_bytes_total, hdd_bytes_free, net_bytes_recv, net_bytes_send, uptime,
+                                                timestamp, net_total_bytes_recv, net_total_bytes_send);
+  ASSERT_EQ(rinf_info.GetCpuLoad(), cpu_load);
+  ASSERT_EQ(rinf_info.GetGpuLoad(), gpu_load);
+  ASSERT_EQ(rinf_info.GetLoadAverage(), load_average);
+  ASSERT_EQ(rinf_info.GetRamBytesTotal(), ram_bytes_total);
+  ASSERT_EQ(rinf_info.GetRamBytesFree(), ram_bytes_free);
+  ASSERT_EQ(rinf_info.GetHddBytesTotal(), hdd_bytes_total);
+  ASSERT_EQ(rinf_info.GetHddBytesFree(), hdd_bytes_free);
+  ASSERT_EQ(rinf_info.GetNetBytesRecv(), net_bytes_recv);
+  ASSERT_EQ(rinf_info.GetNetBytesSend(), net_bytes_send);
+  ASSERT_EQ(rinf_info.GetUptime(), uptime);
+  ASSERT_EQ(rinf_info.GetTimestamp(), timestamp);
+  ASSERT_EQ(rinf_info.GetNetTotalBytesRecv(), net_total_bytes_recv);
+  ASSERT_EQ(rinf_info.GetNetTotalBytesSend(), net_total_bytes_send);
+
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::MachineInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(MovieInfo, serialize_deserialize) {
+  const std::string name = "Some";
+  const fastotv::commands_info::MovieInfo::urls_t urls = {
+      common::uri::GURL("http://localhost:8080/hls/69_avformat_test_alex_2/play.png")};
+  const std::string description = "Desc";
+  const fastotv::commands_info::MovieInfo::url_t preview_icon =
+      common::uri::GURL("http://localhost:8080/hls/69_avformat_test_alex_2/play1.png");
+  const fastotv::commands_info::MovieInfo::url_t trailer_url =
+      common::uri::GURL("http://localhost:8080/hls/69_avformat_test_alex_2/play2.png");
+  double user_score = 12.33;
+  fastotv::timestamp_t prime_date = 1234;
+  const std::string country = "USA";
+  fastotv::timestamp_t duration = 442;
+  fastotv::commands_info::MovieInfo::Type type = fastotv::commands_info::MovieInfo::SERIES;
+
+  fastotv::commands_info::MovieInfo rinf_info(name, urls, description, preview_icon, trailer_url, user_score,
+                                              prime_date, country, duration, type);
+  ASSERT_EQ(rinf_info.GetDisplayName(), name);
+  ASSERT_EQ(rinf_info.GetUrls(), urls);
+  ASSERT_EQ(rinf_info.GetDescription(), description);
+  ASSERT_EQ(rinf_info.GetPreviewIcon(), preview_icon);
+  ASSERT_EQ(rinf_info.GetTrailerUrl(), trailer_url);
+  ASSERT_EQ(rinf_info.GetUserScore(), user_score);
+  ASSERT_EQ(rinf_info.GetPrimeDate(), prime_date);
+  ASSERT_EQ(rinf_info.GetCountry(), country);
+  ASSERT_EQ(rinf_info.GetDuration(), duration);
+  ASSERT_EQ(rinf_info.GetType(), type);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::MovieInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(NotificationTextInfo, serialize_deserialize) {
+  const std::string msg = "1234";
+  const fastotv::commands_info::NotificationTextInfo::MessageType mt = fastotv::commands_info::NotificationTextInfo::HYPERLINK;
+  const common::time64_t sh = 1000;
+  fastotv::commands_info::NotificationTextInfo rinf_info(msg, mt, sh);
+  ASSERT_EQ(rinf_info.GetText(), msg);
+  ASSERT_EQ(rinf_info.GetType(), mt);
+  ASSERT_EQ(rinf_info.GetShowTime(), sh);
+  serialize_t ser;
+  common::Error err = rinf_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::NotificationTextInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info, dser);
 }

@@ -48,9 +48,20 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   cpu_load_t GetCpuLoad() const;
   gpu_load_t GetGpuLoad() const;
   std::string GetLoadAverage() const;
+  size_t GetRamBytesTotal()  const;
+  size_t GetRamBytesFree() const;
+  size_t GetHddBytesTotal() const;
+  size_t GetHddBytesFree() const;
+
   fastotv::bandwidth_t GetNetBytesRecv() const;
   fastotv::bandwidth_t GetNetBytesSend() const;
+  time_t GetUptime();
   fastotv::timestamp_t GetTimestamp() const;
+
+  size_t GetNetTotalBytesRecv() const;
+  size_t GetNetTotalBytesSend() const;
+
+  bool Equals(const MachineInfo& mach) const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -71,6 +82,14 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   size_t net_total_bytes_recv_;
   size_t net_total_bytes_send_;
 };
+
+inline bool operator==(const MachineInfo& left, const MachineInfo& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const MachineInfo& x, const MachineInfo& y) {
+  return !(x == y);
+}
 
 }  // namespace commands_info
 }  // namespace fastotv
