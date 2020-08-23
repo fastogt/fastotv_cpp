@@ -23,7 +23,7 @@
 #define START_FIELD "start"
 #define STOP_FIELD "stop"
 
-#define CATCHUP_RESPONSE_INFO_CATCHUP_FIELD "catchup"
+#define CATCHUP_FIELD "catchup"
 
 namespace fastotv {
 namespace commands_info {
@@ -75,7 +75,7 @@ std::string CatchupGenerateInfo::GetTitle() const {
 }
 
 bool CatchupGenerateInfo::Equals(const CatchupGenerateInfo& inf) const {
-  return sid_ == inf.sid_ && start_time_ == inf.start_time_ && stop_time_ == inf.stop_time_;
+  return sid_ == inf.sid_ && start_time_ == inf.start_time_ && stop_time_ == inf.stop_time_ && title_ == inf.title_;
 }
 
 common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
@@ -154,7 +154,7 @@ bool CatchupQueueInfo::Equals(const CatchupQueueInfo& inf) const {
 common::Error CatchupQueueInfo::DoDeSerialize(json_object* serialized) {
   CatchupQueueInfo inf;
   json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, CATCHUP_RESPONSE_INFO_CATCHUP_FIELD, &jcid);
+  json_bool jcid_exists = json_object_object_get_ex(serialized, CATCHUP_FIELD, &jcid);
   if (!jcid_exists) {
     return common::make_error_inval();
   }
@@ -181,7 +181,7 @@ common::Error CatchupQueueInfo::SerializeFields(json_object* deserialized) const
     return err;
   }
 
-  json_object_object_add(deserialized, CATCHUP_RESPONSE_INFO_CATCHUP_FIELD, jobj);
+  json_object_object_add(deserialized, CATCHUP_FIELD, jobj);
   return common::Error();
 }
 

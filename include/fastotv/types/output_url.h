@@ -53,4 +53,12 @@ class OutputUrl : public common::serializer::JsonSerializer<OutputUrl> {
   url_t url_;
 };
 
+inline bool operator==(const OutputUrl& left, const OutputUrl& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const OutputUrl& x, const OutputUrl& y) {
+  return !(x == y);
+}
+
 }  // namespace fastotv

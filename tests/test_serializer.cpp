@@ -19,6 +19,8 @@
 #include <gtest/gtest.h>
 
 #include <fastotv/commands_info/auth_info.h>
+#include <fastotv/commands_info/catchup_generate_info.h>
+#include <fastotv/commands_info/catchup_info.h>
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/client_info.h>
@@ -279,4 +281,71 @@ TEST(SerialInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(serial, dser);
+}
+
+TEST(CatchupGenerateInfo, serialize_deserialize) {
+  fastotv::stream_id_t sid = "3211";
+  std::string title = "some";
+  fastotv::timestamp_t start_time = 1444;
+  fastotv::timestamp_t stop_time = 6664;
+  fastotv::commands_info::CatchupGenerateInfo cat_info(sid, title, start_time, stop_time);
+  ASSERT_EQ(cat_info.GetStreamID(), sid);
+  ASSERT_EQ(cat_info.GetTitle(), title);
+  ASSERT_EQ(cat_info.GetStart(), start_time);
+  ASSERT_EQ(cat_info.GetStop(), stop_time);
+  serialize_t ser;
+  common::Error err = cat_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::CatchupGenerateInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(cat_info, dser);
+}
+
+TEST(CatchupInfo, serialize_deserialize) {
+  const std::string sid = "1234";
+  const std::string name = "Termiantor";
+  const fastotv::commands_info::CatchupInfo::iarc_t iarc = 11;
+  const fastotv::commands_info::CatchupInfo::groups_t groups = {"Movie"};
+  const bool favorite = false;
+  const fastotv::timestamp_t recent = 1234;
+  const fastotv::timestamp_t interruption_time = 3333;
+  const fastotv::stream_id_t stream_id = "123";
+  const common::uri::GURL url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
+  fastotv::commands_info::EpgInfo epg_info(stream_id, {url}, name);
+  bool enable_audio = false;
+  bool enable_video = true;
+  const fastotv::commands_info::CatchupInfo::parts_t parts;
+  const size_t views = 11;
+  bool locked = false;
+  fastotv::commands_info::CatchupInfo::meta_urls_t urls;
+  urls.Add(fastotv::MetaUrl("Some", common::uri::GURL("http://localhost:8080/hls/69_avformat_test_alex_2/play.png")));
+  const fastotv::timestamp_t start = 111;
+  const fastotv::timestamp_t stop = 333;
+
+  fastotv::commands_info::CatchupInfo cat_info(sid, groups, iarc, favorite, recent, interruption_time, epg_info,
+                                               enable_audio, enable_video, parts, views, locked, urls, start, stop);
+  ASSERT_EQ(cat_info.GetStreamID(), sid);
+  ASSERT_EQ(cat_info.GetGroups(), groups);
+  ASSERT_EQ(cat_info.GetIARC(), iarc);
+  ASSERT_EQ(cat_info.GetFavorite(), favorite);
+  ASSERT_EQ(cat_info.GetRecent(), recent);
+  ASSERT_EQ(cat_info.GetInterruptionTime(), interruption_time);
+  ASSERT_EQ(cat_info.GetEpg(), epg_info);
+  ASSERT_EQ(cat_info.GetParts(), parts);
+  ASSERT_EQ(cat_info.GetViewCount(), views);
+  ASSERT_EQ(cat_info.GetLocked(), locked);
+  ASSERT_EQ(cat_info.GetMetaUrls(), urls);
+  ASSERT_EQ(cat_info.GetStart(), start);
+  ASSERT_EQ(cat_info.GetStop(), stop);
+
+  serialize_t ser;
+  common::Error err = cat_info.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::CatchupInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(cat_info, dser);
 }

@@ -54,4 +54,12 @@ class StreamLink : public common::serializer::JsonSerializer<StreamLink> {
   common::Optional<common::uri::GURL> https_proxy_;
 };
 
+inline bool operator==(const StreamLink& left, const StreamLink& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const StreamLink& x, const StreamLink& y) {
+  return !(x == y);
+}
+
 }  // namespace fastotv

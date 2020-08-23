@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fastotv/types/input_url.h>
 
 #include <fastotv/types/stream_link.h>
@@ -69,5 +71,13 @@ class InputUri : public InputUrl {
   program_number_t program_number_;
   multicast_iface_t iface_;
 };
+
+inline bool operator==(const InputUri& left, const InputUri& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const InputUri& x, const InputUri& y) {
+  return !(x == y);
+}
 
 }  // namespace fastotv

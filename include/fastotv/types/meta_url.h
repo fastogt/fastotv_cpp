@@ -50,6 +50,14 @@ class MetaUrl : public common::serializer::JsonSerializer<MetaUrl> {
   url_t url_;
 };
 
+inline bool operator==(const MetaUrl& left, const MetaUrl& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const MetaUrl& x, const MetaUrl& y) {
+  return !(x == y);
+}
+
 typedef common::serializer::JsonSerializerArray<MetaUrl> MetaUrls;
 
 }  // namespace fastotv

@@ -70,4 +70,12 @@ class OutputUri : public OutputUrl {
   srt_mode_t srt_mode_;
 };
 
+inline bool operator==(const OutputUri& left, const OutputUri& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const OutputUri& x, const OutputUri& y) {
+  return !(x == y);
+}
+
 }  // namespace fastotv
