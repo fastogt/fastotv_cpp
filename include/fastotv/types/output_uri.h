@@ -31,14 +31,15 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<common::uri::GURL> playlist_root_t;
   typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
+  typedef common::Optional<bool> hlssink2_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
 
   bool IsValid() const;
 
-  bool GetHlsSink2() const;
-  void SetHlsSink2(bool hlssink2);
+  hlssink2_t GetHlsSink2() const;
+  void SetHlsSink2(hlssink2_t hlssink2);
 
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
@@ -65,7 +66,7 @@ class OutputUri : public OutputUrl {
 
  private:
   // http
-  bool hlssink2_;
+  hlssink2_t hlssink2_;
   http_root_t http_root_;
   hls_t hls_type_;
   chunk_duration_t chunk_duration_;

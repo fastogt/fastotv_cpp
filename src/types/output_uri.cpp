@@ -32,11 +32,11 @@ bool OutputUri::IsValid() const {
   return base_class::IsValid();
 }
 
-bool OutputUri::GetHlsSink2() const {
+OutputUri::hlssink2_t OutputUri::GetHlsSink2() const {
   return hlssink2_;
 }
 
-void OutputUri::SetHlsSink2(bool hlssink2) {
+void OutputUri::SetHlsSink2(fastotv::OutputUri::hlssink2_t hlssink2) {
   hlssink2_ = hlssink2;
 }
 
@@ -188,7 +188,9 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, HLSSINK2_FILED, json_object_new_boolean(hlssink2_));
+  if (hlssink2_) {
+    json_object_object_add(deserialized, HLSSINK2_FILED, json_object_new_boolean(*hlssink2_));
+  }
   auto ps = GetHttpRoot();
   if (ps) {
     const std::string http_root_str = ps->GetPath();
