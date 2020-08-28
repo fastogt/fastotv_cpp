@@ -37,6 +37,9 @@ class OutputUri : public OutputUrl {
 
   bool IsValid() const;
 
+  bool GetHlsSink2() const;
+  void SetHlsSink2(bool hlssink2);
+
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
 
@@ -62,6 +65,7 @@ class OutputUri : public OutputUrl {
 
  private:
   // http
+  bool hlssink2_;
   http_root_t http_root_;
   hls_t hls_type_;
   chunk_duration_t chunk_duration_;
