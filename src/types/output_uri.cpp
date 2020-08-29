@@ -14,7 +14,7 @@
 
 #include <fastotv/types/output_uri.h>
 
-#define HLSSINK2_FILED "hlssink2"
+#define HLSSINK_TYPE_FILED "hlssink_type"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
 #define CHUNK_DURATION_FIELD "chunk_duration"
@@ -26,18 +26,18 @@ namespace fastotv {
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
 OutputUri::OutputUri(uri_id_t id, const url_t& url)
-    : base_class(id, url), hlssink2_(false), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
+    : base_class(id, url), hlssink_type_(), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
 
 bool OutputUri::IsValid() const {
   return base_class::IsValid();
 }
 
-OutputUri::hlssink2_t OutputUri::GetHlsSink2() const {
-  return hlssink2_;
+OutputUri::hlssink_type_t OutputUri::GetHlsSinkType() const {
+  return hlssink_type_;
 }
 
-void OutputUri::SetHlsSink2(fastotv::OutputUri::hlssink2_t hlssink2) {
-  hlssink2_ = hlssink2;
+void OutputUri::SetHlsSinkType(hlssink_type_t hlssink) {
+  hlssink_type_ = hlssink;
 }
 
 OutputUri::http_root_t OutputUri::GetHttpRoot() const {
@@ -95,10 +95,10 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   }
 
   OutputUri url(base->GetID(), base->GetUrl());
-  bool hlssink2;
-  common::Value* hlssink2_field = hash->Find(HLSSINK2_FILED);
-  if (hlssink2_field && hlssink2_field->GetAsBoolean(&hlssink2)) {
-    url.SetHlsSink2(hlssink2);
+  int hlssink2;
+  common::Value* hlssink2_field = hash->Find(HLSSINK_TYPE_FILED);
+  if (hlssink2_field && hlssink2_field->GetAsInteger(&hlssink2)) {
+    url.SetHlsSinkType(static_cast<HlsSinkType>(hlssink2));
   }
 
   std::string http_root_str;
@@ -143,9 +143,9 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jhlssink2 = nullptr;
-  json_bool jhlssink2_exists = json_object_object_get_ex(serialized, HLSSINK2_FILED, &jhlssink2);
+  json_bool jhlssink2_exists = json_object_object_get_ex(serialized, HLSSINK_TYPE_FILED, &jhlssink2);
   if (jhlssink2_exists) {
-    res.SetHlsSink2(json_object_get_boolean(jhlssink2));
+    res.SetHlsSinkType(static_cast<HlsSinkType>(json_object_get_int(jhlssink2)));
   }
 
   json_object* jhttp_root = nullptr;
@@ -188,8 +188,8 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  if (hlssink2_) {
-    json_object_object_add(deserialized, HLSSINK2_FILED, json_object_new_boolean(*hlssink2_));
+  if (hlssink_type_) {
+    json_object_object_add(deserialized, HLSSINK_TYPE_FILED, json_object_new_int(*hlssink_type_));
   }
   auto ps = GetHttpRoot();
   if (ps) {

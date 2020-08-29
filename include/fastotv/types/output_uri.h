@@ -25,21 +25,22 @@ class OutputUri : public OutputUrl {
   typedef OutputUrl base_class;
   typedef common::Optional<common::file_system::ascii_directory_string_path> http_root_t;
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
+  enum HlsSinkType { HLSSINK = 0, HLSSINK2 = 1 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
 
   typedef common::Optional<HlsType> hls_t;
   typedef common::Optional<common::uri::GURL> playlist_root_t;
   typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
-  typedef common::Optional<bool> hlssink2_t;
+  typedef common::Optional<HlsSinkType> hlssink_type_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
 
   bool IsValid() const;
 
-  hlssink2_t GetHlsSink2() const;
-  void SetHlsSink2(hlssink2_t hlssink2);
+  hlssink_type_t GetHlsSinkType() const;
+  void SetHlsSinkType(hlssink_type_t hlssink);
 
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
@@ -66,7 +67,7 @@ class OutputUri : public OutputUrl {
 
  private:
   // http
-  hlssink2_t hlssink2_;
+  hlssink_type_t hlssink_type_;
   http_root_t http_root_;
   hls_t hls_type_;
   chunk_duration_t chunk_duration_;
