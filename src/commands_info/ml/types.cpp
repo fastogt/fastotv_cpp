@@ -24,6 +24,8 @@ namespace fastotv {
 namespace commands_info {
 namespace ml {
 
+ImageBox::ImageBox() : unique_component_id(0), class_id(0), object_id(0), confidence(0), rect() {}
+
 bool ImageBox::Equals(const ImageBox& box) const {
   return class_id == box.class_id && confidence == box.confidence && unique_component_id == box.unique_component_id &&
          object_id == box.object_id && rect == box.rect;
@@ -31,7 +33,7 @@ bool ImageBox::Equals(const ImageBox& box) const {
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
   return out << "Class id: " << box.class_id << ", Confidence: " << box.confidence
-             << ", Object id: " << box.unique_component_id << ", Object id: " << box.object_id
+             << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
              << ", Rect: " << box.rect.ToString();
 }
 

@@ -31,6 +31,8 @@ struct ImageBox {
   float confidence;
   common::draw::Rect rect;
 
+  ImageBox();
+
   bool Equals(const ImageBox& box) const;
 };
 
