@@ -21,7 +21,8 @@
 namespace fastotv {
 namespace server {
 
-Client::Client(common::libev::IoLoop* server, const common::net::socket_info& info) : base_class(server, info) {}
+Client::Client(common::libev::IoLoop* server, const common::net::socket_info& info, compressor_t compressor)
+    : base_class(server, info, compressor) {}
 
 common::ErrnoError Client::Ping() {
   common::daemon::commands::ClientPingInfo client_ping_info;

@@ -32,7 +32,7 @@ class FastoTVCompressor : public common::CompressZlibEDcoder {
 };
 
 template <typename Client>
-using ProtocolClient = common::protocols::json_rpc::ProtocolClient<Client, FastoTVCompressor>;
+using ProtocolClient = common::protocols::json_rpc::ProtocolClient<Client>;
 
 typedef ProtocolClient<common::libev::IoClient> protocol_client_t;
 

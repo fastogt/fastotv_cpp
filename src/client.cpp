@@ -29,7 +29,9 @@ const char* Client::ClassName() const {
   return "Client";
 }
 
-ProtocoledClient::ProtocoledClient(common::libev::IoLoop* server, const common::net::socket_info& info)
-    : base_class(server, info) {}
+ProtocoledClient::ProtocoledClient(common::libev::IoLoop* server,
+                                   const common::net::socket_info& info,
+                                   compressor_t compressor)
+    : base_class(compressor, server, info) {}
 
 }  // namespace fastotv

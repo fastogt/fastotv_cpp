@@ -36,7 +36,9 @@ namespace server {
 class Client : public ProtocoledClient {
  public:
   typedef ProtocoledClient base_class;
-  Client(common::libev::IoLoop* server, const common::net::socket_info& info);
+  Client(common::libev::IoLoop* server,
+         const common::net::socket_info& info,
+         compressor_t compressor = std::make_shared<protocol::FastoTVCompressor>());
 
   // requests
   common::ErrnoError Ping() WARN_UNUSED_RESULT;

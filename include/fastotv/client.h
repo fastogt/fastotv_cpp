@@ -35,7 +35,9 @@ class Client : public common::libev::tcp::TcpClient {
 class ProtocoledClient : public protocol::ProtocolClient<Client> {
  public:
   typedef protocol::ProtocolClient<Client> base_class;
-  ProtocoledClient(common::libev::IoLoop* server, const common::net::socket_info& info);
+  ProtocoledClient(common::libev::IoLoop* server,
+                   const common::net::socket_info& info,
+                   compressor_t compressor = std::make_shared<protocol::FastoTVCompressor>());
 };
 
 }  // namespace fastotv
