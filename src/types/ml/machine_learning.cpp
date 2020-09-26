@@ -18,11 +18,12 @@
 #define MODEL_PATH_FIELD "model_url"
 #define TRACKING_FIELD "tracking"
 #define OVERLAY_FIELD "overlay"
+#define DUMP_FIELD "dump"
 
 namespace fastotv {
 namespace ml {
 
-MachineLearning::MachineLearning() : backend_(NVIDIA), model_path_(), tracking_(false), overlay_(false) {}
+MachineLearning::MachineLearning() : backend_(NVIDIA), model_path_(), tracking_(false), dump_(false), overlay_(false) {}
 
 MachineLearning::MachineLearning(SupportedBackends backend, const model_path_t& model_path)
     : backend_(backend), model_path_(model_path), overlay_() {}
@@ -41,6 +42,14 @@ bool MachineLearning::GetNeedTracking() const {
 
 void MachineLearning::SetNeedTracking(bool tracking) {
   tracking_ = tracking;
+}
+
+bool MachineLearning::GetNeedDump() const {
+  return dump_;
+}
+
+void MachineLearning::SetNeedDump(bool dump) {
+  dump_ = dump;
 }
 
 bool MachineLearning::GetNeedOverlay() const {
@@ -90,6 +99,13 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
   }
   res.SetNeedTracking(tracking);
 
+  bool dump;
+  common::Value* dump_field = hash->Find(DUMP_FIELD);
+  if (!dump_field || !dump_field->GetAsBoolean(&dump)) {
+    return common::Optional<MachineLearning>();
+  }
+  res.SetNeedDump(dump);
+
   bool overlay;
   common::Value* overlay_field = hash->Find(OVERLAY_FIELD);
   if (!overlay_field || !overlay_field->GetAsBoolean(&overlay)) {
@@ -123,6 +139,7 @@ common::Error MachineLearning::SerializeFields(json_object* out) const {
   const std::string model_path_str = model_path_.spec();
   json_object_object_add(out, MODEL_PATH_FIELD, json_object_new_string(model_path_str.c_str()));
   json_object_object_add(out, TRACKING_FIELD, json_object_new_boolean(tracking_));
+  json_object_object_add(out, DUMP_FIELD, json_object_new_boolean(dump_));
   json_object_object_add(out, OVERLAY_FIELD, json_object_new_boolean(overlay_));
   return common::Error();
 }
