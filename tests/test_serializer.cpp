@@ -188,7 +188,7 @@ TEST(ClientInfo, serialize_deserialize) {
   ASSERT_EQ(cinf, dcinf);
 
   const std::string wrong =
-      R"({"os":{"arch":"arm64","version":null,"name":"tvOS","ram_total":0,"ram_free":0},"device_id":null,"login":null,"project":{"version":"1.0","name":"fastotv"},"cpu_brand":"Apple"})";
+      R"({"login":"test@fastotv.com","project":{"version":"1.0","name":"ivrata"},"cpu_brand":"Apple","device_id":"5f9176e56e2a862a18a9a357","os":{"ram_free":0,"arch":"Apple TV","version":null,"ram_total":0,"name":"Apple TV"}})";
   fastotv::commands_info::ClientInfo apple;
   err = apple.DeSerializeFromString(wrong);
   ASSERT_TRUE(err);

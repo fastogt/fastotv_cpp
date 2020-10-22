@@ -108,21 +108,21 @@ common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
   OperationSystemInfo inf;
   json_object* jname = nullptr;
   json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists) {
+  if (!jname_exists || !json_object_is_type(jname, json_type_string)) {
     return common::make_error_inval();
   }
   inf.name_ = json_object_get_string(jname);
 
   json_object* jversion = nullptr;
   json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
-  if (!jversion_exists) {
+  if (!jversion_exists || !json_object_is_type(jversion, json_type_string)) {
     return common::make_error_inval();
   }
   inf.version_ = json_object_get_string(jversion);
 
   json_object* jarch = nullptr;
   json_bool jarch_exists = json_object_object_get_ex(serialized, ARCH_FIELD, &jarch);
-  if (!jarch_exists) {
+  if (!jarch_exists || !json_object_is_type(jarch, json_type_string)) {
     return common::make_error_inval();
   }
   inf.arch_ = json_object_get_string(jarch);
