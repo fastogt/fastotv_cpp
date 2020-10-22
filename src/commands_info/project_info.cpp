@@ -46,13 +46,13 @@ common::Error ProjectInfo::SerializeFields(json_object* deserialized) const {
 common::Error ProjectInfo::DoDeSerialize(json_object* serialized) {
   json_object* jname = nullptr;
   json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists) {
+  if (!jname_exists || !json_object_is_type(jname, json_type_string)) {
     return common::make_error_inval();
   }
 
   json_object* jversion = nullptr;
   json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
-  if (!jversion_exists) {
+  if (!jversion_exists || !json_object_is_type(jname, json_type_string)) {
     return common::make_error_inval();
   }
 

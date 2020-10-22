@@ -69,7 +69,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   ClientInfo inf;
   json_object* jlogin = nullptr;
   json_bool jlogin_exists = json_object_object_get_ex(serialized, LOGIN_FIELD, &jlogin);
-  if (!jlogin_exists) {
+  if (!jlogin_exists || !json_object_is_type(jlogin, json_type_string)) {
     return common::make_error_inval();
   }
 
@@ -81,7 +81,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
 
   json_object* jdevice_id = nullptr;
   json_bool jdevice_id_exists = json_object_object_get_ex(serialized, DEVICE_ID_FIELD, &jdevice_id);
-  if (!jdevice_id_exists) {
+  if (!jdevice_id_exists || !json_object_is_type(jdevice_id, json_type_string)) {
     return common::make_error_inval();
   }
   inf.device_id_ = json_object_get_string(jdevice_id);
@@ -114,7 +114,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
 
   json_object* jcpu = nullptr;
   json_bool jcpu_exists = json_object_object_get_ex(serialized, CPU_FIELD, &jcpu);
-  if (jcpu_exists) {
+  if (jcpu_exists && json_object_is_type(jcpu, json_type_string)) {
     inf.cpu_brand_ = json_object_get_string(jcpu);
   }
 

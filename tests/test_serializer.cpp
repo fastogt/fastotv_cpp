@@ -186,6 +186,12 @@ TEST(ClientInfo, serialize_deserialize) {
   ASSERT_EQ(cinf.GetCpuBrand(), dcinf.GetCpuBrand());
 
   ASSERT_EQ(cinf, dcinf);
+
+  const std::string wrong =
+      R"({"os":{"arch":"arm64","version":null,"name":"tvOS","ram_total":0,"ram_free":0},"device_id":null,"login":null,"project":{"version":"1.0","name":"fastotv"},"cpu_brand":"Apple"})";
+  fastotv::commands_info::ClientInfo apple;
+  err = apple.DeSerializeFromString(wrong);
+  ASSERT_TRUE(err);
 }
 
 TEST(channels_t, serialize_deserialize) {
