@@ -128,7 +128,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::HashValue* srt_key;
   common::Value* srt_key_field = hash->Find(SRT_KEY_FIELD);
   if (srt_key_field && srt_key_field->GetAsHash(&srt_key)) {
-    url.SetSrtKey(SrtKey::Make(streamlink_url));
+    url.SetSrtKey(SrtKey::Make(srt_key));
   }
   return url;
 }

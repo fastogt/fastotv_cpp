@@ -38,8 +38,17 @@
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
 #include <fastotv/commands_info/server_info.h>
+#include <fastotv/types/srt_key.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
+
+TEST(SrtKey, serialize_deserialize) {
+  const std::string srt_key =
+      R"({"passphrase": "iVrata", "pbkeylen": 32})";
+  fastotv::SrtKey key;
+  common::Error err = key.DeSerializeFromString(srt_key);
+  ASSERT_TRUE(!err);
+}
 
 TEST(ChannelInfo, serialize_deserialize) {
   const std::string name = "alex";
