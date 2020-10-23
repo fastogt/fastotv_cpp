@@ -17,7 +17,7 @@
 #include <string>
 
 #include <fastotv/types/input_url.h>
-
+#include <fastotv/types/srt_key.h>
 #include <fastotv/types/stream_link.h>
 
 namespace fastotv {
@@ -32,7 +32,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<StreamLink> stream_url_t;
-  typedef common::Optional<std::string> srt_passphrase_t;
+  typedef common::Optional<SrtKey> srt_key_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -54,8 +54,8 @@ class InputUri : public InputUrl {
   multicast_iface_t GetMulticastIface() const;
   void SetMulticastIface(multicast_iface_t iface);
 
-  srt_passphrase_t GetSrtPassPhrase() const;
-  void SetSrtPassPhrase(const srt_passphrase_t& pass);
+  srt_key_t GetSrtKey() const;
+  void SetSrtKey(const srt_key_t& pass);
 
   bool Equals(const InputUri& inf) const;
 
@@ -76,7 +76,7 @@ class InputUri : public InputUrl {
   multicast_iface_t iface_;
 
   // srt
-  srt_passphrase_t passphrase_;
+  srt_key_t srt_key_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {

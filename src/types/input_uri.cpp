@@ -19,20 +19,14 @@
 #define PROXY_FIELD "proxy"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
-#define PASSPHRASE_FIELD "passphrase"
+#define SRT_KEY_FIELD "srt_key"
 
 namespace fastotv {
 
 InputUri::InputUri() : InputUri(0, url_t()) {}
 
 InputUri::InputUri(uri_id_t id, const url_t& input)
-    : base_class(id, input),
-      user_agent_(),
-      stream_url_(),
-      http_proxy_url_(),
-      program_number_(),
-      iface_(),
-      passphrase_() {}
+    : base_class(id, input), user_agent_(), stream_url_(), http_proxy_url_(), program_number_(), iface_(), srt_key_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -78,12 +72,12 @@ void InputUri::SetMulticastIface(multicast_iface_t iface) {
   iface_ = iface;
 }
 
-InputUri::srt_passphrase_t InputUri::GetSrtPassPhrase() const {
-  return passphrase_;
+InputUri::srt_key_t InputUri::GetSrtKey() const {
+  return srt_key_;
 }
 
-void InputUri::SetSrtPassPhrase(const srt_passphrase_t& pass) {
-  passphrase_ = pass;
+void InputUri::SetSrtKey(const srt_key_t& pass) {
+  srt_key_ = pass;
 }
 
 bool InputUri::Equals(const InputUri& inf) const {
@@ -131,10 +125,10 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetMulticastIface(iface);
   }
 
-  common::Value* pass_field = hash->Find(PASSPHRASE_FIELD);
-  std::string pass;
-  if (pass_field && pass_field->GetAsBasicString(&pass)) {
-    url.SetSrtPassPhrase(pass);
+  common::HashValue* srt_key;
+  common::Value* srt_key_field = hash->Find(SRT_KEY_FIELD);
+  if (srt_key_field && srt_key_field->GetAsHash(&srt_key)) {
+    url.SetSrtKey(SrtKey::Make(streamlink_url));
   }
   return url;
 }
@@ -176,11 +170,14 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetMulticastIface(iface);
   }
 
-  json_object* jpass = nullptr;
-  json_bool jpass_exists = json_object_object_get_ex(serialized, PASSPHRASE_FIELD, &jpass);
-  if (jpass_exists) {
-    std::string pass = json_object_get_string(jpass);
-    res.SetSrtPassPhrase(pass);
+  json_object* jsrt_key = nullptr;
+  json_bool jsrt_key_exists = json_object_object_get_ex(serialized, SRT_KEY_FIELD, &jsrt_key);
+  if (jsrt_key_exists) {
+    SrtKey key;
+    common::Error err = key.DeSerialize(jsrt_key);
+    if (!err) {
+      res.SetSrtKey(key);
+    }
   }
 
   json_object* jhttp_proxy = nullptr;
@@ -208,7 +205,7 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   }
   if (stream_url_) {
     json_object* jlink = nullptr;
-    common::Error err = stream_url_->Serialize(&jlink);
+    err = stream_url_->Serialize(&jlink);
     if (!err) {
       json_object_object_add(deserialized, STREAMLINK_URL_FIELD, jlink);
     }
@@ -222,10 +219,12 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     const std::string iface_str = *iface;
     json_object_object_add(deserialized, MULTICAST_IFACE_FIELD, json_object_new_string(iface_str.c_str()));
   }
-  const auto pass = GetSrtPassPhrase();
-  if (pass) {
-    const std::string pass_str = *pass;
-    json_object_object_add(deserialized, PASSPHRASE_FIELD, json_object_new_string(pass_str.c_str()));
+  if (srt_key_) {
+    json_object* jkey = nullptr;
+    err = srt_key_->Serialize(&jkey);
+    if (!err) {
+      json_object_object_add(deserialized, SRT_KEY_FIELD, jkey);
+    }
   }
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
