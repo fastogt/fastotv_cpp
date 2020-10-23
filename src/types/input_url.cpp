@@ -76,24 +76,19 @@ common::Optional<InputUrl> InputUrl::Make(common::HashValue* hash) {
 }
 
 common::Error InputUrl::DoDeSerialize(json_object* serialized) {
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, URI_FIELD, &juri);
-  if (!juri_exists) {
-    return common::make_error_inval();
+  std::string uri;
+  common::Error err = common::serializer::json_get_string(serialized, URI_FIELD, &uri);
+  if (err) {
+    return err;
   }
 
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (!jid_exists || !json_object_is_type(jid, json_type_int)) {
-    return common::make_error_inval();
+  int id;
+  err = common::serializer::json_get_int(serialized, ID_FIELD, &id);
+  if (err) {
+    return err;
   }
 
-  InputUrl res;
-  url_t url(json_object_get_string(juri));
-  res.SetUrl(url);
-  res.SetID(json_object_get_int(jid));
-
-  *this = res;
+  *this = InputUrl(id, url_t(uri));
   return common::Error();
 }
 

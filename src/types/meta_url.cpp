@@ -48,24 +48,19 @@ bool MetaUrl::Equals(const MetaUrl& inf) const {
 }
 
 common::Error MetaUrl::DoDeSerialize(json_object* serialized) {
-  json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(serialized, URL_FIELD, &juri);
-  if (!juri_exists || !json_object_is_type(juri, json_type_string)) {
-    return common::make_error_inval();
+  std::string uri;
+  common::Error err = common::serializer::json_get_string(serialized, URL_FIELD, &uri);
+  if (err) {
+    return err;
   }
 
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists || !json_object_is_type(jname, json_type_string)) {
-    return common::make_error_inval();
+  std::string name;
+  err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
 
-  MetaUrl res;
-  url_t url(json_object_get_string(juri));
-  res.SetUrl(url);
-  res.SetName(json_object_get_string(jname));
-
-  *this = res;
+  *this = MetaUrl(name, url_t(uri));
   return common::Error();
 }
 

@@ -53,13 +53,13 @@ common::Error AuthInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jdevid = nullptr;
-  json_bool jdevid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jdevid);
-  if (!jdevid_exists) {
+  device_id_t dev;
+  err = common::serializer::json_get_string(serialized, ID_FIELD, &dev);
+  if (err) {
     return common::make_error_inval();
   }
 
-  AuthInfo ainf(login, json_object_get_string(jdevid));
+  AuthInfo ainf(login, dev);
   *this = ainf;
   return common::Error();
 }

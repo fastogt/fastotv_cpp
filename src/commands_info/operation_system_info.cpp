@@ -106,26 +106,26 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
 
 common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
   OperationSystemInfo inf;
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists || !json_object_is_type(jname, json_type_string)) {
-    return common::make_error_inval();
+  std::string name;
+  common::Error err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
-  inf.name_ = json_object_get_string(jname);
+  inf.name_ = name;
 
-  json_object* jversion = nullptr;
-  json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
-  if (!jversion_exists || !json_object_is_type(jversion, json_type_string)) {
-    return common::make_error_inval();
+  std::string version;
+  err = common::serializer::json_get_string(serialized, VERSION_FIELD, &version);
+  if (err) {
+    return err;
   }
-  inf.version_ = json_object_get_string(jversion);
+  inf.version_ = version;
 
-  json_object* jarch = nullptr;
-  json_bool jarch_exists = json_object_object_get_ex(serialized, ARCH_FIELD, &jarch);
-  if (!jarch_exists || !json_object_is_type(jarch, json_type_string)) {
-    return common::make_error_inval();
+  std::string arch;
+  err = common::serializer::json_get_string(serialized, ARCH_FIELD, &arch);
+  if (err) {
+    return err;
   }
-  inf.arch_ = json_object_get_string(jarch);
+  inf.arch_ = arch;
 
   json_object* jram_total = nullptr;
   json_bool jram_total_exists = json_object_object_get_ex(serialized, RAM_TOTAL_FIELD, &jram_total);

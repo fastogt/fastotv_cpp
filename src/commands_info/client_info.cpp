@@ -67,24 +67,23 @@ common::Error ClientInfo::SerializeFields(json_object* deserialized) const {
 
 common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   ClientInfo inf;
-  json_object* jlogin = nullptr;
-  json_bool jlogin_exists = json_object_object_get_ex(serialized, LOGIN_FIELD, &jlogin);
-  if (!jlogin_exists || !json_object_is_type(jlogin, json_type_string)) {
-    return common::make_error_inval();
+  std::string login;
+  common::Error err = common::serializer::json_get_string(serialized, LOGIN_FIELD, &login);
+  if (err) {
+    return err;
   }
 
-  std::string login = json_object_get_string(jlogin);
   if (login.empty()) {
     return common::make_error_inval();
   }
   inf.login_ = login;
 
-  json_object* jdevice_id = nullptr;
-  json_bool jdevice_id_exists = json_object_object_get_ex(serialized, DEVICE_ID_FIELD, &jdevice_id);
-  if (!jdevice_id_exists || !json_object_is_type(jdevice_id, json_type_string)) {
-    return common::make_error_inval();
+  device_id_t dev;
+  err = common::serializer::json_get_string(serialized, DEVICE_ID_FIELD, &dev);
+  if (err) {
+    return err;
   }
-  inf.device_id_ = json_object_get_string(jdevice_id);
+  inf.device_id_ = dev;
 
   json_object* jproj = nullptr;
   json_bool jproj_exists = json_object_object_get_ex(serialized, PROJECT_FIELD, &jproj);
@@ -93,7 +92,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   }
 
   ProjectInfo proj;
-  common::Error err = proj.DeSerialize(jproj);
+  err = proj.DeSerialize(jproj);
   if (err) {
     return err;
   }
@@ -112,11 +111,12 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   }
   inf.os_ = os;
 
-  json_object* jcpu = nullptr;
-  json_bool jcpu_exists = json_object_object_get_ex(serialized, CPU_FIELD, &jcpu);
-  if (jcpu_exists && json_object_is_type(jcpu, json_type_string)) {
-    inf.cpu_brand_ = json_object_get_string(jcpu);
+  std::string brand;
+  err = common::serializer::json_get_string(serialized, CPU_FIELD, &brand);
+  if (err) {
+    return err;
   }
+  inf.cpu_brand_ = brand;
 
   *this = inf;
   return common::Error();

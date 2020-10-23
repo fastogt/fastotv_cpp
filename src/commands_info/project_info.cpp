@@ -44,20 +44,19 @@ common::Error ProjectInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error ProjectInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists || !json_object_is_type(jname, json_type_string)) {
-    return common::make_error_inval();
+  std::string name;
+  common::Error err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
 
-  json_object* jversion = nullptr;
-  json_bool jversion_exists = json_object_object_get_ex(serialized, VERSION_FIELD, &jversion);
-  if (!jversion_exists || !json_object_is_type(jname, json_type_string)) {
-    return common::make_error_inval();
+  std::string version;
+  err = common::serializer::json_get_string(serialized, VERSION_FIELD, &version);
+  if (err) {
+    return err;
   }
 
-  ProjectInfo proj(json_object_get_string(jname), json_object_get_string(jversion));
-  *this = proj;
+  *this = ProjectInfo(name, version);
   return common::Error();
 }
 
