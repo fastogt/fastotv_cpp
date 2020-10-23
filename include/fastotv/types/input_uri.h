@@ -32,6 +32,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<StreamLink> stream_url_t;
+  typedef common::Optional<std::string> srt_passphrase_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -53,6 +54,9 @@ class InputUri : public InputUrl {
   multicast_iface_t GetMulticastIface() const;
   void SetMulticastIface(multicast_iface_t iface);
 
+  srt_passphrase_t GetSrtPassPhrase() const;
+  void SetSrtPassPhrase(const srt_passphrase_t& pass);
+
   bool Equals(const InputUri& inf) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -70,6 +74,9 @@ class InputUri : public InputUrl {
   // udp
   program_number_t program_number_;
   multicast_iface_t iface_;
+
+  // srt
+  srt_passphrase_t passphrase_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {
