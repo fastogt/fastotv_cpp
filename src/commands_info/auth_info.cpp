@@ -54,7 +54,7 @@ common::Error AuthInfo::DoDeSerialize(json_object* serialized) {
   }
 
   device_id_t dev;
-  err = common::serializer::json_get_string(serialized, ID_FIELD, &dev);
+  err = GetStringField(serialized, ID_FIELD, &dev);
   if (err) {
     return common::make_error_inval();
   }
@@ -113,13 +113,13 @@ common::Error ServerAuthInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jexp = nullptr;
-  json_bool jexp_exists = json_object_object_get_ex(serialized, EXPIRED_DATE_FIELD, &jexp);
-  if (!jexp_exists) {
-    return common::make_error_inval();
+  int64_t exp;
+  err = GetInt64Field(serialized, EXPIRED_DATE_FIELD, &exp);
+  if (err) {
+    return err;
   }
 
-  ServerAuthInfo ainf(login, json_object_get_int64(jexp));
+  ServerAuthInfo ainf(login, exp);
   *this = ainf;
   return common::Error();
 }

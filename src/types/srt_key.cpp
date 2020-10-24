@@ -72,14 +72,14 @@ common::Optional<SrtKey> SrtKey::Make(common::HashValue* json) {
 common::Error SrtKey::DoDeSerialize(json_object* serialized) {
   SrtKey res;
   std::string pass;
-  common::Error err = common::serializer::json_get_string(serialized, PASSPHRASE_FIELD, &pass);
+  common::Error err = GetStringField(serialized, PASSPHRASE_FIELD, &pass);
   if (err) {
     return err;
   }
   res.passphrase_ = pass;
 
   key_len_t kl;
-  err = common::serializer::json_get_int(serialized, KEY_LEN_FIELD, &kl);
+  err = GetIntField(serialized, KEY_LEN_FIELD, &kl);
   if (err) {
     return err;
   }

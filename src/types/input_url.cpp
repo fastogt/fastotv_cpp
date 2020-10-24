@@ -77,13 +77,13 @@ common::Optional<InputUrl> InputUrl::Make(common::HashValue* hash) {
 
 common::Error InputUrl::DoDeSerialize(json_object* serialized) {
   std::string uri;
-  common::Error err = common::serializer::json_get_string(serialized, URI_FIELD, &uri);
+  common::Error err = GetStringField(serialized, URI_FIELD, &uri);
   if (err) {
     return err;
   }
 
   int id;
-  err = common::serializer::json_get_int(serialized, ID_FIELD, &id);
+  err = GetIntField(serialized, ID_FIELD, &id);
   if (err) {
     return err;
   }

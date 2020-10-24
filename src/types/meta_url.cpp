@@ -49,13 +49,13 @@ bool MetaUrl::Equals(const MetaUrl& inf) const {
 
 common::Error MetaUrl::DoDeSerialize(json_object* serialized) {
   std::string uri;
-  common::Error err = common::serializer::json_get_string(serialized, URL_FIELD, &uri);
+  common::Error err = GetStringField(serialized, URL_FIELD, &uri);
   if (err) {
     return err;
   }
 
   std::string name;
-  err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return err;
   }

@@ -45,13 +45,13 @@ common::Error ProjectInfo::SerializeFields(json_object* deserialized) const {
 
 common::Error ProjectInfo::DoDeSerialize(json_object* serialized) {
   std::string name;
-  common::Error err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  common::Error err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return err;
   }
 
   std::string version;
-  err = common::serializer::json_get_string(serialized, VERSION_FIELD, &version);
+  err = GetStringField(serialized, VERSION_FIELD, &version);
   if (err) {
     return err;
   }

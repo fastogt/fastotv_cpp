@@ -68,7 +68,7 @@ common::Error ClientInfo::SerializeFields(json_object* deserialized) const {
 common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   ClientInfo inf;
   std::string login;
-  common::Error err = common::serializer::json_get_string(serialized, LOGIN_FIELD, &login);
+  common::Error err = GetStringField(serialized, LOGIN_FIELD, &login);
   if (err) {
     return err;
   }
@@ -79,7 +79,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   inf.login_ = login;
 
   device_id_t dev;
-  err = common::serializer::json_get_string(serialized, DEVICE_ID_FIELD, &dev);
+  err = GetStringField(serialized, DEVICE_ID_FIELD, &dev);
   if (err) {
     return err;
   }
@@ -112,7 +112,7 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   inf.os_ = os;
 
   std::string brand;
-  err = common::serializer::json_get_string(serialized, CPU_FIELD, &brand);
+  err = GetStringField(serialized, CPU_FIELD, &brand);
   if (err) {
     return err;
   }

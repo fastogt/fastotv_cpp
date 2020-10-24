@@ -40,26 +40,26 @@ common::Error NotificationTextInfo::SerializeFields(json_object* deserialized) c
 }
 
 common::Error NotificationTextInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jtext = nullptr;
-  json_bool jtext_exists = json_object_object_get_ex(serialized, TEXT_FIELD, &jtext);
-  if (!jtext_exists) {
-    return common::make_error_inval();
+  std::string text;
+  common::Error err = GetStringField(serialized, TEXT_FIELD, &text);
+  if (err) {
+    return err;
   }
 
   MessageType type = TEXT;
-  json_object* jtype = nullptr;
-  json_bool jtype_exists = json_object_object_get_ex(serialized, TEXT_TYPE_FIELD, &jtype);
-  if (jtype_exists) {
-    type = static_cast<MessageType>(json_object_get_int(jtype));
+  int jtype;
+  err = GetIntField(serialized, TEXT_TYPE_FIELD, &jtype);
+  if (!err) {
+    type = static_cast<MessageType>(jtype);
   }
 
-  json_object* jshow_time = nullptr;
-  json_bool jshow_time_exists = json_object_object_get_ex(serialized, SHOW_TIME_FIELD, &jshow_time);
-  if (!jshow_time_exists) {
-    return common::make_error_inval();
+  int64_t show_time;
+  err = GetInt64Field(serialized, SHOW_TIME_FIELD, &show_time);
+  if (err) {
+    return err;
   }
 
-  NotificationTextInfo ainf(json_object_get_string(jtext), type, json_object_get_int64(jshow_time));
+  NotificationTextInfo ainf(text, type, show_time);
   *this = ainf;
   return common::Error();
 }

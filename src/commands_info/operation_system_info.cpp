@@ -107,21 +107,21 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
 common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
   OperationSystemInfo inf;
   std::string name;
-  common::Error err = common::serializer::json_get_string(serialized, NAME_FIELD, &name);
+  common::Error err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return err;
   }
   inf.name_ = name;
 
   std::string version;
-  err = common::serializer::json_get_string(serialized, VERSION_FIELD, &version);
+  err = GetStringField(serialized, VERSION_FIELD, &version);
   if (err) {
     return err;
   }
   inf.version_ = version;
 
   std::string arch;
-  err = common::serializer::json_get_string(serialized, ARCH_FIELD, &arch);
+  err = GetStringField(serialized, ARCH_FIELD, &arch);
   if (err) {
     return err;
   }
