@@ -46,11 +46,10 @@ common::Error NotificationTextInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  MessageType type = TEXT;
-  int jtype;
-  err = GetIntField(serialized, TEXT_TYPE_FIELD, &jtype);
-  if (!err) {
-    type = static_cast<MessageType>(jtype);
+  MessageType type;
+  err = GetEnumField<MessageType>(serialized, TEXT_TYPE_FIELD, &type);
+  if (err) {
+    return err;
   }
 
   int64_t show_time;

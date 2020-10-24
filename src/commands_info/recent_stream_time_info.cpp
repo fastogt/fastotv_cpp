@@ -44,20 +44,19 @@ common::Error RecentStreamTimeInfo::SerializeFields(json_object* deserialized) c
 }
 
 common::Error RecentStreamTimeInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, ID_FIELD, &jchannel);
-  if (!jchannel_exists) {
-    return common::make_error_inval();
+  stream_id_t channel;
+  common::Error err = GetStringField(serialized, ID_FIELD, &channel);
+  if (err) {
+    return err;
   }
 
-  json_object* jtime = nullptr;
-  json_bool jtime_exists = json_object_object_get_ex(serialized, TIME_FIELD, &jtime);
-  if (!jtime_exists) {
-    return common::make_error_inval();
+  int64_t time;
+  err = GetInt64Field(serialized, TIME_FIELD, &time);
+  if (err) {
+    return err;
   }
 
-  RecentStreamTimeInfo prog(json_object_get_string(jchannel), json_object_get_int64(jtime));
-  *this = prog;
+  *this = RecentStreamTimeInfo(channel, time);
   return common::Error();
 }
 

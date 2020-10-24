@@ -204,12 +204,10 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
 
 common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
   stream_id_t sid;
-  json_object* jsid = nullptr;
-  json_bool jsid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jsid);
-  if (!jsid_exists) {
+  common::Error err = GetStringField(serialized, ID_FIELD, &sid);
+  if (err) {
     return common::make_error_inval();
   }
-  sid = json_object_get_string(jsid);
 
   groups_t groups;
   json_object* jgroup = nullptr;

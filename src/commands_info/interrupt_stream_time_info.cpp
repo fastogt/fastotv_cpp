@@ -39,25 +39,24 @@ common::Error InterruptStreamTimeInfo::SerializeFields(json_object* deserialized
   }
 
   json_object_object_add(deserialized, ID_FIELD, json_object_new_string(id_.c_str()));
-  json_object_object_add(deserialized, TIME_FIELD, json_object_new_boolean(time_));
+  json_object_object_add(deserialized, TIME_FIELD, json_object_new_int64(time_));
   return common::Error();
 }
 
 common::Error InterruptStreamTimeInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, ID_FIELD, &jchannel);
-  if (!jchannel_exists) {
-    return common::make_error_inval();
+  stream_id_t channel;
+  common::Error err = GetStringField(serialized, ID_FIELD, &channel);
+  if (err) {
+    return err;
   }
 
-  json_object* jtime = nullptr;
-  json_bool jtime_exists = json_object_object_get_ex(serialized, TIME_FIELD, &jtime);
-  if (!jtime_exists) {
-    return common::make_error_inval();
+  int64_t time;
+  err = GetInt64Field(serialized, TIME_FIELD, &time);
+  if (err) {
+    return err;
   }
 
-  InterruptStreamTimeInfo prog(json_object_get_string(jchannel), json_object_get_int64(jtime));
-  *this = prog;
+  *this = InterruptStreamTimeInfo(channel, time);
   return common::Error();
 }
 

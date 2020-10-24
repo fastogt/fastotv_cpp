@@ -48,20 +48,19 @@ common::Error LoginInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error LoginInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jlogin = nullptr;
-  json_bool jlogin_exists = json_object_object_get_ex(serialized, LOGIN_FIELD, &jlogin);
-  if (!jlogin_exists) {
+  std::string login;
+  common::Error err = GetStringField(serialized, LOGIN_FIELD, &login);
+  if (err) {
+    return err;
+  }
+
+  std::string pass;
+  err = GetStringField(serialized, PASSWORD_FIELD, &pass);
+  if (err) {
     return common::make_error_inval();
   }
 
-  json_object* jpass = nullptr;
-  json_bool jpass_exists = json_object_object_get_ex(serialized, PASSWORD_FIELD, &jpass);
-  if (!jpass_exists) {
-    return common::make_error_inval();
-  }
-
-  LoginInfo ainf(json_object_get_string(jlogin), json_object_get_string(jpass));
-  *this = ainf;
+  *this = LoginInfo(login, pass);
   return common::Error();
 }
 

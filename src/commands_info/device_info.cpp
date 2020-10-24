@@ -61,20 +61,16 @@ common::Error DeviceInfo::SerializeFields(json_object* deserialized) const {
 
 common::Error DeviceInfo::DoDeSerialize(json_object* serialized) {
   device_id_t did;
-  json_object* jdid = nullptr;
-  json_bool jdid_exists = json_object_object_get_ex(serialized, DEVICE_INFO_ID_FIELD, &jdid);
-  if (!jdid_exists) {
-    return common::make_error_inval();
+  common::Error err = GetStringField(serialized, DEVICE_INFO_ID_FIELD, &did);
+  if (err) {
+    return err;
   }
-  did = json_object_get_string(jdid);
 
   std::string name;
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, DEVICE_INFO_NAME_FIELD, &jname);
-  if (!jname_exists) {
-    return common::make_error_inval();
+  err = GetStringField(serialized, DEVICE_INFO_NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
-  name = json_object_get_string(jname);
 
   DeviceInfo dev(did, name);
   if (!dev.IsValid()) {
