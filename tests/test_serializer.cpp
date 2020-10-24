@@ -48,6 +48,8 @@ TEST(SrtKey, serialize_deserialize) {
   fastotv::SrtKey key;
   common::Error err = key.DeSerializeFromString(srt_key);
   ASSERT_TRUE(!err);
+  ASSERT_EQ(key.GetSrtPassPhrase(),"iVrata");
+  ASSERT_EQ(key.GetKeyLen(),32);
 }
 
 TEST(ChannelInfo, serialize_deserialize) {
