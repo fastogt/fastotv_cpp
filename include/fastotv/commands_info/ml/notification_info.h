@@ -37,13 +37,16 @@ class NotificationInfo : public common::serializer::JsonSerializer<NotificationI
   NotificationInfo();
   explicit NotificationInfo(const stream_id_t& sid, const images_t& images);
 
+  fastotv::stream_id_t GetStreamID() const;
+  void SetStreamID(const fastotv::stream_id_t& sid);
+
   images_t GetImages() const;
   void SetImages(const images_t& images);
 
   void AddImage(const ImageBox& image);
   void ClearImages();
 
-  bool Equals(const NotificationInfo& auth) const;
+  bool Equals(const NotificationInfo& norification) const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

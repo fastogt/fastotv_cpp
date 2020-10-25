@@ -31,6 +31,7 @@
 #include <fastotv/commands_info/favorite_info.h>
 #include <fastotv/commands_info/interrupt_stream_time_info.h>
 #include <fastotv/commands_info/machine_info.h>
+#include <fastotv/commands_info/ml/notification_info.h>
 #include <fastotv/commands_info/movie_info.h>
 #include <fastotv/commands_info/notification_text_info.h>
 #include <fastotv/commands_info/operation_system_info.h>
@@ -560,4 +561,23 @@ TEST(OperationSystemInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(rinf_info, dser);
+}
+
+TEST(NotificationInfo, serialize_deserialize) {
+  const fastotv::stream_id_t sid = "12345";
+  const fastotv::commands_info::ml::ImageBox image(0, 1, 2, 3.2, common::draw::Rect(3, 5, 128, 256));
+  const std::vector<fastotv::commands_info::ml::ImageBox> images = {image};
+  fastotv::commands_info::ml::NotificationInfo noti(sid, images);
+
+  ASSERT_EQ(noti.GetStreamID(), sid);
+  ASSERT_EQ(noti.GetImages(), images);
+
+  serialize_t ser;
+  common::Error err = noti.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::ml::NotificationInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(noti, dser);
 }

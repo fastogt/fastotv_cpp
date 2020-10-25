@@ -25,6 +25,7 @@
 
 #define CLASS_ID_FIELD "class_id"
 #define CONFIDENCE_FIELD "confidence"
+#define OBJECT_ID_FIELD "object_id"
 #define LEFT_FIELD "left"
 #define TOP_FIELD "top"
 #define WIDTH_FIELD "width"
@@ -40,6 +41,7 @@ json_object* make_json_from_image(const ImageBox& box) {
 
   json_object_object_add(jimage, CLASS_ID_FIELD, json_object_new_int(box.class_id));
   json_object_object_add(jimage, CONFIDENCE_FIELD, json_object_new_double(box.confidence));
+  json_object_object_add(jimage, OBJECT_ID_FIELD, json_object_new_int64(box.object_id));
   const auto point = box.rect.origin();
   json_object_object_add(jimage, LEFT_FIELD, json_object_new_int(point.x()));
   json_object_object_add(jimage, TOP_FIELD, json_object_new_int(point.y()));
@@ -62,6 +64,12 @@ ImageBox make_image_from_json(json_object* obj) {
   json_bool jprob_exists = json_object_object_get_ex(obj, CONFIDENCE_FIELD, &jprob);
   if (jprob_exists) {
     image.confidence = json_object_get_double(jprob);
+  }
+
+  json_object* jobject_id = nullptr;
+  json_bool jobject_id_exists = json_object_object_get_ex(obj, OBJECT_ID_FIELD, &jobject_id);
+  if (jobject_id_exists) {
+    image.object_id = json_object_get_int64(jobject_id);
   }
 
   json_object* jx = nullptr;
@@ -96,6 +104,14 @@ NotificationInfo::NotificationInfo() : sid_(), images_() {}
 
 NotificationInfo::NotificationInfo(const stream_id_t& sid, const images_t& images) : sid_(sid), images_(images) {}
 
+fastotv::stream_id_t NotificationInfo::GetStreamID() const {
+  return sid_;
+}
+
+void NotificationInfo::SetStreamID(const fastotv::stream_id_t& sid) {
+  sid_ = sid;
+}
+
 NotificationInfo::images_t NotificationInfo::GetImages() const {
   return images_;
 }
@@ -113,7 +129,7 @@ void NotificationInfo::ClearImages() {
 }
 
 common::Error NotificationInfo::SerializeFields(json_object* deserialized) const {
-  json_object* jimages = json_object_new_array();
+  json_object* jimages = json_object_new_array_ext(images_.size());
   for (const auto image : images_) {
     json_object* jimage = make_json_from_image(image);
     json_object_array_add(jimages, jimage);
@@ -124,32 +140,31 @@ common::Error NotificationInfo::SerializeFields(json_object* deserialized) const
 }
 
 common::Error NotificationInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
-  if (!jid_exists) {
-    return common::make_error_inval();
+  std::string id;
+  common::Error err = GetStringField(serialized, ID_FIELD, &id);
+  if (err) {
+    return err;
   }
 
-  json_object* jimages = nullptr;
-  json_bool jimages_exists = json_object_object_get_ex(serialized, IMAGES_FIELD, &jimages);
-  if (!jimages_exists) {
-    return common::make_error_inval();
+  json_object* jimages;
+  size_t len;
+  err = GetArrayField(serialized, IMAGES_FIELD, &jimages, &len);
+  if (err) {
+    return err;
   }
 
-  images_t iamges;
-  size_t len = json_object_array_length(jimages);
+  images_t images;
   for (size_t i = 0; i < len; ++i) {
     json_object* jimage = json_object_array_get_idx(jimages, i);
-    iamges.push_back(make_image_from_json(jimage));
+    images.push_back(make_image_from_json(jimage));
   }
 
-  NotificationInfo ainf(json_object_get_string(jid), iamges);
-  *this = ainf;
+  *this = NotificationInfo(id, images);
   return common::Error();
 }
 
-bool NotificationInfo::Equals(const NotificationInfo& auth) const {
-  return images_ == auth.images_;
+bool NotificationInfo::Equals(const NotificationInfo& norification) const {
+  return sid_ == norification.sid_ && images_ == norification.images_;
 }
 
 }  // namespace ml

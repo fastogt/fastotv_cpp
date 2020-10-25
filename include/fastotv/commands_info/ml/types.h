@@ -32,6 +32,11 @@ struct ImageBox {
   common::draw::Rect rect;
 
   ImageBox();
+  ImageBox(int32_t unique_component_id,
+           int32_t class_id,
+           uint64_t object_id,
+           float confidence,
+           const common::draw::Rect& rect);
 
   bool Equals(const ImageBox& box) const;
 };
