@@ -80,28 +80,28 @@ common::Error ProgrammeInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error ProgrammeInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, CHANNEL_FIELD, &jchannel);
-  if (!jchannel_exists) {
-    return common::make_error_inval();
+  std::string channel;
+  common::Error err = GetStringField(serialized, CHANNEL_FIELD, &channel);
+  if (err) {
+    return err;
   }
 
-  json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
-  if (!jstart_exists) {
-    return common::make_error_inval();
+  int64_t start;
+  err = GetInt64Field(serialized, START_FIELD, &start);
+  if (err) {
+    return err;
   }
 
-  json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
-  if (!jstop_exists) {
-    return common::make_error_inval();
+  int64_t stop;
+  err = GetInt64Field(serialized, STOP_FIELD, &stop);
+  if (err) {
+    return err;
   }
 
-  json_object* jtitle = nullptr;
-  json_bool jtitle_exists = json_object_object_get_ex(serialized, TITLE_FIELD, &jtitle);
-  if (!jtitle_exists) {
-    return common::make_error_inval();
+  std::string title;
+  err = GetStringField(serialized, TITLE_FIELD, &title);
+  if (err) {
+    return err;
   }
 
   json_object* jcategory = nullptr;
@@ -118,9 +118,7 @@ common::Error ProgrammeInfo::DoDeSerialize(json_object* serialized) {
     descr = std::string(json_object_get_string(jdescr));
   }
 
-  ProgrammeInfo prog(json_object_get_string(jchannel), json_object_get_int64(jstart), json_object_get_int64(jstop),
-                     json_object_get_string(jtitle), category, descr);
-  *this = prog;
+  *this = ProgrammeInfo(channel, start, stop, title, category, descr);
   return common::Error();
 }
 

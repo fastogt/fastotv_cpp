@@ -43,28 +43,25 @@ common::Error CreateContentRequestInfo::SerializeFields(json_object* deserialize
 
 common::Error CreateContentRequestInfo::DoDeSerialize(json_object* serialized) {
   CreateContentRequestInfo ainf;
-  json_object* jtext = nullptr;
-  json_bool jtext_exists = json_object_object_get_ex(serialized, TITLE_FIELD, &jtext);
-  if (!jtext_exists) {
-    return common::make_error_inval();
-  }
-  ainf.text_ = json_object_get_string(jtext);
-
-  json_object* jtype = nullptr;
-  json_bool jtype_exists = json_object_object_get_ex(serialized, CONTENT_TYPE_FIELD, &jtype);
-  if (!jtype_exists) {
-    return common::make_error_inval();
+  std::string text;
+  common::Error err = GetStringField(serialized, TITLE_FIELD, &text);
+  if (err) {
+    return err;
   }
 
-  ainf.type_ = static_cast<ContentType>(json_object_get_int(jtype));
-  json_object* jstatus = nullptr;
-  json_bool jstatus_exists = json_object_object_get_ex(serialized, REQUEST_STATUS_FIELD, &jstatus);
-  if (!jstatus_exists) {
-    return common::make_error_inval();
+  ContentType type;
+  err = GetEnumField(serialized, CONTENT_TYPE_FIELD, &type);
+  if (err) {
+    return err;
   }
 
-  ainf.status_ = static_cast<RequestStatus>(json_object_get_int(jstatus));
-  *this = ainf;
+  RequestStatus status;
+  err = GetEnumField(serialized, REQUEST_STATUS_FIELD, &status);
+  if (err) {
+    return err;
+  }
+
+  *this = CreateContentRequestInfo(text, type, status);
   return common::Error();
 }
 

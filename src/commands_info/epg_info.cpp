@@ -180,7 +180,7 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jprogs;
-  size_t len ;
+  size_t len;
   err = GetArrayField(serialized, PROGRAMS_FIELD, &jprogs, &len);
   if (!err) {
     programs_t progs;

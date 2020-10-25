@@ -548,8 +548,8 @@ TEST(MovieInfo, serialize_deserialize) {
   const bool enable_video = false;
   const bool enable_audio = true;
 
-  fastotv::commands_info::VodInfo vod_info(stream_id, {}, 0, false, false, 0, dser, enable_audio, enable_video, {},
-                                           0, false, {});
+  fastotv::commands_info::VodInfo vod_info(stream_id, {}, 0, false, false, 0, dser, enable_audio, enable_video, {}, 0,
+                                           false, {});
 
   err = vod_info.Serialize(&ser);
   ASSERT_FALSE(err);

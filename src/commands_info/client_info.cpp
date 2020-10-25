@@ -85,10 +85,10 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   }
   inf.device_id_ = dev;
 
-  json_object* jproj = nullptr;
-  json_bool jproj_exists = json_object_object_get_ex(serialized, PROJECT_FIELD, &jproj);
-  if (!jproj_exists) {
-    return common::make_error_inval();
+  json_object* jproj;
+  err = GetObjectField(serialized, PROJECT_FIELD, &jproj);
+  if (err) {
+    return err;
   }
 
   ProjectInfo proj;
@@ -98,10 +98,10 @@ common::Error ClientInfo::DoDeSerialize(json_object* serialized) {
   }
   inf.proj_ = proj;
 
-  json_object* jos = nullptr;
-  json_bool jos_exists = json_object_object_get_ex(serialized, OS_FIELD, &jos);
-  if (!jos_exists) {
-    return common::make_error_inval();
+  json_object* jos;
+  err = GetObjectField(serialized, OS_FIELD, &jos);
+  if (err) {
+    return err;
   }
 
   OperationSystemInfo os;
