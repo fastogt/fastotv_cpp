@@ -79,41 +79,35 @@ bool CatchupGenerateInfo::Equals(const CatchupGenerateInfo& inf) const {
 }
 
 common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
-  CatchupGenerateInfo inf;
-  json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jcid);
-  if (!jcid_exists) {
-    return common::make_error_inval();
+  stream_id_t cid;
+  common::Error err = GetStringField(serialized, ID_FIELD, &cid);
+  if (err) {
+    return err;
   }
 
-  stream_id_t cid = json_object_get_string(jcid);
   if (cid == invalid_stream_id) {
     return common::make_error_inval();
   }
-  inf.sid_ = cid;
 
-  json_object* jtitle = nullptr;
-  json_bool jtitle_exists = json_object_object_get_ex(serialized, TITLE_FIELD, &jtitle);
-  if (!jtitle_exists) {
-    return common::make_error_inval();
+  std::string title;
+  err = GetStringField(serialized, TITLE_FIELD, &title);
+  if (err) {
+    return err;
   }
-  inf.title_ = json_object_get_string(jtitle);
 
-  json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
-  if (!jstart_exists) {
-    return common::make_error_inval();
+  int64_t start;
+  err = GetInt64Field(serialized, START_FIELD, &start);
+  if (err) {
+    return err;
   }
-  inf.start_time_ = json_object_get_int64(jstart);
 
-  json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
-  if (!jstop_exists) {
-    return common::make_error_inval();
+  int64_t stop;
+  err = GetInt64Field(serialized, STOP_FIELD, &stop);
+  if (err) {
+    return err;
   }
-  inf.stop_time_ = json_object_get_int64(jstop);
 
-  *this = inf;
+  *this = CatchupGenerateInfo(cid, title, start, stop);
   return common::Error();
 }
 

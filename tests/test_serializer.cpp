@@ -249,6 +249,28 @@ TEST(AuthInfo, serialize_deserialize) {
   ASSERT_EQ(auth_info, dser);
 }
 
+TEST(ServerAuthInfo, serialize_deserialize) {
+  const std::string login = "palec";
+  const std::string password = "ff";
+  const std::string device = "dev";
+  const int64_t exp = 1234;
+  fastotv::commands_info::LoginInfo log(login, password);
+  fastotv::commands_info::AuthInfo auth_info(log, device);
+  fastotv::commands_info::ServerAuthInfo sauth(auth_info, exp);
+  ASSERT_EQ(sauth.GetLogin(), login);
+  ASSERT_EQ(sauth.GetPassword(), password);
+  ASSERT_EQ(sauth.GetDeviceID(), device);
+  ASSERT_EQ(sauth.GetExpiredDate(), exp);
+  serialize_t ser;
+  common::Error err = sauth.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::commands_info::ServerAuthInfo dser;
+  err = dser.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(auth_info, dser);
+}
+
 TEST(RuntimeChannelInfo, serialize_deserialize) {
   const std::string channel_id = "1234";
   const size_t watchers = 7;

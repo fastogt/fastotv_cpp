@@ -99,19 +99,19 @@ common::Error CatchupInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jstart = nullptr;
-  json_bool jstart_exists = json_object_object_get_ex(serialized, START_FIELD, &jstart);
-  if (!jstart_exists) {
-    return common::make_error_inval();
+  int64_t start;
+  err = GetInt64Field(serialized, START_FIELD, &start);
+  if (err) {
+    return err;
   }
-  inf.start_ = json_object_get_int64(jstart);
+  inf.start_ = start;
 
-  json_object* jstop = nullptr;
-  json_bool jstop_exists = json_object_object_get_ex(serialized, STOP_FIELD, &jstop);
-  if (!jstop_exists) {
-    return common::make_error_inval();
+  int64_t stop;
+  err = GetInt64Field(serialized, STOP_FIELD, &stop);
+  if (err) {
+    return err;
   }
-  inf.stop_ = json_object_get_int64(jstop);
+  inf.stop_ = stop;
 
   *this = inf;
   return common::Error();

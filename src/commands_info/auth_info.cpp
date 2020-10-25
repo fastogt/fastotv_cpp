@@ -59,8 +59,7 @@ common::Error AuthInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  AuthInfo ainf(login, dev);
-  *this = ainf;
+  *this = AuthInfo(login, dev);
   return common::Error();
 }
 
@@ -119,8 +118,7 @@ common::Error ServerAuthInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  ServerAuthInfo ainf(login, exp);
-  *this = ainf;
+  *this = ServerAuthInfo(login, exp);
   return common::Error();
 }
 

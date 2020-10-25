@@ -46,20 +46,17 @@ bool CatchupUndoInfo::Equals(const CatchupUndoInfo& inf) const {
 }
 
 common::Error CatchupUndoInfo::DoDeSerialize(json_object* serialized) {
-  CatchupUndoInfo inf;
-  json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jcid);
-  if (!jcid_exists) {
-    return common::make_error_inval();
+  stream_id_t cid;
+  common::Error err = GetStringField(serialized, ID_FIELD, &cid);
+  if (err) {
+    return err;
   }
 
-  stream_id_t cid = json_object_get_string(jcid);
   if (cid == invalid_stream_id) {
     return common::make_error_inval();
   }
-  inf.sid_ = cid;
 
-  *this = inf;
+  *this = CatchupUndoInfo(cid);
   return common::Error();
 }
 
