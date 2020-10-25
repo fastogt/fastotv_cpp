@@ -40,11 +40,12 @@
 #include <fastotv/commands_info/serial_info.h>
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vod_info.h>
+#include <fastotv/types/input_uri.h>
 #include <fastotv/types/srt_key.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
-TEST(SrtKey, serialize_deserialize) {
+TEST(InputUri, serialize_deserialize) {
   const std::string srt_key =
       R"({"passphrase": "iVrata", "pbkeylen": 32})";
   fastotv::SrtKey key;
@@ -52,6 +53,20 @@ TEST(SrtKey, serialize_deserialize) {
   ASSERT_TRUE(!err);
   ASSERT_EQ(key.GetSrtPassPhrase(), "iVrata");
   ASSERT_EQ(key.GetKeyLen(), 32);
+
+  const common::uri::GURL url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
+  int sid = 11;
+  fastotv::InputUri input(sid, url);
+  input.SetSrtKey(key);
+
+  serialize_t ser;
+  err = input.Serialize(&ser);
+  ASSERT_TRUE(!err);
+  fastotv::InputUri dinput;
+  err = dinput.DeSerialize(ser);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(input, dinput);
 }
 
 TEST(ChannelInfo, serialize_deserialize) {

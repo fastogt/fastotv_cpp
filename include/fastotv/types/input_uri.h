@@ -57,7 +57,7 @@ class InputUri : public InputUrl {
   srt_key_t GetSrtKey() const;
   void SetSrtKey(const srt_key_t& pass);
 
-  bool Equals(const InputUri& inf) const;
+  bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
 

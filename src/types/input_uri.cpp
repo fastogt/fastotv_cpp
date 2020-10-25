@@ -80,8 +80,10 @@ void InputUri::SetSrtKey(const srt_key_t& pass) {
   srt_key_ = pass;
 }
 
-bool InputUri::Equals(const InputUri& inf) const {
-  return base_class::Equals(inf);
+bool InputUri::Equals(const InputUri& url) const {
+  return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
+         http_proxy_url_ == url.http_proxy_url_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
+         srt_key_ == url.srt_key_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -140,50 +142,48 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* juser_agent = nullptr;
-  json_bool juser_agent_exists = json_object_object_get_ex(serialized, USER_AGENT_FIELD, &juser_agent);
-  if (juser_agent_exists) {
-    user_agent_t agent = static_cast<UserAgent>(json_object_get_int(juser_agent));
+  UserAgent agent;
+  err = GetEnumField(serialized, USER_AGENT_FIELD, &agent);
+  if (!err) {
     res.SetUserAgent(agent);
   }
 
   json_object* jstream_url = nullptr;
-  json_bool jstream_url_exists = json_object_object_get_ex(serialized, STREAMLINK_URL_FIELD, &jstream_url);
-  if (jstream_url_exists) {
+  err = GetObjectField(serialized, STREAMLINK_URL_FIELD, &jstream_url);
+  if (!err) {
     StreamLink link;
-    common::Error err = link.DeSerialize(jstream_url);
+    err = link.DeSerialize(jstream_url);
     if (!err) {
       res.SetStreamLink(link);
     }
   }
 
-  json_object* jpid = nullptr;
-  json_bool jpid_exists = json_object_object_get_ex(serialized, PROGRAM_NUMBER_FIELD, &jpid);
-  if (jpid_exists) {
-    res.SetProgramNumber(json_object_get_int(jpid));
+  int pid;
+  err = GetIntField(serialized, PROGRAM_NUMBER_FIELD, &pid);
+  if (!err) {
+    res.SetProgramNumber(pid);
   }
 
-  json_object* jiface = nullptr;
-  json_bool jiface_exists = json_object_object_get_ex(serialized, MULTICAST_IFACE_FIELD, &jiface);
-  if (jiface_exists) {
-    std::string iface = json_object_get_string(jiface);
+  std::string iface;
+  err = GetStringField(serialized, MULTICAST_IFACE_FIELD, &iface);
+  if (!err) {
     res.SetMulticastIface(iface);
   }
 
   json_object* jsrt_key = nullptr;
-  json_bool jsrt_key_exists = json_object_object_get_ex(serialized, SRT_KEY_FIELD, &jsrt_key);
-  if (jsrt_key_exists) {
+  err = GetObjectField(serialized, SRT_KEY_FIELD, &jsrt_key);
+  if (!err) {
     SrtKey key;
-    common::Error err = key.DeSerialize(jsrt_key);
+    err = key.DeSerialize(jsrt_key);
     if (!err) {
       res.SetSrtKey(key);
     }
   }
 
-  json_object* jhttp_proxy = nullptr;
-  json_bool jhttp_proxy_exists = json_object_object_get_ex(serialized, PROXY_FIELD, &jhttp_proxy);
-  if (jhttp_proxy_exists) {
-    res.SetHttpProxyUrl(url_t(json_object_get_string(jhttp_proxy)));
+  std::string http_proxy;
+  err = GetStringField(serialized, PROXY_FIELD, &http_proxy);
+  if (!err) {
+    res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
   *this = res;
@@ -203,6 +203,7 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (user_agent_) {
     json_object_object_add(deserialized, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
   }
+
   if (stream_url_) {
     json_object* jlink = nullptr;
     err = stream_url_->Serialize(&jlink);
@@ -210,15 +211,18 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
       json_object_object_add(deserialized, STREAMLINK_URL_FIELD, jlink);
     }
   }
+
   const auto pid = GetProgramNumber();
   if (pid) {
     json_object_object_add(deserialized, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
   }
+
   const auto iface = GetMulticastIface();
   if (iface) {
     const std::string iface_str = *iface;
     json_object_object_add(deserialized, MULTICAST_IFACE_FIELD, json_object_new_string(iface_str.c_str()));
   }
+
   if (srt_key_) {
     json_object* jkey = nullptr;
     err = srt_key_->Serialize(&jkey);
@@ -226,6 +230,7 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
       json_object_object_add(deserialized, SRT_KEY_FIELD, jkey);
     }
   }
+
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
     const std::string proxy = hurl->spec();
