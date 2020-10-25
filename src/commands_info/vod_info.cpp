@@ -95,10 +95,10 @@ common::Error VodInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jmovie = nullptr;
-  json_bool jepg_exists = json_object_object_get_ex(serialized, MOVIE_FIELD, &jmovie);
-  if (!jepg_exists) {
-    return common::make_error_inval();
+  json_object* jmovie;
+  err = GetObjectField(serialized, MOVIE_FIELD, &jmovie);
+  if (err) {
+    return err;
   }
 
   MovieInfo movie;

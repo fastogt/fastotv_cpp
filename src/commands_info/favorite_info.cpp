@@ -43,20 +43,19 @@ common::Error FavoriteInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error FavoriteInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jchannel = nullptr;
-  json_bool jchannel_exists = json_object_object_get_ex(serialized, ID_FIELD, &jchannel);
-  if (!jchannel_exists) {
-    return common::make_error_inval();
+  std::string channel;
+  common::Error err = GetStringField(serialized, ID_FIELD, &channel);
+  if (err) {
+    return err;
   }
 
-  json_object* jfavorite = nullptr;
-  json_bool jfavorite_exists = json_object_object_get_ex(serialized, FAVORITE_FIELD, &jfavorite);
-  if (!jfavorite_exists) {
-    return common::make_error_inval();
+  bool favorite;
+  err = GetBoolField(serialized, FAVORITE_FIELD, &favorite);
+  if (err) {
+    return err;
   }
 
-  FavoriteInfo prog(json_object_get_string(jchannel), json_object_get_boolean(jfavorite));
-  *this = prog;
+  *this = FavoriteInfo(channel, favorite);
   return common::Error();
 }
 

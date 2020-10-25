@@ -210,10 +210,10 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
   }
 
   groups_t groups;
-  json_object* jgroup = nullptr;
-  json_bool jgroup_exists = json_object_object_get_ex(serialized, GROUPS_FIELD, &jgroup);
-  if (jgroup_exists) {
-    size_t len = json_object_array_length(jgroup);
+  size_t len;
+  json_object* jgroup;
+  err = GetArrayField(serialized, GROUPS_FIELD, &jgroup, &len);
+  if (!err) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jpart = json_object_array_get_idx(jgroup, i);
       groups.push_back(json_object_get_string(jpart));
@@ -222,14 +222,14 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   iarc_t iart = DEFAULT_IARC;
   json_object* jiart = nullptr;
-  json_bool jiart_exists = json_object_object_get_ex(serialized, IARC_FIELD, &jgroup);
+  json_bool jiart_exists = json_object_object_get_ex(serialized, IARC_FIELD, &jiart);
   if (jiart_exists) {
     iart = json_object_get_int(jiart);
   }
 
   bool favorite = false;
   json_object* jfavorite = nullptr;
-  json_bool jfavorite_exists = json_object_object_get_ex(serialized, AUDIO_ENABLE_FIELD, &jfavorite);
+  json_bool jfavorite_exists = json_object_object_get_ex(serialized, FAVORITE_FIELD, &jfavorite);
   if (jfavorite_exists) {
     favorite = json_object_get_boolean(jfavorite);
   }
@@ -265,9 +265,8 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 
   parts_t parts;
   json_object* jparts = nullptr;
-  json_bool jparts_exists = json_object_object_get_ex(serialized, PARTS_FIELD, &jparts);
-  if (jparts_exists) {
-    size_t len = json_object_array_length(jparts);
+  err = GetArrayField(serialized, PARTS_FIELD, &jparts, &len);
+  if (!err) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jpart = json_object_array_get_idx(jparts, i);
       parts.push_back(json_object_get_string(jpart));
@@ -306,7 +305,11 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
 }
 
 bool StreamBaseInfo::Equals(const StreamBaseInfo& url) const {
-  return stream_id_ == url.stream_id_ && enable_audio_ == url.enable_audio_ && enable_video_ == url.enable_video_;
+  return stream_id_ == url.stream_id_ && groups_ == url.groups_ && iarc_ == url.iarc_ &&
+         view_count_ == url.view_count_ && favorite_ == url.favorite_ && recent_ == url.recent_ &&
+         interruption_time_ == url.interruption_time_ && enable_audio_ == url.enable_audio_ &&
+         enable_video_ == url.enable_video_ && parts_ == url.parts_ && locked_ == url.locked_ &&
+         meta_urls_ == url.meta_urls_;
 }
 
 }  // namespace commands_info

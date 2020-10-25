@@ -182,14 +182,14 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jurls = nullptr;
-  json_bool jurls_exists = json_object_object_get_ex(serialized, URLS_FIELD, &jurls);
-  if (!jurls_exists) {
-    return common::make_error_inval();
+  json_object* jurls;
+  size_t len;
+  common::Error err = GetArrayField(serialized, URLS_FIELD, &jurls, &len);
+  if (err) {
+    return err;
   }
 
   urls_t urls;
-  size_t len = json_object_array_length(jurls);
   for (size_t i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
     const std::string url_str = json_object_get_string(jurl);

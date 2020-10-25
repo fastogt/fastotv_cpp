@@ -39,6 +39,7 @@
 #include <fastotv/commands_info/runtime_channel_info.h>
 #include <fastotv/commands_info/serial_info.h>
 #include <fastotv/commands_info/server_info.h>
+#include <fastotv/commands_info/vod_info.h>
 #include <fastotv/types/srt_key.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
@@ -541,6 +542,23 @@ TEST(MovieInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(rinf_info, dser);
+
+  const fastotv::stream_id_t stream_id = "123";
+  const common::uri::GURL url("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8");
+  const bool enable_video = false;
+  const bool enable_audio = true;
+
+  fastotv::commands_info::VodInfo vod_info(stream_id, {}, 0, false, false, 0, dser, enable_audio, enable_video, {},
+                                           0, false, {});
+
+  err = vod_info.Serialize(&ser);
+  ASSERT_FALSE(err);
+  fastotv::commands_info::VodInfo dser2;
+  err = dser2.DeSerialize(ser);
+  ASSERT_FALSE(err);
+  std::string out;
+  err = dser2.SerializeToString(&out);
+  ASSERT_FALSE(err);
 }
 
 TEST(NotificationTextInfo, serialize_deserialize) {

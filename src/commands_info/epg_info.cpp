@@ -158,13 +158,12 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (!jname_exists) {
+  std::string name;
+  common::Error err = GetStringField(serialized, NAME_FIELD, &name);
+  if (err) {
     return common::make_error_inval();
   }
 
-  std::string name = json_object_get_string(jname);
   if (name.empty()) {
     return common::make_error_inval();
   }
@@ -180,15 +179,15 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
     url.icon_src_ = url_t(json_object_get_string(jurl_icon));
   }
 
-  json_object* jprogs = nullptr;
-  json_bool jprogs_exists = json_object_object_get_ex(serialized, PROGRAMS_FIELD, &jprogs);
-  if (jprogs_exists) {
+  json_object* jprogs;
+  size_t len ;
+  err = GetArrayField(serialized, PROGRAMS_FIELD, &jprogs, &len);
+  if (!err) {
     programs_t progs;
-    size_t len = json_object_array_length(jprogs);
     for (size_t i = 0; i < len; ++i) {
       json_object* jprog = json_object_array_get_idx(jprogs, i);
       ProgrammeInfo prog;
-      common::Error err = prog.DeSerialize(jprog);
+      err = prog.DeSerialize(jprog);
       if (err) {
         continue;
       }
