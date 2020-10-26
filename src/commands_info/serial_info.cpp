@@ -52,7 +52,7 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
       view_count_(views) {}
 
 bool SerialInfo::IsValid() const {
-  return sid_ != invalid_stream_id;
+  return sid_ != invalid_stream_id && !name_.empty();
 }
 
 serial_id_t SerialInfo::GetSerialID() const {
@@ -149,69 +149,52 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
-  SerialInfo result;
-  json_object* jsid = nullptr;
-  json_bool jsid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jsid);
-  if (!jsid_exists) {
-    return common::make_error_inval();
-  }
-  result.sid_ = json_object_get_string(jsid);
-
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (jname_exists) {
-    result.name_ = json_object_get_string(jname);
+  serial_id_t sid;
+  common::Error err = GetStringField(serialized, ID_FIELD, &sid);
+  if (err) {
+    return err;
   }
 
-  json_object* jicon = nullptr;
-  json_bool jicon_exists = json_object_object_get_ex(serialized, ICON_FIELD, &jicon);
-  if (jicon_exists) {
-    result.icon_ = common::uri::GURL(json_object_get_string(jicon));
+  std::string name;
+  err = GetStringField(serialized, NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
 
-  json_object* jgroup = nullptr;
-  json_bool jgroup_exists = json_object_object_get_ex(serialized, GROUPS_FIELD, &jgroup);
-  if (jgroup_exists) {
-    size_t len = json_object_array_length(jgroup);
+  std::string icon;
+  ignore_result(GetStringField(serialized, ICON_FIELD, &icon));
+
+  std::string description;
+  ignore_result(GetStringField(serialized, DESCRIPTION_FIELD, &description));
+
+  int64_t season;
+  ignore_result(GetInt64Field(serialized, SEASON_FIELD, &season));
+
+  int view;
+  ignore_result(GetIntField(serialized, VIEW_COUNT_FIELD, &view));
+
+  json_object* jgroup;
+  size_t len;
+  err = GetArrayField(serialized, GROUPS_FIELD, &jgroup, &len);
+  groups_t groups;
+  if (!err) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jpart = json_object_array_get_idx(jgroup, i);
-      result.groups_.push_back(json_object_get_string(jpart));
+      groups.push_back(json_object_get_string(jpart));
     }
   }
 
-  json_object* jdescription = nullptr;
-  json_bool jdescription_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescription);
-  if (jdescription_exists) {
-    result.description_ = json_object_get_string(jdescription);
-  }
-
-  json_object* jseason = nullptr;
-  json_bool jseason_exists = json_object_object_get_ex(serialized, SEASON_FIELD, &jseason);
-  if (jseason_exists) {
-    result.season_ = json_object_get_int64(jseason);
-  }
-
-  json_object* jparts = nullptr;
-  json_bool jparts_exists = json_object_object_get_ex(serialized, EPISODES_FIELD, &jparts);
-  if (jparts_exists) {
-    size_t len = json_object_array_length(jparts);
+  json_object* jparts;
+  err = GetArrayField(serialized, EPISODES_FIELD, &jparts, &len);
+  episodes_t episodes;
+  if (!err) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jpart = json_object_array_get_idx(jparts, i);
-      result.episodes_.push_back(json_object_get_string(jpart));
+      episodes.push_back(json_object_get_string(jpart));
     }
   }
 
-  json_object* jview = nullptr;
-  json_bool jview_exists = json_object_object_get_ex(serialized, VIEW_COUNT_FIELD, &jview);
-  if (jview_exists) {
-    result.view_count_ = json_object_get_int(jview);
-  }
-
-  if (!result.IsValid()) {
-    return common::make_error_inval();
-  }
-
-  *this = result;
+  *this = SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view);
   return common::Error();
 }
 

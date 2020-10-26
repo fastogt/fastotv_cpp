@@ -58,8 +58,7 @@ common::Error NotificationTextInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  NotificationTextInfo ainf(text, type, show_time);
-  *this = ainf;
+  *this = NotificationTextInfo(text, type, show_time);
   return common::Error();
 }
 

@@ -209,6 +209,31 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
+  // optional
+  int iart = DEFAULT_IARC;
+  ignore_result(GetIntField(serialized, IARC_FIELD, &iart));
+
+  bool favorite = false;
+  ignore_result(GetBoolField(serialized, FAVORITE_FIELD, &favorite));
+
+  timestamp_t recent = 0;
+  ignore_result(GetInt64Field(serialized, RECENT_FIELD, &recent));
+
+  timestamp_t interruption_time = 0;
+  ignore_result(GetInt64Field(serialized, INTERRUPT_TIME_FIELD, &interruption_time));
+
+  bool enable_audio = true;
+  ignore_result(GetBoolField(serialized, AUDIO_ENABLE_FIELD, &enable_audio));
+
+  bool enable_video = true;
+  ignore_result(GetBoolField(serialized, VIDEO_ENABLE_FIELD, &enable_video));
+
+  int view = 0;
+  ignore_result(GetIntField(serialized, VIEW_COUNT_FIELD, &view));
+
+  bool locked = false;
+  ignore_result(GetBoolField(serialized, LOCKED_FIELD, &locked));
+
   groups_t groups;
   size_t len;
   json_object* jgroup;
@@ -218,49 +243,6 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
       json_object* jpart = json_object_array_get_idx(jgroup, i);
       groups.push_back(json_object_get_string(jpart));
     }
-  }
-
-  iarc_t iart = DEFAULT_IARC;
-  json_object* jiart = nullptr;
-  json_bool jiart_exists = json_object_object_get_ex(serialized, IARC_FIELD, &jiart);
-  if (jiart_exists) {
-    iart = json_object_get_int(jiart);
-  }
-
-  bool favorite = false;
-  json_object* jfavorite = nullptr;
-  json_bool jfavorite_exists = json_object_object_get_ex(serialized, FAVORITE_FIELD, &jfavorite);
-  if (jfavorite_exists) {
-    favorite = json_object_get_boolean(jfavorite);
-  }
-
-  timestamp_t recent = false;
-  json_object* jrecent = nullptr;
-  json_bool jrecent_exists = json_object_object_get_ex(serialized, RECENT_FIELD, &jrecent);
-  if (jrecent_exists) {
-    recent = json_object_get_int64(jrecent);
-  }
-
-  timestamp_t interruption_time = 0;
-  json_object* jinterruption_time = nullptr;
-  json_bool jinterruption_time_exists =
-      json_object_object_get_ex(serialized, INTERRUPT_TIME_FIELD, &jinterruption_time);
-  if (jinterruption_time_exists) {
-    interruption_time = json_object_get_int64(jinterruption_time);
-  }
-
-  bool enable_audio = true;
-  json_object* jenable_audio = nullptr;
-  json_bool jenable_audio_exists = json_object_object_get_ex(serialized, AUDIO_ENABLE_FIELD, &jenable_audio);
-  if (jenable_audio_exists) {
-    enable_audio = json_object_get_boolean(jenable_audio);
-  }
-
-  bool enable_video = true;
-  json_object* jdisable_video = nullptr;
-  json_bool jdisable_video_exists = json_object_object_get_ex(serialized, VIDEO_ENABLE_FIELD, &jdisable_video);
-  if (jdisable_video_exists) {
-    enable_video = json_object_get_boolean(jdisable_video);
   }
 
   parts_t parts;
@@ -273,34 +255,15 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  view_count_t view = 0;
-  json_object* jview = nullptr;
-  json_bool jview_exists = json_object_object_get_ex(serialized, VIEW_COUNT_FIELD, &jview);
-  if (jview_exists) {
-    view = json_object_get_int(jview);
-  }
-
-  bool locked = false;
-  json_object* jlocked = nullptr;
-  json_bool jlocked_exists = json_object_object_get_ex(serialized, LOCKED_FIELD, &jlocked);
-  if (jlocked_exists) {
-    locked = json_object_get_int(jlocked);
-  }
-
   meta_urls_t meta;
   json_object* jmeta = nullptr;
-  json_bool jmeta_exists = json_object_object_get_ex(serialized, META_FIELD, &jmeta);
-  if (jmeta_exists) {
+  err = GetArrayField(serialized, META_FIELD, &jmeta, &len);
+  if (!err) {
     ignore_result(meta.DeSerialize(jmeta));
   }
 
-  StreamBaseInfo url(sid, groups, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts, view,
-                     locked, meta);
-  if (!url.IsValid()) {
-    return common::make_error_inval();
-  }
-
-  *this = url;
+  *this = StreamBaseInfo(sid, groups, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts,
+                         view, locked, meta);
   return common::Error();
 }
 

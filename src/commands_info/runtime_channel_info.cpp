@@ -94,7 +94,7 @@ common::Error RuntimeChannelInfo::SerializeFields(json_object* deserialized) con
     return err;
   }
 
-  json_object_object_add(deserialized, WATCHERS_FIELD, json_object_new_int(watchers_));
+  json_object_object_add(deserialized, WATCHERS_FIELD, json_object_new_int64(watchers_));
   return common::Error();
 }
 
@@ -105,10 +105,10 @@ common::Error RuntimeChannelInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jwatchers = nullptr;
-  json_bool jwatchers_exists = json_object_object_get_ex(serialized, WATCHERS_FIELD, &jwatchers);
-  if (jwatchers_exists) {
-    inf.watchers_ = json_object_get_int64(jwatchers);
+  int64_t watchers;
+  err = GetInt64Field(serialized, WATCHERS_FIELD, &watchers);
+  if (!err) {
+    inf.watchers_ = watchers;
   }
 
   *this = inf;

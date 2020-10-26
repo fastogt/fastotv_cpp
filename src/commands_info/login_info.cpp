@@ -57,7 +57,7 @@ common::Error LoginInfo::DoDeSerialize(json_object* serialized) {
   std::string pass;
   err = GetStringField(serialized, PASSWORD_FIELD, &pass);
   if (err) {
-    return common::make_error_inval();
+    return err;
   }
 
   *this = LoginInfo(login, pass);

@@ -38,20 +38,16 @@ common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
 
 common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
   ServerInfo inf;
-  json_object* jepg_url = nullptr;
-  json_bool jepg_url_exists = json_object_object_get_ex(serialized, EPG_URL_FIELD, &jepg_url);
-  if (jepg_url_exists) {
-    const std::string epg_url_str = json_object_get_string(jepg_url);
-    url_t hs(epg_url_str);
-    if (hs.is_valid()) {
-      inf.epg_url_ = hs;
-    }
+  std::string epg_url_str;
+  common::Error err = GetStringField(serialized, EPG_URL_FIELD, &epg_url_str);
+  if (!err) {
+    inf.epg_url_ = url_t(epg_url_str);
   }
 
-  json_object* jlocked = nullptr;
-  json_bool jlocked_exists = json_object_object_get_ex(serialized, LOCKED_STREAM_TEXT_FIELD, &jlocked);
-  if (jlocked_exists) {
-    inf.locked_stream_text_ = json_object_get_string(jlocked);
+  std::string locked;
+  err = GetStringField(serialized, LOCKED_STREAM_TEXT_FIELD, &locked);
+  if (!err) {
+    inf.locked_stream_text_ = locked;
   }
 
   *this = inf;

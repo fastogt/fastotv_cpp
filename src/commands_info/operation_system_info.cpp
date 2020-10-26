@@ -105,40 +105,32 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
 }
 
 common::Error OperationSystemInfo::DoDeSerialize(json_object* serialized) {
-  OperationSystemInfo inf;
   std::string name;
   common::Error err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return err;
   }
-  inf.name_ = name;
 
   std::string version;
   err = GetStringField(serialized, VERSION_FIELD, &version);
   if (err) {
     return err;
   }
-  inf.version_ = version;
 
   std::string arch;
   err = GetStringField(serialized, ARCH_FIELD, &arch);
   if (err) {
     return err;
   }
-  inf.arch_ = arch;
 
-  json_object* jram_total = nullptr;
-  json_bool jram_total_exists = json_object_object_get_ex(serialized, RAM_TOTAL_FIELD, &jram_total);
-  if (jram_total_exists) {
-    inf.ram_bytes_total_ = json_object_get_int64(jram_total);
-  }
+  // optional
+  int64_t ram_total = 0;
+  ignore_result(GetInt64Field(serialized, RAM_TOTAL_FIELD, &ram_total));
 
-  json_object* jram_free = nullptr;
-  json_bool jram_free_exists = json_object_object_get_ex(serialized, RAM_FREE_FIELD, &jram_free);
-  if (jram_free_exists) {
-    inf.ram_bytes_free_ = json_object_get_int64(jram_free);
-  }
-  *this = inf;
+  int64_t ram_free = 0;
+  ignore_result(GetInt64Field(serialized, RAM_FREE_FIELD, &ram_free));
+
+  *this = OperationSystemInfo(name, version, arch, ram_total, ram_free);
   return common::Error();
 }
 

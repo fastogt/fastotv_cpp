@@ -66,7 +66,7 @@ MovieInfo::MovieInfo(const std::string& name,
       type_(type) {}
 
 bool MovieInfo::IsValid() const {
-  return !urls_.empty();
+  return !urls_.empty() && !display_name_.empty();
 }
 
 bool MovieInfo::IsSerial() const {
@@ -193,77 +193,42 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
   for (size_t i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
     const std::string url_str = json_object_get_string(jurl);
-    url_t url(url_str);
-    if (url.is_valid()) {
-      urls.push_back(url);
-    }
-  }
-
-  std::string description;
-  json_object* jdescription = nullptr;
-  json_bool jdescription_exists = json_object_object_get_ex(serialized, DESCRIPTION_FIELD, &jdescription);
-  if (jdescription_exists) {
-    description = json_object_get_string(jdescription);
+    urls.push_back(url_t(url_str));
   }
 
   std::string name;
-  json_object* jname = nullptr;
-  json_bool jname_exists = json_object_object_get_ex(serialized, NAME_FIELD, &jname);
-  if (jname_exists) {
-    name = json_object_get_string(jname);
+  err = GetStringField(serialized, NAME_FIELD, &name);
+  if (err) {
+    return err;
   }
 
-  url_t preview_icon;
-  json_object* jpreview_icon = nullptr;
-  json_bool jpreview_icon_exists = json_object_object_get_ex(serialized, PREVIEW_ICON_FIELD, &jpreview_icon);
-  if (jpreview_icon_exists) {
-    preview_icon = url_t(json_object_get_string(jpreview_icon));
-  }
+  // optional
+  std::string description;
+  ignore_result(GetStringField(serialized, DESCRIPTION_FIELD, &description));
 
-  url_t trailer_url;
-  json_object* jtrailer_url = nullptr;
-  json_bool jtrailer_url_exists = json_object_object_get_ex(serialized, TRAILER_URL_FIELD, &jtrailer_url);
-  if (jtrailer_url_exists) {
-    trailer_url = url_t(json_object_get_string(jtrailer_url));
-  }
+  std::string preview_icon;
+  ignore_result(GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon));
+
+  std::string trailer_url;
+  ignore_result(GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url));
 
   double user_score = 0;
-  json_object* juser_score = nullptr;
-  json_bool juser_score_exists = json_object_object_get_ex(serialized, USER_SCORE_FIELD, &juser_score);
-  if (juser_score_exists) {
-    user_score = json_object_get_double(juser_score);
-  }
+  ignore_result(GetDoubleField(serialized, USER_SCORE_FIELD, &user_score));
 
   timestamp_t prime_date = 0;
-  json_object* jprime_date = nullptr;
-  json_bool jprime_date_exists = json_object_object_get_ex(serialized, PRIME_DATE_FIELD, &jprime_date);
-  if (jprime_date_exists) {
-    prime_date = json_object_get_int64(jprime_date);
-  }
+  ignore_result(GetInt64Field(serialized, PRIME_DATE_FIELD, &prime_date));
 
   std::string country;
-  json_object* jcountry = nullptr;
-  json_bool jcountry_exists = json_object_object_get_ex(serialized, COUNTRY_FIELD, &jcountry);
-  if (jcountry_exists) {
-    country = json_object_get_string(jcountry);
-  }
+  ignore_result(GetStringField(serialized, COUNTRY_FIELD, &country));
 
-  json_object* jduration = nullptr;
   timestamp_t duration = 0;
-  json_bool jduration_exists = json_object_object_get_ex(serialized, DURATION_FIELD, &jduration);
-  if (jduration_exists) {
-    duration = json_object_get_int64(jduration);
-  }
+  ignore_result(GetInt64Field(serialized, DURATION_FIELD, &prime_date));
 
   Type type = VODS;
-  json_object* jtype = nullptr;
-  json_bool jtype_exists = json_object_object_get_ex(serialized, TYPE_FIELD, &jtype);
-  if (jtype_exists) {
-    type = static_cast<Type>(json_object_get_int(jtype));
-  }
+  ignore_result(GetEnumField(serialized, TYPE_FIELD, &type));
 
-  MovieInfo url(name, urls, description, preview_icon, trailer_url, user_score, prime_date, country, duration, type);
-  *this = url;
+  *this = MovieInfo(name, urls, description, url_t(preview_icon), url_t(trailer_url), user_score, prime_date, country,
+                    duration, type);
   return common::Error();
 }
 

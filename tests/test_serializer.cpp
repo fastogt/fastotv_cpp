@@ -115,7 +115,7 @@ TEST(ChannelInfo, serialize_deserialize) {
 
 TEST(ServerInfo, serialize_deserialize) {
   const common::uri::GURL url("http://localhost/index.html");
-  fastotv::commands_info::ServerInfo serv_info(url, "");
+  fastotv::commands_info::ServerInfo serv_info(url, "Hello moto");
 
   serialize_t ser;
   common::Error err = serv_info.Serialize(&ser);

@@ -136,18 +136,14 @@ common::Error EpgInfo::SerializeFields(json_object* deserialized) const {
 }
 
 common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jid);
   stream_id_t id;
-  if (jid_exists) {
-    id = json_object_get_string(jid);
-  }
+  ignore_result(GetStringField(serialized, ID_FIELD, &id));
 
   json_object* jurls = nullptr;
   urls_t urls;
-  json_bool jurls_exists = json_object_object_get_ex(serialized, URLS_FIELD, &jurls);
-  if (jurls_exists) {
-    size_t len = json_object_array_length(jurls);
+  size_t len;
+  common::Error err = GetArrayField(serialized, URLS_FIELD, &jurls, &len);
+  if (!err) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jurl = json_object_array_get_idx(jurls, i);
       const std::string url_str = json_object_get_string(jurl);
@@ -159,7 +155,7 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
   }
 
   std::string name;
-  common::Error err = GetStringField(serialized, NAME_FIELD, &name);
+  err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return common::make_error_inval();
   }
@@ -173,14 +169,13 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  json_object* jurl_icon = nullptr;
-  json_bool jurl_icon_exists = json_object_object_get_ex(serialized, ICON_FIELD, &jurl_icon);
-  if (jurl_icon_exists) {
-    url.icon_src_ = url_t(json_object_get_string(jurl_icon));
+  std::string url_icon;
+  err = GetStringField(serialized, ICON_FIELD, &url_icon);
+  if (!err) {
+    url.icon_src_ = url_t(url_icon);
   }
 
   json_object* jprogs;
-  size_t len;
   err = GetArrayField(serialized, PROGRAMS_FIELD, &jprogs, &len);
   if (!err) {
     programs_t progs;
