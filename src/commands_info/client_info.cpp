@@ -22,7 +22,7 @@
 #define DEVICE_ID_FIELD "device_id"
 #define PROJECT_FIELD "project"
 #define OS_FIELD "os"
-#define CPU_FIELD "cpu"
+#define CPU_FIELD "cpu_brand"
 
 namespace fastotv {
 namespace commands_info {
