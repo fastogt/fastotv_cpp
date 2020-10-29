@@ -68,16 +68,16 @@ common::Optional<StreamLink> StreamLink::Make(common::HashValue* json) {
 
 common::Error StreamLink::DoDeSerialize(json_object* serialized) {
   StreamLink res;
-  json_object* jhttp = nullptr;
-  json_bool jhttp_exists = json_object_object_get_ex(serialized, HTTP_FIELD, &jhttp);
-  if (jhttp_exists) {
-    res.SetHttp(http_proxy_t(json_object_get_string(jhttp)));
+  std::string http;
+  common::Error err = GetStringField(serialized, HTTP_FIELD, &http);
+  if (!err) {
+    res.SetHttp(http_proxy_t(http));
   }
 
-  json_object* jhttps = nullptr;
-  json_bool jhttps_exists = json_object_object_get_ex(serialized, HTTPS_FIELD, &jhttps);
-  if (jhttps_exists) {
-    res.SetHttps(https_proxy_t(json_object_get_string(jhttps)));
+  std::string https;
+  err = GetStringField(serialized, HTTPS_FIELD, &https);
+  if (!err) {
+    res.SetHttps(https_proxy_t(https));
   }
 
   *this = res;

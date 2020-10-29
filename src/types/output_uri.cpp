@@ -142,36 +142,34 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jhlssink2 = nullptr;
-  json_bool jhlssink2_exists = json_object_object_get_ex(serialized, HLSSINK_TYPE_FILED, &jhlssink2);
-  if (jhlssink2_exists) {
-    res.SetHlsSinkType(static_cast<HlsSinkType>(json_object_get_int(jhlssink2)));
+  HlsSinkType hlssink2;
+  err = GetEnumField(serialized, HLSSINK_TYPE_FILED, &hlssink2);
+  if (!err) {
+    res.SetHlsSinkType(hlssink2);
   }
 
-  json_object* jhttp_root = nullptr;
-  json_bool jhttp_root_exists = json_object_object_get_ex(serialized, HTTP_ROOT_FIELD, &jhttp_root);
-  if (jhttp_root_exists) {
-    const char* http_root_str = json_object_get_string(jhttp_root);
-    const common::file_system::ascii_directory_string_path http_root(http_root_str);
-    res.SetHttpRoot(http_root);
+  std::string http_root;
+  err = GetStringField(serialized, HTTP_ROOT_FIELD, &http_root);
+  if (!err) {
+    res.SetHttpRoot(common::file_system::ascii_directory_string_path(http_root));
   }
 
-  json_object* jhls_type = nullptr;
-  json_bool jhls_type_exists = json_object_object_get_ex(serialized, HLS_TYPE_FIELD, &jhls_type);
-  if (jhls_type_exists) {
-    res.SetHlsType(static_cast<HlsType>(json_object_get_int(jhls_type)));
+  HlsType hls_type;
+  err = GetEnumField(serialized, HLS_TYPE_FIELD, &hls_type);
+  if (!err) {
+    res.SetHlsType(hls_type);
   }
 
-  json_object* jchunk_duration = nullptr;
-  json_bool jchunk_duration_exists = json_object_object_get_ex(serialized, CHUNK_DURATION_FIELD, &jchunk_duration);
-  if (jchunk_duration_exists) {
-    res.SetChunkDuration(json_object_get_int(jchunk_duration));
+  int chunk_duration;
+  err = GetIntField(serialized, CHUNK_DURATION_FIELD, &chunk_duration);
+  if (!err) {
+    res.SetChunkDuration(chunk_duration);
   }
 
-  json_object* jsrt_mode = nullptr;
-  json_bool jsrt_mode_exists = json_object_object_get_ex(serialized, SRT_MODE_FIELD, &jsrt_mode);
-  if (jsrt_mode_exists) {
-    res.SetSrtMode(static_cast<SrtMode>(json_object_get_int(jsrt_mode)));
+  SrtMode srt_mode;
+  err = GetEnumField(serialized, SRT_MODE_FIELD, &srt_mode);
+  if (!err) {
+    res.SetSrtMode(srt_mode);
   }
 
   *this = res;

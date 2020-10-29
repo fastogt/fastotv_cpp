@@ -146,21 +146,19 @@ bool CatchupQueueInfo::Equals(const CatchupQueueInfo& inf) const {
 }
 
 common::Error CatchupQueueInfo::DoDeSerialize(json_object* serialized) {
-  CatchupQueueInfo inf;
   json_object* jcid = nullptr;
-  json_bool jcid_exists = json_object_object_get_ex(serialized, CATCHUP_FIELD, &jcid);
-  if (!jcid_exists) {
-    return common::make_error_inval();
-  }
-
-  CatchupInfo cid;
-  common::Error err = cid.DeSerialize(jcid);
+  common::Error err = GetObjectField(serialized, CATCHUP_FIELD, &jcid);
   if (err) {
     return err;
   }
-  inf.cinf_ = cid;
 
-  *this = inf;
+  CatchupInfo cid;
+  err = cid.DeSerialize(jcid);
+  if (err) {
+    return err;
+  }
+
+  *this = CatchupQueueInfo(cid);
   return common::Error();
 }
 

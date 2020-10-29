@@ -117,20 +117,18 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
 
 common::Error MachineLearning::DoDeSerialize(json_object* serialized) {
   MachineLearning res;
-  json_object* jbackend = nullptr;
-  json_bool jbackend_exists = json_object_object_get_ex(serialized, BACKEND_FIELD, &jbackend);
-  if (!jbackend_exists) {
-    return common::make_error_inval();
+  SupportedBackends backend;
+  common::Error err = GetEnumField(serialized, BACKEND_FIELD, &backend);
+  if (err) {
+    return err;
   }
-  res.SetBackend(static_cast<SupportedBackends>(json_object_get_int(jbackend)));
 
-  json_object* jmodel_path = nullptr;
-  json_bool jmodel_path_exists = json_object_object_get_ex(serialized, MODEL_PATH_FIELD, &jmodel_path);
-  if (!jmodel_path_exists) {
-    return common::make_error_inval();
+  std::string model_path;
+  err = GetStringField(serialized, MODEL_PATH_FIELD, &model_path);
+  if (err) {
+    return err;
   }
-  res.SetModelPath(common::uri::GURL(json_object_get_string(jmodel_path)));
-  *this = res;
+  *this = MachineLearning(backend, common::uri::GURL(model_path));
   return common::Error();
 }
 
