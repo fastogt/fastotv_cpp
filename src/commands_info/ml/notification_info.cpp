@@ -54,46 +54,32 @@ json_object* make_json_from_image(const ImageBox& box) {
 
 ImageBox make_image_from_json(json_object* obj) {
   ImageBox image;
-  json_object* jlabel = nullptr;
-  json_bool jlabel_exists = json_object_object_get_ex(obj, CLASS_ID_FIELD, &jlabel);
-  if (jlabel_exists) {
-    image.class_id = json_object_get_int(jlabel);
+  ignore_result(common::serializer::json_get_int(obj, CLASS_ID_FIELD, &image.class_id));
+  ignore_result(common::serializer::json_get_float(obj, CONFIDENCE_FIELD, &image.confidence));
+  ignore_result(common::serializer::json_get_uint64(obj, OBJECT_ID_FIELD, &image.object_id));
+
+  int x;
+  common::Error err = common::serializer::json_get_int(obj, LEFT_FIELD, &x);
+  if (!err) {
+    image.rect.set_x(x);
   }
 
-  json_object* jprob = nullptr;
-  json_bool jprob_exists = json_object_object_get_ex(obj, CONFIDENCE_FIELD, &jprob);
-  if (jprob_exists) {
-    image.confidence = json_object_get_double(jprob);
+  int y;
+  err = common::serializer::json_get_int(obj, TOP_FIELD, &y);
+  if (!err) {
+    image.rect.set_y(y);
   }
 
-  json_object* jobject_id = nullptr;
-  json_bool jobject_id_exists = json_object_object_get_ex(obj, OBJECT_ID_FIELD, &jobject_id);
-  if (jobject_id_exists) {
-    image.object_id = json_object_get_int64(jobject_id);
+  int width;
+  err = common::serializer::json_get_int(obj, WIDTH_FIELD, &width);
+  if (!err) {
+    image.rect.set_width(width);
   }
 
-  json_object* jx = nullptr;
-  json_bool jx_exists = json_object_object_get_ex(obj, LEFT_FIELD, &jx);
-  if (jx_exists) {
-    image.rect.set_x(json_object_get_int(jx));
-  }
-
-  json_object* jy = nullptr;
-  json_bool jy_exists = json_object_object_get_ex(obj, TOP_FIELD, &jy);
-  if (jy_exists) {
-    image.rect.set_y(json_object_get_int(jy));
-  }
-
-  json_object* jwidth = nullptr;
-  json_bool jwidth_exists = json_object_object_get_ex(obj, WIDTH_FIELD, &jwidth);
-  if (jwidth_exists) {
-    image.rect.set_width(json_object_get_int(jwidth));
-  }
-
-  json_object* jheight = nullptr;
-  json_bool jheight_exists = json_object_object_get_ex(obj, HEIGHT_FIELD, &jheight);
-  if (jheight_exists) {
-    image.rect.set_height(json_object_get_int(jheight));
+  int height;
+  err = common::serializer::json_get_int(obj, HEIGHT_FIELD, &height);
+  if (!err) {
+    image.rect.set_height(height);
   }
 
   return image;

@@ -92,9 +92,9 @@ common::Error ChannelInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jepg = nullptr;
-  json_bool jepg_exists = json_object_object_get_ex(serialized, EPG_FIELD, &jepg);
-  if (!jepg_exists) {
-    return common::make_error_inval();
+  err = GetObjectField(serialized, EPG_FIELD, &jepg);
+  if (err) {
+    return err;
   }
 
   EpgInfo epg;

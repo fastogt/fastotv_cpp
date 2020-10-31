@@ -121,13 +121,13 @@ common::Error ContentRequestInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  json_object* jrid = nullptr;
-  json_bool jrid_exists = json_object_object_get_ex(serialized, ID_FIELD, &jrid);
-  if (!jrid_exists) {
-    return common::make_error_inval();
+  std::string rid;
+  err = GetStringField(serialized, ID_FIELD, &rid);
+  if (err) {
+    return err;
   }
 
-  inf.rid_ = json_object_get_string(jrid);
+  inf.rid_ = rid;
   *this = inf;
   return common::Error();
 }
