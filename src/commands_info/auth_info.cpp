@@ -42,7 +42,7 @@ common::Error AuthInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(device_id_.c_str()));
+  ignore_result(SetStringField(deserialized, ID_FIELD, device_id_));
   return base_class::SerializeFields(deserialized);
 }
 
@@ -101,7 +101,7 @@ common::Error ServerAuthInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, EXPIRED_DATE_FIELD, json_object_new_int64(expired_date_));
+  ignore_result(SetInt64Field(deserialized, EXPIRED_DATE_FIELD, expired_date_));
   return base_class::SerializeFields(deserialized);
 }
 

@@ -84,7 +84,7 @@ common::Error VodInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, MOVIE_FIELD, jmovie);
+  ignore_result(SetObjectField(deserialized, MOVIE_FIELD, jmovie));
   return common::Error();
 }
 

@@ -124,26 +124,26 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
+  ignore_result(SetStringField(deserialized, ID_FIELD, sid_));
+  ignore_result(SetStringField(deserialized, NAME_FIELD, name_));
   const std::string url_str = icon_.spec();
-  json_object_object_add(deserialized, ICON_FIELD, json_object_new_string(url_str.c_str()));
+  ignore_result(SetStringField(deserialized, ICON_FIELD, url_str));
   json_object* jgroups = json_object_new_array();
   for (const auto group : groups_) {
     json_object* jgroup = json_object_new_string(group.c_str());
     json_object_array_add(jgroups, jgroup);
   }
-  json_object_object_add(deserialized, GROUPS_FIELD, jgroups);
-  json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
-  json_object_object_add(deserialized, SEASON_FIELD, json_object_new_int64(season_));
+  ignore_result(SetArrayField(deserialized, GROUPS_FIELD, jgroups));
+  ignore_result(SetStringField(deserialized, DESCRIPTION_FIELD, description_));
+  ignore_result(SetInt64Field(deserialized, SEASON_FIELD, season_));
 
   json_object* jepisodes = json_object_new_array();
   for (const auto episode : episodes_) {
     json_object* jepisode = json_object_new_string(episode.c_str());
     json_object_array_add(jepisodes, jepisode);
   }
-  json_object_object_add(deserialized, EPISODES_FIELD, jepisodes);
-  json_object_object_add(deserialized, VIEW_COUNT_FIELD, json_object_new_int(view_count_));
+  ignore_result(SetArrayField(deserialized, EPISODES_FIELD, jepisodes));
+  ignore_result(SetIntField(deserialized, VIEW_COUNT_FIELD, view_count_));
 
   return common::Error();
 }

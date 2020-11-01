@@ -65,7 +65,7 @@ common::Error CatchupUndoInfo::SerializeFields(json_object* deserialized) const 
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
+  ignore_result(SetStringField(deserialized, ID_FIELD, sid_));
   return common::Error();
 }
 

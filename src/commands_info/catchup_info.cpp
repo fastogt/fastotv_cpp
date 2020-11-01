@@ -87,8 +87,8 @@ common::Error CatchupInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_));
-  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_));
+  ignore_result(SetInt64Field(deserialized, START_FIELD, start_));
+  ignore_result(SetInt64Field(deserialized, STOP_FIELD, stop_));
   return common::Error();
 }
 

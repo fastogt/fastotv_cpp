@@ -42,8 +42,8 @@ common::Error LoginInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, LOGIN_FIELD, json_object_new_string(login_.c_str()));
-  json_object_object_add(deserialized, PASSWORD_FIELD, json_object_new_string(password_.c_str()));
+  ignore_result(SetStringField(deserialized, LOGIN_FIELD, login_));
+  ignore_result(SetStringField(deserialized, PASSWORD_FIELD, password_));
   return common::Error();
 }
 

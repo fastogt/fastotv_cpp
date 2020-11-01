@@ -80,19 +80,19 @@ MachineInfo::MachineInfo(cpu_load_t cpu_load,
       net_total_bytes_send_(net_total_bytes_send) {}
 
 common::Error MachineInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, CPU_FIELD, json_object_new_double(cpu_load_));
-  json_object_object_add(out, GPU_FIELD, json_object_new_double(gpu_load_));
-  json_object_object_add(out, LOAD_AVERAGE_FIELD, json_object_new_string(load_average_.c_str()));
-  json_object_object_add(out, MEMORY_TOTAL_FIELD, json_object_new_uint64(ram_bytes_total_));
-  json_object_object_add(out, MEMORY_FREE_FIELD, json_object_new_uint64(ram_bytes_free_));
-  json_object_object_add(out, HDD_TOTAL_FIELD, json_object_new_uint64(hdd_bytes_total_));
-  json_object_object_add(out, HDD_FREE_FIELD, json_object_new_uint64(hdd_bytes_free_));
-  json_object_object_add(out, BANDWIDTH_IN_FIELD, json_object_new_uint64(net_bytes_recv_));
-  json_object_object_add(out, BANDWIDTH_OUT_FIELD, json_object_new_uint64(net_bytes_send_));
-  json_object_object_add(out, UPTIME_FIELD, json_object_new_int64(uptime_));
-  json_object_object_add(out, TIMESTAMP_FIELD, json_object_new_int64(current_ts_));
-  json_object_object_add(out, TOTAL_BYTES_IN_FIELD, json_object_new_uint64(net_total_bytes_recv_));
-  json_object_object_add(out, TOTAL_BYTES_OUT_FIELD, json_object_new_uint64(net_total_bytes_send_));
+  ignore_result(SetDoubleField(out, CPU_FIELD, cpu_load_));
+  ignore_result(SetDoubleField(out, GPU_FIELD, gpu_load_));
+  ignore_result(SetStringField(out, LOAD_AVERAGE_FIELD, load_average_));
+  ignore_result(SetUInt64Field(out, MEMORY_TOTAL_FIELD, ram_bytes_total_));
+  ignore_result(SetUInt64Field(out, MEMORY_FREE_FIELD, ram_bytes_free_));
+  ignore_result(SetUInt64Field(out, HDD_TOTAL_FIELD, hdd_bytes_total_));
+  ignore_result(SetUInt64Field(out, HDD_FREE_FIELD, hdd_bytes_free_));
+  ignore_result(SetUInt64Field(out, BANDWIDTH_IN_FIELD, net_bytes_recv_));
+  ignore_result(SetUInt64Field(out, BANDWIDTH_OUT_FIELD, net_bytes_send_));
+  ignore_result(SetInt64Field(out, UPTIME_FIELD, uptime_));
+  ignore_result(SetInt64Field(out, TIMESTAMP_FIELD, current_ts_));
+  ignore_result(SetUInt64Field(out, TOTAL_BYTES_IN_FIELD, net_total_bytes_recv_));
+  ignore_result(SetUInt64Field(out, TOTAL_BYTES_OUT_FIELD, net_total_bytes_send_));
   return common::Error();
 }
 

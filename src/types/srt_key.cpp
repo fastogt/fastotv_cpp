@@ -94,8 +94,8 @@ common::Error SrtKey::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, PASSPHRASE_FIELD, json_object_new_string(passphrase_.c_str()));
-  json_object_object_add(out, KEY_LEN_FIELD, json_object_new_int(key_len_));
+  ignore_result(SetStringField(out, PASSPHRASE_FIELD, passphrase_));
+  ignore_result(SetIntField(out, KEY_LEN_FIELD, key_len_));
   return common::Error();
 }
 

@@ -201,40 +201,40 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   }
 
   if (user_agent_) {
-    json_object_object_add(deserialized, USER_AGENT_FIELD, json_object_new_int(*user_agent_));
+    ignore_result(SetIntField(deserialized, USER_AGENT_FIELD, *user_agent_));
   }
 
   if (stream_url_) {
     json_object* jlink = nullptr;
     err = stream_url_->Serialize(&jlink);
     if (!err) {
-      json_object_object_add(deserialized, STREAMLINK_URL_FIELD, jlink);
+      ignore_result(SetObjectField(deserialized, STREAMLINK_URL_FIELD, jlink));
     }
   }
 
   const auto pid = GetProgramNumber();
   if (pid) {
-    json_object_object_add(deserialized, PROGRAM_NUMBER_FIELD, json_object_new_int(*pid));
+    ignore_result(SetIntField(deserialized, PROGRAM_NUMBER_FIELD, *pid));
   }
 
   const auto iface = GetMulticastIface();
   if (iface) {
     const std::string iface_str = *iface;
-    json_object_object_add(deserialized, MULTICAST_IFACE_FIELD, json_object_new_string(iface_str.c_str()));
+    ignore_result(SetStringField(deserialized, MULTICAST_IFACE_FIELD, iface_str));
   }
 
   if (srt_key_) {
     json_object* jkey = nullptr;
     err = srt_key_->Serialize(&jkey);
     if (!err) {
-      json_object_object_add(deserialized, SRT_KEY_FIELD, jkey);
+      ignore_result(SetObjectField(deserialized, SRT_KEY_FIELD, jkey));
     }
   }
 
   const auto hurl = GetHttpProxyUrl();
   if (hurl) {
     const std::string proxy = hurl->spec();
-    json_object_object_add(deserialized, PROXY_FIELD, json_object_new_string(proxy.c_str()));
+    ignore_result(SetStringField(deserialized, PROXY_FIELD, proxy));
   }
 
   return common::Error();

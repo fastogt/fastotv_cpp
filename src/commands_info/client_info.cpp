@@ -57,11 +57,11 @@ common::Error ClientInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, LOGIN_FIELD, json_object_new_string(login_.c_str()));
-  json_object_object_add(deserialized, DEVICE_ID_FIELD, json_object_new_string(device_id_.c_str()));
-  json_object_object_add(deserialized, PROJECT_FIELD, proj);
-  json_object_object_add(deserialized, OS_FIELD, os);
-  json_object_object_add(deserialized, CPU_FIELD, json_object_new_string(cpu_brand_.c_str()));
+  ignore_result(SetStringField(deserialized, LOGIN_FIELD, login_));
+  ignore_result(SetStringField(deserialized, DEVICE_ID_FIELD, device_id_));
+  ignore_result(SetObjectField(deserialized, PROJECT_FIELD, proj));
+  ignore_result(SetObjectField(deserialized, OS_FIELD, os));
+  ignore_result(SetStringField(deserialized, CPU_FIELD, cpu_brand_));
   return common::Error();
 }
 

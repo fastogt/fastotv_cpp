@@ -69,7 +69,7 @@ common::Error RuntimeChannelLiteInfo::SerializeFields(json_object* deserialized)
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, STREAM_ID_FIELD, json_object_new_string(sid_.c_str()));
+  ignore_result(SetStringField(deserialized, STREAM_ID_FIELD, sid_));
   return common::Error();
 }
 
@@ -94,7 +94,7 @@ common::Error RuntimeChannelInfo::SerializeFields(json_object* deserialized) con
     return err;
   }
 
-  json_object_object_add(deserialized, WATCHERS_FIELD, json_object_new_int64(watchers_));
+  ignore_result(SetInt64Field(deserialized, WATCHERS_FIELD, watchers_));
   return common::Error();
 }
 

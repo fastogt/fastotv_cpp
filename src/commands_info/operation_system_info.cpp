@@ -96,11 +96,11 @@ common::Error OperationSystemInfo::SerializeFields(json_object* deserialized) co
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
-  json_object_object_add(deserialized, VERSION_FIELD, json_object_new_string(version_.c_str()));
-  json_object_object_add(deserialized, ARCH_FIELD, json_object_new_string(arch_.c_str()));
-  json_object_object_add(deserialized, RAM_TOTAL_FIELD, json_object_new_int64(ram_bytes_total_));
-  json_object_object_add(deserialized, RAM_FREE_FIELD, json_object_new_int64(ram_bytes_free_));
+  ignore_result(SetStringField(deserialized, NAME_FIELD, name_));
+  ignore_result(SetStringField(deserialized, VERSION_FIELD, version_));
+  ignore_result(SetStringField(deserialized, ARCH_FIELD, arch_));
+  ignore_result(SetInt64Field(deserialized, RAM_TOTAL_FIELD, ram_bytes_total_));
+  ignore_result(SetInt64Field(deserialized, RAM_FREE_FIELD, ram_bytes_free_));
   return common::Error();
 }
 

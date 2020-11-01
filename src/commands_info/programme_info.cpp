@@ -66,15 +66,15 @@ common::Error ProgrammeInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, CHANNEL_FIELD, json_object_new_string(channel_.c_str()));
-  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_time_));
-  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_time_));
-  json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(title_.c_str()));
+  ignore_result(SetStringField(deserialized, CHANNEL_FIELD, channel_));
+  ignore_result(SetInt64Field(deserialized, START_FIELD, start_time_));
+  ignore_result(SetInt64Field(deserialized, STOP_FIELD, stop_time_));
+  ignore_result(SetStringField(deserialized, TITLE_FIELD, title_));
   if (category_) {
-    json_object_object_add(deserialized, CATEGORY_FIELD, json_object_new_string(category_->c_str()));
+    ignore_result(SetStringField(deserialized, CATEGORY_FIELD, *category_));
   }
   if (description_) {
-    json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_->c_str()));
+    ignore_result(SetStringField(deserialized, DESCRIPTION_FIELD, *description_));
   }
   return common::Error();
 }

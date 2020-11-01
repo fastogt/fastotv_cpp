@@ -176,28 +176,28 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
     json_object_array_add(jgroups, jgroup);
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  json_object_object_add(deserialized, GROUPS_FIELD, jgroups);
-  json_object_object_add(deserialized, IARC_FIELD, json_object_new_int(iarc_));
-  json_object_object_add(deserialized, FAVORITE_FIELD, json_object_new_boolean(favorite_));
-  json_object_object_add(deserialized, RECENT_FIELD, json_object_new_int64(recent_));
-  json_object_object_add(deserialized, INTERRUPT_TIME_FIELD, json_object_new_int64(interruption_time_));
-  json_object_object_add(deserialized, AUDIO_ENABLE_FIELD, json_object_new_boolean(enable_audio_));
-  json_object_object_add(deserialized, VIDEO_ENABLE_FIELD, json_object_new_boolean(enable_video_));
-  json_object_object_add(deserialized, VIEW_COUNT_FIELD, json_object_new_int(view_count_));
-  json_object_object_add(deserialized, LOCKED_FIELD, json_object_new_boolean(locked_));
+  ignore_result(SetStringField(deserialized, ID_FIELD, stream_id_));
+  ignore_result(SetArrayField(deserialized, GROUPS_FIELD, jgroups));
+  ignore_result(SetIntField(deserialized, IARC_FIELD, iarc_));
+  ignore_result(SetBoolField(deserialized, FAVORITE_FIELD, favorite_));
+  ignore_result(SetInt64Field(deserialized, RECENT_FIELD, recent_));
+  ignore_result(SetInt64Field(deserialized, INTERRUPT_TIME_FIELD, interruption_time_));
+  ignore_result(SetBoolField(deserialized, AUDIO_ENABLE_FIELD, enable_audio_));
+  ignore_result(SetBoolField(deserialized, VIDEO_ENABLE_FIELD, enable_video_));
+  ignore_result(SetIntField(deserialized, VIEW_COUNT_FIELD, view_count_));
+  ignore_result(SetBoolField(deserialized, LOCKED_FIELD, locked_));
 
   json_object* jparts = json_object_new_array();
   for (const auto part : parts_) {
     json_object* jpart = json_object_new_string(part.c_str());
     json_object_array_add(jparts, jpart);
   }
-  json_object_object_add(deserialized, PARTS_FIELD, jparts);
+  ignore_result(SetArrayField(deserialized, PARTS_FIELD, jparts));
 
   json_object* jmeta = nullptr;
   common::Error err = meta_urls_.Serialize(&jmeta);
   if (!err) {
-    json_object_object_add(deserialized, META_FIELD, jmeta);
+    ignore_result(SetObjectField(deserialized, META_FIELD, jmeta));
   }
   return common::Error();
 }

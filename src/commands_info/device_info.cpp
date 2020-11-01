@@ -54,8 +54,8 @@ common::Error DeviceInfo::SerializeFields(json_object* deserialized) const {
   }
 
   const std::string did = *did_;
-  json_object_object_add(deserialized, DEVICE_INFO_ID_FIELD, json_object_new_string(did.c_str()));
-  json_object_object_add(deserialized, DEVICE_INFO_NAME_FIELD, json_object_new_string(name_.c_str()));
+  ignore_result(SetStringField(deserialized, DEVICE_INFO_ID_FIELD, did));
+  ignore_result(SetStringField(deserialized, DEVICE_INFO_NAME_FIELD, name_));
   return common::Error();
 }
 

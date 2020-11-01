@@ -187,25 +187,25 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   }
 
   if (hlssink_type_) {
-    json_object_object_add(deserialized, HLSSINK_TYPE_FILED, json_object_new_int(*hlssink_type_));
+    ignore_result(SetIntField(deserialized, HLSSINK_TYPE_FILED, *hlssink_type_));
   }
   auto ps = GetHttpRoot();
   if (ps) {
     const std::string http_root_str = ps->GetPath();
-    json_object_object_add(deserialized, HTTP_ROOT_FIELD, json_object_new_string(http_root_str.c_str()));
+    ignore_result(SetStringField(deserialized, HTTP_ROOT_FIELD, http_root_str));
   }
   if (hls_type_) {
-    json_object_object_add(deserialized, HLS_TYPE_FIELD, json_object_new_int(*hls_type_));
+    ignore_result(SetEnumField(deserialized, HLS_TYPE_FIELD, *hls_type_));
   }
   if (chunk_duration_) {
-    json_object_object_add(deserialized, CHUNK_DURATION_FIELD, json_object_new_int(*chunk_duration_));
+    ignore_result(SetIntField(deserialized, CHUNK_DURATION_FIELD, *chunk_duration_));
   }
   if (playlist_root_) {
     const std::string root = playlist_root_->spec();
-    json_object_object_add(deserialized, PLAYLIST_ROOT_FIELD, json_object_new_string(root.c_str()));
+    ignore_result(SetStringField(deserialized, PLAYLIST_ROOT_FIELD, root));
   }
   if (srt_mode_) {
-    json_object_object_add(deserialized, SRT_MODE_FIELD, json_object_new_int(*srt_mode_));
+    ignore_result(SetEnumField(deserialized, SRT_MODE_FIELD, *srt_mode_));
   }
   return common::Error();
 }

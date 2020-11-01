@@ -31,8 +31,8 @@ ServerInfo::ServerInfo(const url_t& epg_url, const std::string& locked_stream_te
 
 common::Error ServerInfo::SerializeFields(json_object* deserialized) const {
   const std::string epg_url_str = epg_url_.spec();
-  json_object_object_add(deserialized, EPG_URL_FIELD, json_object_new_string(epg_url_str.c_str()));
-  json_object_object_add(deserialized, LOCKED_STREAM_TEXT_FIELD, json_object_new_string(locked_stream_text_.c_str()));
+  ignore_result(SetStringField(deserialized, EPG_URL_FIELD, epg_url_str));
+  ignore_result(SetStringField(deserialized, LOCKED_STREAM_TEXT_FIELD, locked_stream_text_));
   return common::Error();
 }
 

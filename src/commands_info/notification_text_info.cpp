@@ -33,9 +33,9 @@ NotificationTextInfo::NotificationTextInfo(const std::string& text, MessageType 
     : text_(text), type_(type), show_time_(show_time) {}
 
 common::Error NotificationTextInfo::SerializeFields(json_object* deserialized) const {
-  json_object_object_add(deserialized, TEXT_FIELD, json_object_new_string(text_.c_str()));
-  json_object_object_add(deserialized, TEXT_TYPE_FIELD, json_object_new_int(type_));
-  json_object_object_add(deserialized, SHOW_TIME_FIELD, json_object_new_int64(show_time_));
+  ignore_result(SetStringField(deserialized, TEXT_FIELD, text_));
+  ignore_result(SetIntField(deserialized, TEXT_TYPE_FIELD, type_));
+  ignore_result(SetInt64Field(deserialized, SHOW_TIME_FIELD, show_time_));
   return common::Error();
 }
 

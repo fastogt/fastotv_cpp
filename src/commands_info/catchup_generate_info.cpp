@@ -116,10 +116,10 @@ common::Error CatchupGenerateInfo::SerializeFields(json_object* deserialized) co
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(title_.c_str()));
-  json_object_object_add(deserialized, START_FIELD, json_object_new_int64(start_time_));
-  json_object_object_add(deserialized, STOP_FIELD, json_object_new_int64(stop_time_));
+  ignore_result(SetStringField(deserialized, ID_FIELD, sid_));
+  ignore_result(SetStringField(deserialized, TITLE_FIELD, title_));
+  ignore_result(SetInt64Field(deserialized, START_FIELD, start_time_));
+  ignore_result(SetInt64Field(deserialized, STOP_FIELD, stop_time_));
   return common::Error();
 }
 
@@ -173,7 +173,7 @@ common::Error CatchupQueueInfo::SerializeFields(json_object* deserialized) const
     return err;
   }
 
-  json_object_object_add(deserialized, CATCHUP_FIELD, jobj);
+  ignore_result(SetObjectField(deserialized, CATCHUP_FIELD, jobj));
   return common::Error();
 }
 

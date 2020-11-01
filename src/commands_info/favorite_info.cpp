@@ -37,8 +37,8 @@ common::Error FavoriteInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(id_.c_str()));
-  json_object_object_add(deserialized, FAVORITE_FIELD, json_object_new_boolean(favorite_));
+  ignore_result(SetStringField(deserialized, ID_FIELD, id_));
+  ignore_result(SetBoolField(deserialized, FAVORITE_FIELD, favorite_));
   return common::Error();
 }
 

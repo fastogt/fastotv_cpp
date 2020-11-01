@@ -97,9 +97,9 @@ common::Error InputUrl::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, ID_FIELD, json_object_new_int(GetID()));
+  ignore_result(SetIntField(out, ID_FIELD, GetID()));
   const std::string url_str = url_.spec();
-  json_object_object_add(out, URI_FIELD, json_object_new_string(url_str.c_str()));
+  ignore_result(SetStringField(out, URI_FIELD, url_str));
   return common::Error();
 }
 

@@ -38,8 +38,8 @@ common::Error ProjectInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(name_.c_str()));
-  json_object_object_add(deserialized, VERSION_FIELD, json_object_new_string(version_.c_str()));
+  ignore_result(SetStringField(deserialized, NAME_FIELD, name_));
+  ignore_result(SetStringField(deserialized, VERSION_FIELD, version_));
   return common::Error();
 }
 

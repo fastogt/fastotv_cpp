@@ -35,9 +35,9 @@ CreateContentRequestInfo::CreateContentRequestInfo(const std::string& text, Cont
     : text_(text), type_(type), status_(status) {}
 
 common::Error CreateContentRequestInfo::SerializeFields(json_object* deserialized) const {
-  json_object_object_add(deserialized, TITLE_FIELD, json_object_new_string(text_.c_str()));
-  json_object_object_add(deserialized, CONTENT_TYPE_FIELD, json_object_new_int(type_));
-  json_object_object_add(deserialized, REQUEST_STATUS_FIELD, json_object_new_int(status_));
+  ignore_result(SetStringField(deserialized, TITLE_FIELD, text_));
+  ignore_result(SetEnumField(deserialized, CONTENT_TYPE_FIELD, type_));
+  ignore_result(SetEnumField(deserialized, REQUEST_STATUS_FIELD, status_));
   return common::Error();
 }
 
@@ -110,7 +110,7 @@ common::Error ContentRequestInfo::SerializeFields(json_object* deserialized) con
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(rid_.c_str()));
+  ignore_result(SetStringField(deserialized, ID_FIELD, rid_));
   return base_class::SerializeFields(deserialized);
 }
 

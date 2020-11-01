@@ -69,9 +69,9 @@ common::Error MetaUrl::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(out, NAME_FIELD, json_object_new_string(name_.c_str()));
+  ignore_result(SetStringField(out, NAME_FIELD, name_));
   const std::string url_str = url_.spec();
-  json_object_object_add(out, URL_FIELD, json_object_new_string(url_str.c_str()));
+  ignore_result(SetStringField(out, URL_FIELD, url_str));
   return common::Error();
 }
 

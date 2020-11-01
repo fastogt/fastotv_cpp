@@ -80,7 +80,7 @@ common::Error ChannelInfo::SerializeFields(json_object* deserialized) const {
     return err;
   }
 
-  json_object_object_add(deserialized, EPG_FIELD, jepg);
+  ignore_result(SetObjectField(deserialized, EPG_FIELD, jepg));
   return common::Error();
 }
 

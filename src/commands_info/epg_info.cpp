@@ -109,10 +109,10 @@ common::Error EpgInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(tvg_id_.c_str()));
-  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(display_name_.c_str()));
+  ignore_result(SetStringField(deserialized, ID_FIELD, tvg_id_));
+  ignore_result(SetStringField(deserialized, NAME_FIELD, display_name_));
   const std::string icon_url_str = icon_src_.spec();
-  json_object_object_add(deserialized, ICON_FIELD, json_object_new_string(icon_url_str.c_str()));
+  ignore_result(SetStringField(deserialized, ICON_FIELD, icon_url_str));
 
   json_object* jurls = json_object_new_array();
   for (const auto url : uri_) {
@@ -120,7 +120,7 @@ common::Error EpgInfo::SerializeFields(json_object* deserialized) const {
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
   }
-  json_object_object_add(deserialized, URLS_FIELD, jurls);
+  ignore_result(SetArrayField(deserialized, URLS_FIELD, jurls));
 
   json_object* jprograms = json_object_new_array();
   for (ProgrammeInfo prog : programs_) {
@@ -131,7 +131,7 @@ common::Error EpgInfo::SerializeFields(json_object* deserialized) const {
     }
     json_object_array_add(jprograms, jprog);
   }
-  json_object_object_add(deserialized, PROGRAMS_FIELD, jprograms);
+  ignore_result(SetArrayField(deserialized, PROGRAMS_FIELD, jprograms));
   return common::Error();
 }
 

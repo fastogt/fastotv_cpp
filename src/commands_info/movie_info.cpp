@@ -158,17 +158,17 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
     return common::make_error_inval();
   }
 
-  json_object_object_add(deserialized, NAME_FIELD, json_object_new_string(display_name_.c_str()));
-  json_object_object_add(deserialized, DESCRIPTION_FIELD, json_object_new_string(description_.c_str()));
+  ignore_result(SetStringField(deserialized, NAME_FIELD, display_name_));
+  ignore_result(SetStringField(deserialized, DESCRIPTION_FIELD, description_));
   const std::string icon_url_str = preview_icon_.spec();
-  json_object_object_add(deserialized, PREVIEW_ICON_FIELD, json_object_new_string(icon_url_str.c_str()));
+  ignore_result(SetStringField(deserialized, PREVIEW_ICON_FIELD, icon_url_str));
 
   const std::string trailer_url_str = trailer_url_.spec();
-  json_object_object_add(deserialized, TRAILER_URL_FIELD, json_object_new_string(trailer_url_str.c_str()));
-  json_object_object_add(deserialized, USER_SCORE_FIELD, json_object_new_double(user_score_));
-  json_object_object_add(deserialized, PRIME_DATE_FIELD, json_object_new_int64(prime_date_));
-  json_object_object_add(deserialized, COUNTRY_FIELD, json_object_new_string(country_.c_str()));
-  json_object_object_add(deserialized, DURATION_FIELD, json_object_new_int64(duration_));
+  ignore_result(SetStringField(deserialized, TRAILER_URL_FIELD, trailer_url_str));
+  ignore_result(SetDoubleField(deserialized, USER_SCORE_FIELD, user_score_));
+  ignore_result(SetInt64Field(deserialized, PRIME_DATE_FIELD, prime_date_));
+  ignore_result(SetStringField(deserialized, COUNTRY_FIELD, country_));
+  ignore_result(SetInt64Field(deserialized, DURATION_FIELD, duration_));
 
   json_object* jurls = json_object_new_array();
   for (const auto url : urls_) {
@@ -176,8 +176,8 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
   }
-  json_object_object_add(deserialized, URLS_FIELD, jurls);
-  json_object_object_add(deserialized, TYPE_FIELD, json_object_new_int(type_));
+  ignore_result(SetArrayField(deserialized, URLS_FIELD, jurls));
+  ignore_result(SetEnumField(deserialized, TYPE_FIELD, type_));
   return common::Error();
 }
 

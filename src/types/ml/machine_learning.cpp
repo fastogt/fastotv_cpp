@@ -133,12 +133,12 @@ common::Error MachineLearning::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error MachineLearning::SerializeFields(json_object* out) const {
-  json_object_object_add(out, BACKEND_FIELD, json_object_new_int64(backend_));
+  ignore_result(SetInt64Field(out, BACKEND_FIELD, backend_));
   const std::string model_path_str = model_path_.spec();
-  json_object_object_add(out, MODEL_PATH_FIELD, json_object_new_string(model_path_str.c_str()));
-  json_object_object_add(out, TRACKING_FIELD, json_object_new_boolean(tracking_));
-  json_object_object_add(out, DUMP_FIELD, json_object_new_boolean(dump_));
-  json_object_object_add(out, OVERLAY_FIELD, json_object_new_boolean(overlay_));
+  ignore_result(SetStringField(out, MODEL_PATH_FIELD, model_path_str));
+  ignore_result(SetBoolField(out, TRACKING_FIELD, tracking_));
+  ignore_result(SetBoolField(out, DUMP_FIELD, dump_));
+  ignore_result(SetBoolField(out, OVERLAY_FIELD, overlay_));
   return common::Error();
 }
 

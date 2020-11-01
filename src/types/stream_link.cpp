@@ -87,11 +87,11 @@ common::Error StreamLink::DoDeSerialize(json_object* serialized) {
 common::Error StreamLink::SerializeFields(json_object* out) const {
   if (http_proxy_) {
     const std::string url_path = http_proxy_->spec();
-    json_object_object_add(out, HTTP_FIELD, json_object_new_string(url_path.c_str()));
+    ignore_result(SetStringField(out, HTTP_FIELD, url_path));
   }
   if (https_proxy_) {
     const std::string url_path = https_proxy_->spec();
-    json_object_object_add(out, HTTPS_FIELD, json_object_new_string(url_path.c_str()));
+    ignore_result(SetStringField(out, HTTPS_FIELD, url_path));
   }
   return common::Error();
 }

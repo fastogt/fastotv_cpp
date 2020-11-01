@@ -39,15 +39,15 @@ namespace {
 json_object* make_json_from_image(const ImageBox& box) {
   json_object* jimage = json_object_new_object();
 
-  json_object_object_add(jimage, CLASS_ID_FIELD, json_object_new_int(box.class_id));
-  json_object_object_add(jimage, CONFIDENCE_FIELD, json_object_new_double(box.confidence));
-  json_object_object_add(jimage, OBJECT_ID_FIELD, json_object_new_int64(box.object_id));
+  ignore_result(common::serializer::json_set_int(jimage, CLASS_ID_FIELD, box.class_id));
+  ignore_result(common::serializer::json_set_double(jimage, CONFIDENCE_FIELD, box.confidence));
+  ignore_result(common::serializer::json_set_int64(jimage, OBJECT_ID_FIELD, box.object_id));
   const auto point = box.rect.origin();
-  json_object_object_add(jimage, LEFT_FIELD, json_object_new_int(point.x()));
-  json_object_object_add(jimage, TOP_FIELD, json_object_new_int(point.y()));
+  ignore_result(common::serializer::json_set_int(jimage, LEFT_FIELD, point.x()));
+  ignore_result(common::serializer::json_set_int(jimage, TOP_FIELD, point.y()));
   const auto size = box.rect.size();
-  json_object_object_add(jimage, WIDTH_FIELD, json_object_new_int(size.width()));
-  json_object_object_add(jimage, HEIGHT_FIELD, json_object_new_int(size.height()));
+  ignore_result(common::serializer::json_set_int(jimage, WIDTH_FIELD, size.width()));
+  ignore_result(common::serializer::json_set_int(jimage, HEIGHT_FIELD, size.height()));
 
   return jimage;
 }
@@ -120,8 +120,8 @@ common::Error NotificationInfo::SerializeFields(json_object* deserialized) const
     json_object* jimage = make_json_from_image(image);
     json_object_array_add(jimages, jimage);
   }
-  json_object_object_add(deserialized, ID_FIELD, json_object_new_string(sid_.c_str()));
-  json_object_object_add(deserialized, IMAGES_FIELD, jimages);
+  ignore_result(SetStringField(deserialized, ID_FIELD, sid_));
+  ignore_result(SetArrayField(deserialized, IMAGES_FIELD, jimages));
   return common::Error();
 }
 
