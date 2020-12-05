@@ -74,9 +74,9 @@ common::ErrnoError Client::SystemInfo(protocol::sequance_id_t id,
                                       const login_t& login,
                                       const device_id_t& dev,
                                       const commands_info::ProjectInfo& proj) {
-  const common::system_info::CpuInfo& c1 = common::system_info::CurrentCpuInfo();
-  std::string brand = c1.GetBrandName();
-  commands_info::ClientInfo info(login, dev, proj, commands_info::OperationSystemInfo::MakeOSSnapshot(), brand);
+  common::system_info::CPU c1;
+  commands_info::ClientInfo info(login, dev, proj, commands_info::OperationSystemInfo::MakeOSSnapshot(),
+                                 c1.vendor_name());
   return SystemInfo(id, info);
 }
 
