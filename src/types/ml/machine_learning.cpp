@@ -116,7 +116,6 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
 }
 
 common::Error MachineLearning::DoDeSerialize(json_object* serialized) {
-  MachineLearning res;
   SupportedBackends backend;
   common::Error err = GetEnumField(serialized, BACKEND_FIELD, &backend);
   if (err) {
@@ -128,6 +127,7 @@ common::Error MachineLearning::DoDeSerialize(json_object* serialized) {
   if (err) {
     return err;
   }
+
   *this = MachineLearning(backend, common::uri::GURL(model_path));
   return common::Error();
 }

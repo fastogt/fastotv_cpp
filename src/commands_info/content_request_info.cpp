@@ -42,7 +42,6 @@ common::Error CreateContentRequestInfo::SerializeFields(json_object* deserialize
 }
 
 common::Error CreateContentRequestInfo::DoDeSerialize(json_object* serialized) {
-  CreateContentRequestInfo ainf;
   std::string text;
   common::Error err = GetStringField(serialized, TITLE_FIELD, &text);
   if (err) {
