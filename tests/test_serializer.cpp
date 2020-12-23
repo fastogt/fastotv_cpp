@@ -595,6 +595,19 @@ TEST(NotificationTextInfo, serialize_deserialize) {
   ASSERT_EQ(rinf_info, dser);
 }
 
+TEST(NotificationTextInfo, serialize_deserialize_text) {
+  const std::string json =
+      R"({"show_time": 10000, "device_id": "5fe2cf4212aeacb86b692f6a", "type": 0, "message": "Ho", "id": "5f097178543af781c17d34cd"})";
+
+  fastotv::commands_info::NotificationTextInfo rinf_info;
+  common::Error err = rinf_info.DeSerializeFromString(json);
+  ASSERT_TRUE(!err);
+
+  ASSERT_EQ(rinf_info.GetText(), "Ho");
+  ASSERT_EQ(rinf_info.GetType(), 0);
+  ASSERT_EQ(rinf_info.GetShowTime(), 10000);
+}
+
 TEST(OperationSystemInfo, serialize_deserialize) {
   const std::string name = "Windows";
   const std::string version = "4.3";
