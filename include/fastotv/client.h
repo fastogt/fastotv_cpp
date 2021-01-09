@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2020 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2021 FastoGT. All right reserved.
 
     This file is part of FastoTV.
 
@@ -17,6 +17,8 @@
 */
 
 #pragma once
+
+#include <memory>
 
 #include <common/libev/tcp/tcp_client.h>  // for TcpClient
 
