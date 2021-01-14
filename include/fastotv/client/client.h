@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <common/daemon/commands/ping_info.h>
 
