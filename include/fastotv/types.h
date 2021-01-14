@@ -51,9 +51,8 @@ enum StreamType : int {
   COD_ENCODE = 11,
   EVENT = 12,
   CV_DATA = 13,
-  VOD_CV_DATA = 14,
-  CHANGER = 15,
-  SCREEN = 16  // for inner use
+  CHANGER = 14,
+  SCREEN = 15  // for inner use
 };
 
 }  // namespace fastotv
