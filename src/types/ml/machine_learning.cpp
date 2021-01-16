@@ -17,16 +17,18 @@
 #define BACKEND_FIELD "backend"
 #define MODEL_PATH_FIELD "model_url"
 #define TRACKING_FIELD "tracking"
+#define CLASS_ID_FIELD "class_id"
 #define OVERLAY_FIELD "overlay"
 #define DUMP_FIELD "dump"
 
 namespace fastotv {
 namespace ml {
 
-MachineLearning::MachineLearning() : backend_(NVIDIA), model_path_(), tracking_(false), dump_(false), overlay_(false) {}
+MachineLearning::MachineLearning()
+    : backend_(NVIDIA), model_path_(), tracking_(false), dump_(false), class_id_(0), overlay_(false) {}
 
 MachineLearning::MachineLearning(SupportedBackends backend, const model_path_t& model_path)
-    : backend_(backend), model_path_(model_path), overlay_() {}
+    : backend_(backend), model_path_(model_path), class_id_(0), overlay_(false) {}
 
 MachineLearning::model_path_t MachineLearning::GetModelPath() const {
   return model_path_;
@@ -58,6 +60,14 @@ bool MachineLearning::GetNeedOverlay() const {
 
 void MachineLearning::SetNeedOverlay(bool overlay) {
   overlay_ = overlay;
+}
+
+int MachineLearning::GetClassID() const {
+  return class_id_;
+}
+
+void MachineLearning::SetClassID(int cid) {
+  class_id_ = cid;
 }
 
 SupportedBackends MachineLearning::GetBackend() const {
@@ -106,6 +116,13 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
   }
   res.SetNeedDump(dump);
 
+  int clid;
+  common::Value* clid_field = hash->Find(CLASS_ID_FIELD);
+  if (!clid_field || !clid_field->GetAsInteger(&clid)) {
+    return common::Optional<MachineLearning>();
+  }
+  res.SetClassID(clid);
+
   bool overlay;
   common::Value* overlay_field = hash->Find(OVERLAY_FIELD);
   if (!overlay_field || !overlay_field->GetAsBoolean(&overlay)) {
@@ -128,7 +145,36 @@ common::Error MachineLearning::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  *this = MachineLearning(backend, common::uri::GURL(model_path));
+  MachineLearning lresult(backend, common::uri::GURL(model_path));
+  bool tracking;
+  err = GetBoolField(serialized, TRACKING_FIELD, &tracking);
+  if (err) {
+    return err;
+  }
+  lresult.SetNeedTracking(tracking);
+
+  bool dump;
+  err = GetBoolField(serialized, DUMP_FIELD, &dump);
+  if (err) {
+    return err;
+  }
+  lresult.SetNeedDump(dump);
+
+  int clid;
+  err = GetIntField(serialized, CLASS_ID_FIELD, &clid);
+  if (err) {
+    return err;
+  }
+  lresult.SetClassID(clid);
+
+  bool overlay;
+  err = GetBoolField(serialized, OVERLAY_FIELD, &overlay);
+  if (err) {
+    return err;
+  }
+  lresult.SetNeedOverlay(overlay);
+
+  *this = lresult;
   return common::Error();
 }
 
@@ -138,6 +184,7 @@ common::Error MachineLearning::SerializeFields(json_object* out) const {
   ignore_result(SetStringField(out, MODEL_PATH_FIELD, model_path_str));
   ignore_result(SetBoolField(out, TRACKING_FIELD, tracking_));
   ignore_result(SetBoolField(out, DUMP_FIELD, dump_));
+  ignore_result(SetIntField(out, CLASS_ID_FIELD, class_id_));
   ignore_result(SetBoolField(out, OVERLAY_FIELD, overlay_));
   return common::Error();
 }

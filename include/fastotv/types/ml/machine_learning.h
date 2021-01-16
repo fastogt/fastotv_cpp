@@ -50,6 +50,9 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
   bool GetNeedOverlay() const;
   void SetNeedOverlay(bool overlay);
 
+  int GetClassID() const;
+  void SetClassID(int cid);
+
   static common::Optional<MachineLearning> MakeMachineLearning(common::HashValue* hash);
 
  protected:
@@ -61,6 +64,7 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
   model_path_t model_path_;
   bool tracking_;
   bool dump_;
+  int class_id_;
   bool overlay_;
 };
 
