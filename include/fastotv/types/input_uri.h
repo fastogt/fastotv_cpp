@@ -17,8 +17,8 @@
 #include <string>
 
 #include <fastotv/types/input_url.h>
-#include <fastotv/types/srt_key.h>
 #include <fastotv/types/pyfastostream.h>
+#include <fastotv/types/srt_key.h>
 
 namespace fastotv {
 

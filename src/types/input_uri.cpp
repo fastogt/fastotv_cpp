@@ -15,7 +15,7 @@
 #include <fastotv/types/input_uri.h>
 
 #define USER_AGENT_FIELD "user_agent"
-#define PyFastoStream_URL_FIELD "stream_link"
+#define PYFASTOSTREAM_URL_FIELD "stream_link"
 #define PROXY_FIELD "proxy"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
@@ -104,7 +104,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   common::HashValue* PyFastoStream_url;
-  common::Value* PyFastoStream_url_field = hash->Find(PyFastoStream_URL_FIELD);
+  common::Value* PyFastoStream_url_field = hash->Find(PYFASTOSTREAM_URL_FIELD);
   if (PyFastoStream_url_field && PyFastoStream_url_field->GetAsHash(&PyFastoStream_url)) {
     url.SetPyFastoStream(PyFastoStream::Make(PyFastoStream_url));
   }
@@ -149,7 +149,7 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jstream_url = nullptr;
-  err = GetObjectField(serialized, PyFastoStream_URL_FIELD, &jstream_url);
+  err = GetObjectField(serialized, PYFASTOSTREAM_URL_FIELD, &jstream_url);
   if (!err) {
     PyFastoStream link;
     err = link.DeSerialize(jstream_url);
@@ -208,7 +208,7 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     json_object* jlink = nullptr;
     err = stream_url_->Serialize(&jlink);
     if (!err) {
-      ignore_result(SetObjectField(deserialized, PyFastoStream_URL_FIELD, jlink));
+      ignore_result(SetObjectField(deserialized, PYFASTOSTREAM_URL_FIELD, jlink));
     }
   }
 
