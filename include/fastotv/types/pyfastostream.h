@@ -24,14 +24,16 @@
 
 namespace fastotv {
 
-class StreamLink : public common::serializer::JsonSerializer<StreamLink> {
+enum QualityPrefer { QP_AUDIO = 0, QP_VIDEO = 1, QP_BOTH = 2 };
+
+class PyFastoStream : public common::serializer::JsonSerializer<PyFastoStream> {
  public:
-  typedef JsonSerializer<StreamLink> base_class;
+  typedef JsonSerializer<PyFastoStream> base_class;
   typedef common::Optional<common::uri::GURL> http_proxy_t;
   typedef common::Optional<common::uri::GURL> https_proxy_t;
 
-  StreamLink();
-  explicit StreamLink(const http_proxy_t& http, const http_proxy_t& https);
+  PyFastoStream();
+  explicit PyFastoStream(const http_proxy_t& http, const http_proxy_t& https, QualityPrefer prefer);
 
   bool IsValid() const;
 
@@ -41,9 +43,12 @@ class StreamLink : public common::serializer::JsonSerializer<StreamLink> {
   https_proxy_t GetHttps() const;
   void SetHttps(const https_proxy_t& url);
 
-  bool Equals(const StreamLink& url) const;
+  QualityPrefer GetPrefer() const;
+  void SetPrefer(QualityPrefer prefer);
 
-  static common::Optional<StreamLink> Make(common::HashValue* json);
+  bool Equals(const PyFastoStream& url) const;
+
+  static common::Optional<PyFastoStream> Make(common::HashValue* json);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -52,13 +57,14 @@ class StreamLink : public common::serializer::JsonSerializer<StreamLink> {
  private:
   common::Optional<common::uri::GURL> http_proxy_;
   common::Optional<common::uri::GURL> https_proxy_;
+  QualityPrefer prefer_;
 };
 
-inline bool operator==(const StreamLink& left, const StreamLink& right) {
+inline bool operator==(const PyFastoStream& left, const PyFastoStream& right) {
   return left.Equals(right);
 }
 
-inline bool operator!=(const StreamLink& x, const StreamLink& y) {
+inline bool operator!=(const PyFastoStream& x, const PyFastoStream& y) {
   return !(x == y);
 }
 

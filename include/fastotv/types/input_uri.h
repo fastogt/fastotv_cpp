@@ -18,7 +18,7 @@
 
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/srt_key.h>
-#include <fastotv/types/stream_link.h>
+#include <fastotv/types/pyfastostream.h>
 
 namespace fastotv {
 
@@ -31,7 +31,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
-  typedef common::Optional<StreamLink> stream_url_t;
+  typedef common::Optional<PyFastoStream> stream_url_t;
   typedef common::Optional<SrtKey> srt_key_t;
 
   InputUri();
@@ -42,8 +42,8 @@ class InputUri : public InputUrl {
   user_agent_t GetUserAgent() const;
   void SetUserAgent(user_agent_t agent);
 
-  stream_url_t GetStreamLink() const;
-  void SetStreamLink(stream_url_t stream);
+  stream_url_t GetPyFastoStream() const;
+  void SetPyFastoStream(stream_url_t stream);
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);

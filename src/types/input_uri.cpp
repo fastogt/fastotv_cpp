@@ -15,7 +15,7 @@
 #include <fastotv/types/input_uri.h>
 
 #define USER_AGENT_FIELD "user_agent"
-#define STREAMLINK_URL_FIELD "stream_link"
+#define PyFastoStream_URL_FIELD "stream_link"
 #define PROXY_FIELD "proxy"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
@@ -40,11 +40,11 @@ void InputUri::SetUserAgent(user_agent_t agent) {
   user_agent_ = agent;
 }
 
-InputUri::stream_url_t InputUri::GetStreamLink() const {
+InputUri::stream_url_t InputUri::GetPyFastoStream() const {
   return stream_url_;
 }
 
-void InputUri::SetStreamLink(fastotv::InputUri::stream_url_t stream) {
+void InputUri::SetPyFastoStream(fastotv::InputUri::stream_url_t stream) {
   stream_url_ = stream;
 }
 
@@ -103,10 +103,10 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetUserAgent(static_cast<UserAgent>(agent));
   }
 
-  common::HashValue* streamlink_url;
-  common::Value* streamlink_url_field = hash->Find(STREAMLINK_URL_FIELD);
-  if (streamlink_url_field && streamlink_url_field->GetAsHash(&streamlink_url)) {
-    url.SetStreamLink(StreamLink::Make(streamlink_url));
+  common::HashValue* PyFastoStream_url;
+  common::Value* PyFastoStream_url_field = hash->Find(PyFastoStream_URL_FIELD);
+  if (PyFastoStream_url_field && PyFastoStream_url_field->GetAsHash(&PyFastoStream_url)) {
+    url.SetPyFastoStream(PyFastoStream::Make(PyFastoStream_url));
   }
 
   std::string http_url_str;
@@ -149,12 +149,12 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jstream_url = nullptr;
-  err = GetObjectField(serialized, STREAMLINK_URL_FIELD, &jstream_url);
+  err = GetObjectField(serialized, PyFastoStream_URL_FIELD, &jstream_url);
   if (!err) {
-    StreamLink link;
+    PyFastoStream link;
     err = link.DeSerialize(jstream_url);
     if (!err) {
-      res.SetStreamLink(link);
+      res.SetPyFastoStream(link);
     }
   }
 
@@ -208,7 +208,7 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     json_object* jlink = nullptr;
     err = stream_url_->Serialize(&jlink);
     if (!err) {
-      ignore_result(SetObjectField(deserialized, STREAMLINK_URL_FIELD, jlink));
+      ignore_result(SetObjectField(deserialized, PyFastoStream_URL_FIELD, jlink));
     }
   }
 
