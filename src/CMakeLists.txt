@@ -72,6 +72,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/project_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/content_request_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/notification_text_info.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/shutdown_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/notification_info.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands_info/ml/types.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/protocol/types.h
@@ -118,6 +119,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/commands_info/machine_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/project_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/notification_text_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/commands_info/shutdown_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/notification_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/ml/types.cpp
   ${CMAKE_SOURCE_DIR}/src/protocol/types.cpp
