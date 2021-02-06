@@ -36,6 +36,7 @@
 #define SERVER_PING "server_ping"  // ping client
 #define SERVER_GET_CLIENT_INFO "get_client_info"
 #define SERVER_TEXT_NOTIFICATION "send_message"
+#define SERVER_SHUTDOWN_NOTIFICATION "send_shutdown"
 
 // request
 // {"jsonrpc": "2.0", "method": "activate_request", "id": 11, "params": {"license_key":"%s"}}
