@@ -127,7 +127,7 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   fastotv::timestamp_t current_ts = 0;
   ignore_result(GetInt64Field(serialized, TIMESTAMP_FIELD, &current_ts));
 
-  time_t uptime = 0;
+  int64_t uptime = 0;
   ignore_result(GetInt64Field(serialized, UPTIME_FIELD, &uptime));
 
   uint64_t net_total_bytes_recv = 0;
