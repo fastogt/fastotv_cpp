@@ -106,22 +106,22 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   std::string load_average;
   ignore_result(GetStringField(serialized, LOAD_AVERAGE_FIELD, &load_average));
 
-  size_t ram_bytes_total = 0;
+  uint64_t ram_bytes_total = 0;
   ignore_result(GetUint64Field(serialized, MEMORY_TOTAL_FIELD, &ram_bytes_total));
 
-  size_t ram_bytes_free = 0;
+  uint64_t ram_bytes_free = 0;
   ignore_result(GetUint64Field(serialized, MEMORY_FREE_FIELD, &ram_bytes_free));
 
-  size_t hdd_bytes_total = 0;
+  uint64_t hdd_bytes_total = 0;
   ignore_result(GetUint64Field(serialized, HDD_TOTAL_FIELD, &hdd_bytes_total));
 
-  size_t hdd_bytes_free = 0;
+  uint64_t hdd_bytes_free = 0;
   ignore_result(GetUint64Field(serialized, HDD_FREE_FIELD, &hdd_bytes_free));
 
-  fastotv::bandwidth_t net_bytes_recv = 0;
+  uint64_t net_bytes_recv = 0;
   ignore_result(GetUint64Field(serialized, BANDWIDTH_IN_FIELD, &net_bytes_recv));
 
-  fastotv::bandwidth_t net_bytes_send = 0;
+  uint64_t net_bytes_send = 0;
   ignore_result(GetUint64Field(serialized, BANDWIDTH_OUT_FIELD, &net_bytes_send));
 
   fastotv::timestamp_t current_ts = 0;
@@ -130,10 +130,10 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   time_t uptime = 0;
   ignore_result(GetInt64Field(serialized, UPTIME_FIELD, &uptime));
 
-  size_t net_total_bytes_recv = 0;
+  uint64_t net_total_bytes_recv = 0;
   ignore_result(GetUint64Field(serialized, TOTAL_BYTES_IN_FIELD, &net_total_bytes_recv));
 
-  size_t net_total_bytes_send = 0;
+  uint64_t net_total_bytes_send = 0;
   ignore_result(GetUint64Field(serialized, TOTAL_BYTES_OUT_FIELD, &net_total_bytes_send));
 
   *this =
