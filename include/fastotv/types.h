@@ -51,8 +51,8 @@ enum StreamType : int {
   COD_ENCODE = 11,
   EVENT = 12,
   CV_DATA = 13,
-  CHANGER_ENCODE = 14,
-  CHANGER_RELAY = 15,
+  CHANGER_RELAY = 14,
+  CHANGER_ENCODE = 15,
   SCREEN = 16  // for inner use
 };
 
