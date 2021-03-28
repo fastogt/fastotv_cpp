@@ -20,13 +20,21 @@
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
+#define SRT_MODE_FIELD "srt_mode"
 
 namespace fastotv {
 
 InputUri::InputUri() : InputUri(0, url_t()) {}
 
 InputUri::InputUri(uri_id_t id, const url_t& input)
-    : base_class(id, input), user_agent_(), stream_url_(), http_proxy_url_(), program_number_(), iface_(), srt_key_() {}
+    : base_class(id, input),
+      user_agent_(),
+      stream_url_(),
+      http_proxy_url_(),
+      program_number_(),
+      iface_(),
+      srt_mode_(),
+      srt_key_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -80,10 +88,18 @@ void InputUri::SetSrtKey(const srt_key_t& pass) {
   srt_key_ = pass;
 }
 
+InputUri::srt_mode_t InputUri::GetSrtMode() const {
+  return srt_mode_;
+}
+
+void InputUri::SetSrtMode(srt_mode_t mode) {
+  srt_mode_ = mode;
+}
+
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
-         srt_key_ == url.srt_key_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -125,6 +141,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   std::string iface;
   if (iface_field && iface_field->GetAsBasicString(&iface)) {
     url.SetMulticastIface(iface);
+  }
+
+  int srt_mode;
+  common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
+  if (srt_mode_field && srt_mode_field->GetAsInteger(&srt_mode)) {
+    url.SetSrtMode(static_cast<SrtMode>(srt_mode));
   }
 
   common::HashValue* srt_key;
@@ -180,6 +202,12 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  SrtMode srt_mode;
+  err = GetEnumField(serialized, SRT_MODE_FIELD, &srt_mode);
+  if (!err) {
+    res.SetSrtMode(srt_mode);
+  }
+
   std::string http_proxy;
   err = GetStringField(serialized, PROXY_FIELD, &http_proxy);
   if (!err) {
@@ -223,6 +251,9 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     ignore_result(SetStringField(deserialized, MULTICAST_IFACE_FIELD, iface_str));
   }
 
+  if (srt_mode_) {
+    ignore_result(SetEnumField(deserialized, SRT_MODE_FIELD, *srt_mode_));
+  }
   if (srt_key_) {
     json_object* jkey = nullptr;
     err = srt_key_->Serialize(&jkey);

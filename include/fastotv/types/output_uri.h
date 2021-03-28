@@ -17,6 +17,7 @@
 #include <common/file_system/path.h>
 
 #include <fastotv/types/output_url.h>
+#include <fastotv/types/srt_key.h>
 
 namespace fastotv {
 
@@ -33,6 +34,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<unsigned> chunk_duration_t;
   typedef common::Optional<SrtMode> srt_mode_t;
   typedef common::Optional<HlsSinkType> hlssink_type_t;
+  typedef common::Optional<SrtKey> srt_key_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -54,6 +56,9 @@ class OutputUri : public OutputUrl {
   srt_mode_t GetSrtMode() const;
   void SetSrtMode(srt_mode_t mode);
 
+  srt_key_t GetSrtKey() const;
+  void SetSrtKey(const srt_key_t& pass);
+
   playlist_root_t GetPlaylistRoot() const;
   void SetPlaylistRoot(const playlist_root_t& playlist);
 
@@ -74,6 +79,7 @@ class OutputUri : public OutputUrl {
   playlist_root_t playlist_root_;
   // srt
   srt_mode_t srt_mode_;
+  srt_key_t srt_key_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

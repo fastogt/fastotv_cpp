@@ -26,6 +26,7 @@ class InputUri : public InputUrl {
  public:
   typedef InputUrl base_class;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
+  enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
   typedef common::Optional<UserAgent> user_agent_t;
   // optionals
   typedef common::Optional<int> program_number_t;
@@ -33,6 +34,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<PyFastoStream> stream_url_t;
   typedef common::Optional<SrtKey> srt_key_t;
+  typedef common::Optional<SrtMode> srt_mode_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -53,6 +55,9 @@ class InputUri : public InputUrl {
 
   multicast_iface_t GetMulticastIface() const;
   void SetMulticastIface(multicast_iface_t iface);
+
+  srt_mode_t GetSrtMode() const;
+  void SetSrtMode(srt_mode_t mode);
 
   srt_key_t GetSrtKey() const;
   void SetSrtKey(const srt_key_t& pass);
@@ -76,6 +81,7 @@ class InputUri : public InputUrl {
   multicast_iface_t iface_;
 
   // srt
+  srt_mode_t srt_mode_;
   srt_key_t srt_key_;
 };
 

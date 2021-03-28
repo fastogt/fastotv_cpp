@@ -20,13 +20,14 @@
 #define CHUNK_DURATION_FIELD "chunk_duration"
 #define PLAYLIST_ROOT_FIELD "playlist_root"
 #define SRT_MODE_FIELD "srt_mode"
+#define SRT_KEY_FIELD "srt_key"
 
 namespace fastotv {
 
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
 OutputUri::OutputUri(uri_id_t id, const url_t& url)
-    : base_class(id, url), hlssink_type_(), http_root_(), hls_type_(), chunk_duration_(), srt_mode_() {}
+    : base_class(id, url), hlssink_type_(), http_root_(), hls_type_(), chunk_duration_(), srt_mode_(), srt_key_() {}
 
 bool OutputUri::IsValid() const {
   return base_class::IsValid();
@@ -72,6 +73,14 @@ void OutputUri::SetSrtMode(srt_mode_t mode) {
   srt_mode_ = mode;
 }
 
+OutputUri::srt_key_t OutputUri::GetSrtKey() const {
+  return srt_key_;
+}
+
+void OutputUri::SetSrtKey(const srt_key_t& pass) {
+  srt_key_ = pass;
+}
+
 OutputUri::playlist_root_t OutputUri::GetPlaylistRoot() const {
   return playlist_root_;
 }
@@ -81,7 +90,9 @@ void OutputUri::SetPlaylistRoot(const OutputUri::playlist_root_t& playlist) {
 }
 
 bool OutputUri::Equals(const OutputUri& url) const {
-  return base_class::Equals(url) && http_root_ == url.http_root_;
+  return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
+         hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -132,6 +143,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetSrtMode(static_cast<SrtMode>(srt_mode));
   }
 
+  common::HashValue* srt_key;
+  common::Value* srt_key_field = hash->Find(SRT_KEY_FIELD);
+  if (srt_key_field && srt_key_field->GetAsHash(&srt_key)) {
+    url.SetSrtKey(SrtKey::Make(srt_key));
+  }
+
   return url;
 }
 
@@ -172,6 +189,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     res.SetSrtMode(srt_mode);
   }
 
+  json_object* jsrt_key = nullptr;
+  err = GetObjectField(serialized, SRT_KEY_FIELD, &jsrt_key);
+  if (!err) {
+    SrtKey key;
+    err = key.DeSerialize(jsrt_key);
+    if (!err) {
+      res.SetSrtKey(key);
+    }
+  }
+
   *this = res;
   return common::Error();
 }
@@ -206,6 +233,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   }
   if (srt_mode_) {
     ignore_result(SetEnumField(deserialized, SRT_MODE_FIELD, *srt_mode_));
+  }
+  if (srt_key_) {
+    json_object* jkey = nullptr;
+    err = srt_key_->Serialize(&jkey);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, SRT_KEY_FIELD, jkey));
+    }
   }
   return common::Error();
 }
