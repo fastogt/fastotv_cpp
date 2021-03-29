@@ -41,10 +41,10 @@ bool OutputUri::IsHls() const {
   }
 
   if (GetHlsSinkType() && GetHttpRoot() && GetHlsType()) {
-    return false;
+    return true;
   }
 
-  return true;
+  return false;
 }
 
 OutputUri::hlssink_type_t OutputUri::GetHlsSinkType() const {
