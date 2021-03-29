@@ -41,6 +41,8 @@ class OutputUri : public OutputUrl {
 
   bool IsValid() const;
 
+  bool IsHls() const;
+
   hlssink_type_t GetHlsSinkType() const;
   void SetHlsSinkType(hlssink_type_t hlssink);
 

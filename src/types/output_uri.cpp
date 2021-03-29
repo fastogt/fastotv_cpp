@@ -33,6 +33,20 @@ bool OutputUri::IsValid() const {
   return base_class::IsValid();
 }
 
+bool OutputUri::IsHls() const {
+  DCHECK(IsValid());
+  const auto url = GetUrl();
+  if (!url.SchemeIsHTTPOrHTTPS()) {
+    return false;
+  }
+
+  if (GetHlsSinkType() && GetHttpRoot()) {
+    return false;
+  }
+
+  return true;
+}
+
 OutputUri::hlssink_type_t OutputUri::GetHlsSinkType() const {
   return hlssink_type_;
 }
