@@ -41,13 +41,24 @@
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vod_info.h>
 #include <fastotv/types/input_uri.h>
+#include <fastotv/types/output_uri.h>
 #include <fastotv/types/srt_key.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
+TEST(OutputUri, serialize_deserialize) {
+  const std::string url = R"({"id": 10, "uri": "http://fastocloud.com/laza"})";
+  fastotv::OutputUri out;
+  common::Error err = out.DeSerializeFromString(url);
+  ASSERT_TRUE(!err);
+  ASSERT_EQ(out.GetUrl(), "http://fastocloud.com/laza");
+  ASSERT_EQ(out.GetID(), 10);
+  ASSERT_TRUE(out.IsHls());
+  ASSERT_TRUE(out.IsValid());
+}
+
 TEST(InputUri, serialize_deserialize) {
-  const std::string srt_key =
-      R"({"passphrase": "iVrata", "pbkeylen": 32})";
+  const std::string srt_key = R"({"passphrase": "iVrata", "pbkeylen": 32})";
   fastotv::SrtKey key;
   common::Error err = key.DeSerializeFromString(srt_key);
   ASSERT_TRUE(!err);
