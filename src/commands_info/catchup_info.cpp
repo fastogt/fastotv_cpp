@@ -53,7 +53,8 @@ CatchupInfo::CatchupInfo(const stream_id_t& sid,
                  parts,
                  view,
                  locked,
-                 urls),
+                 urls,
+                 false),
       start_(start),
       stop_(stop) {}
 

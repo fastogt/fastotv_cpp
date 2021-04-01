@@ -19,11 +19,12 @@
 #include <fastotv/commands_info/channel_info.h>
 
 #define EPG_FIELD "epg"
+#define ARCHIVE_FIELD "archive"
 
 namespace fastotv {
 namespace commands_info {
 
-ChannelInfo::ChannelInfo() : base_class(), epg_() {}
+ChannelInfo::ChannelInfo() : base_class(), epg_(), archive_(false) {}
 
 ChannelInfo::ChannelInfo(const stream_id_t& sid,
                          const groups_t& groups,
@@ -37,7 +38,8 @@ ChannelInfo::ChannelInfo(const stream_id_t& sid,
                          const parts_t& parts,
                          view_count_t view,
                          bool locked,
-                         const meta_urls_t& urls)
+                         const meta_urls_t& urls,
+                         bool archive)
     : base_class(sid,
                  groups,
                  iarc,
@@ -50,7 +52,8 @@ ChannelInfo::ChannelInfo(const stream_id_t& sid,
                  view,
                  locked,
                  urls),
-      epg_(epg) {}
+      epg_(epg),
+      archive_(archive) {}
 
 bool ChannelInfo::IsValid() const {
   return base_class::IsValid() && epg_.IsValid();
@@ -62,6 +65,14 @@ EpgInfo ChannelInfo::GetEpg() const {
 
 void ChannelInfo::SetEpg(const EpgInfo& epg) {
   epg_ = epg;
+}
+
+bool ChannelInfo::GetArchive() const {
+  return archive_;
+}
+
+void ChannelInfo::SetArchive(bool archive) {
+  archive_ = archive;
 }
 
 common::Error ChannelInfo::SerializeFields(json_object* deserialized) const {
@@ -81,6 +92,7 @@ common::Error ChannelInfo::SerializeFields(json_object* deserialized) const {
   }
 
   ignore_result(SetObjectField(deserialized, EPG_FIELD, jepg));
+  ignore_result(SetBoolField(deserialized, ARCHIVE_FIELD, archive_));
   return common::Error();
 }
 
@@ -102,6 +114,8 @@ common::Error ChannelInfo::DoDeSerialize(json_object* serialized) {
   if (err) {
     return err;
   }
+
+  ignore_result(GetBoolField(serialized, ARCHIVE_FIELD, &inf.archive_));
 
   inf.epg_ = epg;
   *this = inf;

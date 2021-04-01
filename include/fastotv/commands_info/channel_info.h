@@ -43,12 +43,15 @@ class ChannelInfo : public StreamBaseInfo {
               const parts_t& parts,
               view_count_t view,
               bool locked,
-              const meta_urls_t& urls);
+              const meta_urls_t& urls, bool archive);
 
   bool IsValid() const;
 
   EpgInfo GetEpg() const;
   void SetEpg(const EpgInfo& epg);
+
+  bool GetArchive() const;
+  void SetArchive(bool archive);
 
   bool Equals(const ChannelInfo& info) const;
 
@@ -58,6 +61,7 @@ class ChannelInfo : public StreamBaseInfo {
 
  private:
   EpgInfo epg_;
+  bool archive_;
 };
 
 inline bool operator==(const ChannelInfo& left, const ChannelInfo& right) {
