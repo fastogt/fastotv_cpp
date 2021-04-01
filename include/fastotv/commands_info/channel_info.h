@@ -43,7 +43,8 @@ class ChannelInfo : public StreamBaseInfo {
               const parts_t& parts,
               view_count_t view,
               bool locked,
-              const meta_urls_t& urls, bool archive);
+              const meta_urls_t& urls,
+              bool archive);
 
   bool IsValid() const;
 
