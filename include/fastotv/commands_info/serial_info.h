@@ -32,6 +32,7 @@ namespace commands_info {
 class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
  public:
   typedef unsigned int view_count_t;
+  typedef double price_t;
   typedef std::vector<stream_id_t> episodes_t;
   typedef std::vector<std::string> groups_t;
 
@@ -43,7 +44,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              const std::string& description,
              size_t season,
              episodes_t episodes,
-             view_count_t view);
+             view_count_t view, double price);
 
   bool IsValid() const;
 
@@ -64,6 +65,9 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
 
   view_count_t GetViewCount() const;
   void SetViewCount(view_count_t view);
+
+  price_t GetPrice() const;
+  void SetPrice(price_t price);
 
   std::string GetDescription() const;
   void SetDescription(const std::string& description);
@@ -89,6 +93,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   size_t season_;
   episodes_t episodes_;
   view_count_t view_count_;
+  price_t price_;
 };
 
 inline bool operator==(const SerialInfo& left, const SerialInfo& right) {

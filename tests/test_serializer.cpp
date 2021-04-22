@@ -339,7 +339,8 @@ TEST(SerialInfo, serialize_deserialize) {
   const size_t season = 3;
   const fastotv::commands_info::SerialInfo::episodes_t epis = {"1234", "4543"};
   const size_t views = 11;
-  fastotv::commands_info::SerialInfo serial(sid, name, icon, groups, descr, season, epis, views);
+  const double price = 11.3;
+  fastotv::commands_info::SerialInfo serial(sid, name, icon, groups, descr, season, epis, views, price);
   ASSERT_EQ(serial.GetSerialID(), sid);
   ASSERT_EQ(serial.GetIcon(), icon);
   ASSERT_EQ(serial.GetGroups(), groups);
@@ -347,6 +348,7 @@ TEST(SerialInfo, serialize_deserialize) {
   ASSERT_EQ(serial.GetSeason(), season);
   ASSERT_EQ(serial.GetEpisodes(), epis);
   ASSERT_EQ(serial.GetViewCount(), views);
+  ASSERT_EQ(serial.GetPrice(), price);
 
   serialize_t ser;
   common::Error err = serial.Serialize(&ser);

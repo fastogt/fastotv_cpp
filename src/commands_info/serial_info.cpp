@@ -26,13 +26,21 @@
 #define SEASON_FIELD "season"
 #define EPISODES_FIELD "episodes"
 #define VIEW_COUNT_FIELD "view_count"
+#define PRICE_FILED "price"
 
 namespace fastotv {
 namespace commands_info {
 
 SerialInfo::SerialInfo()
-    : SerialInfo(invalid_stream_id, std::string(), common::uri::GURL(), groups_t(), std::string(), 0, episodes_t(), 0) {
-}
+    : SerialInfo(invalid_stream_id,
+                 std::string(),
+                 common::uri::GURL(),
+                 groups_t(),
+                 std::string(),
+                 0,
+                 episodes_t(),
+                 0,
+                 0) {}
 
 SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        const std::string& name,
@@ -41,7 +49,8 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        const std::string& description,
                        size_t season,
                        episodes_t episodes,
-                       view_count_t views)
+                       view_count_t views,
+                       double price)
     : sid_(sid),
       name_(name),
       icon_(icon),
@@ -49,7 +58,8 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
       description_(description),
       season_(season),
       episodes_(episodes),
-      view_count_(views) {}
+      view_count_(views),
+      price_(price) {}
 
 bool SerialInfo::IsValid() const {
   return sid_ != invalid_stream_id && !name_.empty();
@@ -93,6 +103,14 @@ SerialInfo::view_count_t SerialInfo::GetViewCount() const {
 
 void SerialInfo::SetViewCount(view_count_t view) {
   view_count_ = view;
+}
+
+SerialInfo::price_t SerialInfo::GetPrice() const{
+  return price_;
+}
+
+void SerialInfo::SetPrice(SerialInfo::price_t price) {
+  price_ = price;
 }
 
 std::string SerialInfo::GetDescription() const {
@@ -144,6 +162,7 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
   }
   ignore_result(SetArrayField(deserialized, EPISODES_FIELD, jepisodes));
   ignore_result(SetIntField(deserialized, VIEW_COUNT_FIELD, view_count_));
+  ignore_result(SetIntField(deserialized, PRICE_FILED, price_));
 
   return common::Error();
 }
@@ -173,6 +192,9 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
   int view;
   ignore_result(GetIntField(serialized, VIEW_COUNT_FIELD, &view));
 
+  price_t price;
+  ignore_result(GetDoubleField(serialized, PRICE_FILED, &price));
+
   json_object* jgroup;
   size_t len;
   err = GetArrayField(serialized, GROUPS_FIELD, &jgroup, &len);
@@ -194,7 +216,7 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  *this = SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view);
+  *this = SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view, price);
   return common::Error();
 }
 
