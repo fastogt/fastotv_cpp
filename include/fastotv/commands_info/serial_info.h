@@ -44,7 +44,8 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              const std::string& description,
              size_t season,
              episodes_t episodes,
-             view_count_t view, double price);
+             view_count_t view,
+             price_t price);
 
   bool IsValid() const;
 

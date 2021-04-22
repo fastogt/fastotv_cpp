@@ -50,7 +50,7 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        size_t season,
                        episodes_t episodes,
                        view_count_t views,
-                       double price)
+                       price_t price)
     : sid_(sid),
       name_(name),
       icon_(icon),
@@ -105,7 +105,7 @@ void SerialInfo::SetViewCount(view_count_t view) {
   view_count_ = view;
 }
 
-SerialInfo::price_t SerialInfo::GetPrice() const{
+SerialInfo::price_t SerialInfo::GetPrice() const {
   return price_;
 }
 
@@ -162,7 +162,7 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
   }
   ignore_result(SetArrayField(deserialized, EPISODES_FIELD, jepisodes));
   ignore_result(SetIntField(deserialized, VIEW_COUNT_FIELD, view_count_));
-  ignore_result(SetIntField(deserialized, PRICE_FILED, price_));
+  ignore_result(SetDoubleField(deserialized, PRICE_FILED, price_));
 
   return common::Error();
 }
