@@ -21,6 +21,7 @@
 #define URLS_FIELD "urls"
 #define DESCRIPTION_FIELD "description"
 #define PREVIEW_ICON_FIELD "preview_icon"
+#define BACKGROUND_ICON_FIELD "backgorund_icon"
 #define NAME_FIELD "display_name"
 #define TRAILER_URL_FIELD "trailer_url"
 #define USER_SCORE_FIELD "user_score"
@@ -37,6 +38,7 @@ MovieInfo::MovieInfo()
       urls_(),
       description_(),
       preview_icon_(),
+      background_icon_(),
       trailer_url_(),
       user_score_(),
       prime_date_(),
@@ -48,6 +50,7 @@ MovieInfo::MovieInfo(const std::string& name,
                      const urls_t& urls,
                      const std::string& description,
                      const url_t& preview_icon,
+                     const url_t& background_icon,
                      const url_t& trailer_url,
                      double user_score,
                      timestamp_t prime_date,
@@ -58,6 +61,7 @@ MovieInfo::MovieInfo(const std::string& name,
       urls_(urls),
       description_(description),
       preview_icon_(preview_icon),
+      background_icon_(background_icon),
       trailer_url_(trailer_url),
       user_score_(user_score),
       prime_date_(prime_date),
@@ -103,6 +107,14 @@ void MovieInfo::SetPreviewIcon(const url_t& url) {
 
 fastotv::commands_info::MovieInfo::url_t MovieInfo::GetPreviewIcon() const {
   return preview_icon_;
+}
+
+void MovieInfo::SetBackgroundIcon(const url_t& url) {
+  background_icon_ = url;
+}
+
+MovieInfo::url_t MovieInfo::GetBackgroundIcon() const {
+  return background_icon_;
 }
 
 void MovieInfo::SetTrailerUrl(const url_t& url) {
@@ -163,6 +175,9 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
   const std::string icon_url_str = preview_icon_.spec();
   ignore_result(SetStringField(deserialized, PREVIEW_ICON_FIELD, icon_url_str));
 
+  const std::string back_icon_url_str = background_icon_.spec();
+  ignore_result(SetStringField(deserialized, BACKGROUND_ICON_FIELD, back_icon_url_str));
+
   const std::string trailer_url_str = trailer_url_.spec();
   ignore_result(SetStringField(deserialized, TRAILER_URL_FIELD, trailer_url_str));
   ignore_result(SetDoubleField(deserialized, USER_SCORE_FIELD, user_score_));
@@ -209,6 +224,9 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
   std::string preview_icon;
   ignore_result(GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon));
 
+  std::string back_icon;
+  ignore_result(GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_icon));
+
   std::string trailer_url;
   ignore_result(GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url));
 
@@ -227,14 +245,14 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
   Type type = VODS;
   ignore_result(GetEnumField(serialized, TYPE_FIELD, &type));
 
-  *this = MovieInfo(name, urls, description, url_t(preview_icon), url_t(trailer_url), user_score, prime_date, country,
-                    duration, type);
+  *this = MovieInfo(name, urls, description, url_t(preview_icon), url_t(back_icon), url_t(trailer_url), user_score,
+                    prime_date, country, duration, type);
   return common::Error();
 }
 
 bool MovieInfo::Equals(const MovieInfo& url) const {
   return urls_ == url.urls_ && description_ == url.description_ && preview_icon_ == url.preview_icon_ &&
-         type_ == url.type_;
+         background_icon_ == url.background_icon_ && type_ == url.type_;
 }
 
 const MovieInfo::url_t& MovieInfo::GetUnknownIconUrl() {

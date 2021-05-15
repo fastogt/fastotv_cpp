@@ -550,8 +550,8 @@ TEST(MovieInfo, serialize_deserialize) {
   fastotv::timestamp_t duration = 442;
   fastotv::commands_info::MovieInfo::Type type = fastotv::commands_info::MovieInfo::SERIES;
 
-  fastotv::commands_info::MovieInfo rinf_info(name, urls, description, preview_icon, trailer_url, user_score,
-                                              prime_date, country, duration, type);
+  fastotv::commands_info::MovieInfo rinf_info(name, urls, description, preview_icon, preview_icon, trailer_url,
+                                              user_score, prime_date, country, duration, type);
   ASSERT_EQ(rinf_info.GetName(), name);
   ASSERT_EQ(rinf_info.GetUrls(), urls);
   ASSERT_EQ(rinf_info.GetDescription(), description);
