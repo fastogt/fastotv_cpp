@@ -60,9 +60,6 @@ class EpgInfo : public common::serializer::JsonSerializer<EpgInfo> {
 
   bool Equals(const EpgInfo& url) const;
 
-  static const url_t& GetUnknownIconUrl();
-  static bool IsUnknownIconUrl(const url_t& url);
-
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* deserialized) const override;

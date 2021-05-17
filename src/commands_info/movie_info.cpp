@@ -255,14 +255,5 @@ bool MovieInfo::Equals(const MovieInfo& url) const {
          background_icon_ == url.background_icon_ && type_ == url.type_;
 }
 
-const MovieInfo::url_t& MovieInfo::GetUnknownIconUrl() {
-  static const url_t url("https://fastocloud.com/images/unknown_channel.png");
-  return url;
-}
-
-bool MovieInfo::IsUnknownIconUrl(const url_t& url) {
-  return url == GetUnknownIconUrl();
-}
-
 }  // namespace commands_info
 }  // namespace fastotv

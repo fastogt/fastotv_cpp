@@ -35,10 +35,10 @@
 namespace fastotv {
 namespace commands_info {
 
-EpgInfo::EpgInfo() : tvg_id_(), uri_(), display_name_(), icon_src_(GetUnknownIconUrl()), programs_() {}
+EpgInfo::EpgInfo() : tvg_id_(), uri_(), display_name_(), icon_src_(), programs_() {}
 
 EpgInfo::EpgInfo(const tvg_id_t& id, const urls_t& uri, const std::string& name)
-    : tvg_id_(id), uri_(uri), display_name_(name), icon_src_(GetUnknownIconUrl()), programs_() {}
+    : tvg_id_(id), uri_(uri), display_name_(name), icon_src_(), programs_() {}
 
 bool EpgInfo::IsValid() const {
   return !uri_.empty() && !display_name_.empty();
@@ -197,15 +197,6 @@ common::Error EpgInfo::DoDeSerialize(json_object* serialized) {
 
 bool EpgInfo::Equals(const EpgInfo& url) const {
   return tvg_id_ == url.tvg_id_ && uri_ == url.uri_ && display_name_ == url.display_name_;
-}
-
-const EpgInfo::url_t& EpgInfo::GetUnknownIconUrl() {
-  static const url_t url("https://fastocloud.com/images/unknown_channel.png");
-  return url;
-}
-
-bool EpgInfo::IsUnknownIconUrl(const EpgInfo::url_t& url) {
-  return url == GetUnknownIconUrl();
 }
 
 }  // namespace commands_info
