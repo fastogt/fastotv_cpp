@@ -50,8 +50,8 @@ MovieInfo::MovieInfo(const std::string& name,
                      const urls_t& urls,
                      const std::string& description,
                      const url_t& preview_icon,
-                     const url_t& background_icon,
-                     const url_t& trailer_url,
+                     const optional_url_t& background_icon,
+                     const optional_url_t& trailer_url,
                      double user_score,
                      timestamp_t prime_date,
                      const std::string& country,
@@ -109,19 +109,19 @@ fastotv::commands_info::MovieInfo::url_t MovieInfo::GetPreviewIcon() const {
   return preview_icon_;
 }
 
-void MovieInfo::SetBackgroundIcon(const url_t& url) {
+void MovieInfo::SetBackgroundIcon(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
   background_icon_ = url;
 }
 
-MovieInfo::url_t MovieInfo::GetBackgroundIcon() const {
+fastotv::commands_info::MovieInfo::optional_url_t MovieInfo::GetBackgroundIcon() const {
   return background_icon_;
 }
 
-void MovieInfo::SetTrailerUrl(const url_t& url) {
+void MovieInfo::SetTrailerUrl(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
   trailer_url_ = url;
 }
 
-MovieInfo::url_t MovieInfo::GetTrailerUrl() const {
+fastotv::commands_info::MovieInfo::optional_url_t MovieInfo::GetTrailerUrl() const {
   return trailer_url_;
 }
 
@@ -175,18 +175,22 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
   const std::string icon_url_str = preview_icon_.spec();
   ignore_result(SetStringField(deserialized, PREVIEW_ICON_FIELD, icon_url_str));
 
-  const std::string back_icon_url_str = background_icon_.spec();
-  ignore_result(SetStringField(deserialized, BACKGROUND_ICON_FIELD, back_icon_url_str));
+  if (background_icon_) {
+    const std::string back_icon_url_str = background_icon_->spec();
+    ignore_result(SetStringField(deserialized, BACKGROUND_ICON_FIELD, back_icon_url_str));
+  }
 
-  const std::string trailer_url_str = trailer_url_.spec();
-  ignore_result(SetStringField(deserialized, TRAILER_URL_FIELD, trailer_url_str));
+  if (trailer_url_) {
+    const std::string trailer_url_str = trailer_url_->spec();
+    ignore_result(SetStringField(deserialized, TRAILER_URL_FIELD, trailer_url_str));
+  }
   ignore_result(SetDoubleField(deserialized, USER_SCORE_FIELD, user_score_));
   ignore_result(SetInt64Field(deserialized, PRIME_DATE_FIELD, prime_date_));
   ignore_result(SetStringField(deserialized, COUNTRY_FIELD, country_));
   ignore_result(SetInt64Field(deserialized, DURATION_FIELD, duration_));
 
   json_object* jurls = json_object_new_array();
-  for (const auto url : urls_) {
+  for (auto url : urls_) {
     std::string url_str = url.spec();
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
@@ -204,49 +208,69 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
+  MovieInfo res;
   urls_t urls;
   for (size_t i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
     const std::string url_str = json_object_get_string(jurl);
     urls.push_back(url_t(url_str));
   }
+  res.SetUrls(urls);
 
   std::string name;
   err = GetStringField(serialized, NAME_FIELD, &name);
   if (err) {
     return err;
   }
+  res.SetName(name);
 
   // optional
   std::string description;
-  ignore_result(GetStringField(serialized, DESCRIPTION_FIELD, &description));
+  if (GetStringField(serialized, DESCRIPTION_FIELD, &description)) {
+    res.SetDescription(description);
+  }
 
   std::string preview_icon;
-  ignore_result(GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon));
+  if (GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon)) {
+    res.SetPreviewIcon(url_t(preview_icon));
+  }
 
   std::string back_icon;
-  ignore_result(GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_icon));
+  if (GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_icon)) {
+    res.SetBackgroundIcon(url_t(back_icon));
+  }
 
   std::string trailer_url;
-  ignore_result(GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url));
+  if (GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url)) {
+    res.SetTrailerUrl(url_t(trailer_url));
+  }
 
   double user_score = 0;
-  ignore_result(GetDoubleField(serialized, USER_SCORE_FIELD, &user_score));
+  if (GetDoubleField(serialized, USER_SCORE_FIELD, &user_score)) {
+    res.SetUserScore(user_score);
+  }
 
   timestamp_t prime_date = 0;
-  ignore_result(GetInt64Field(serialized, PRIME_DATE_FIELD, &prime_date));
+  if (GetInt64Field(serialized, PRIME_DATE_FIELD, &prime_date)) {
+    res.SetPrimeDate(prime_date);
+  }
 
   std::string country;
-  ignore_result(GetStringField(serialized, COUNTRY_FIELD, &country));
+  if (GetStringField(serialized, COUNTRY_FIELD, &country)) {
+    res.SetCountry(country);
+  }
 
   timestamp_t duration = 0;
-  ignore_result(GetInt64Field(serialized, DURATION_FIELD, &prime_date));
+  if (GetInt64Field(serialized, DURATION_FIELD, &prime_date)) {
+    res.SetDuration(duration);
+  }
 
   Type type = VODS;
-  ignore_result(GetEnumField(serialized, TYPE_FIELD, &type));
+  if (GetEnumField(serialized, TYPE_FIELD, &type)) {
+    res.SetType(type);
+  }
 
-  *this = MovieInfo(name, urls, description, url_t(preview_icon), url_t(back_icon), url_t(trailer_url), user_score,
-                    prime_date, country, duration, type);
+  *this = res;
   return common::Error();
 }
 

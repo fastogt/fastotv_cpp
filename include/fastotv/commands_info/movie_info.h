@@ -32,6 +32,7 @@ namespace commands_info {
 class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
  public:
   typedef common::uri::GURL url_t;
+  typedef common::Optional<url_t> optional_url_t;
   typedef std::vector<url_t> urls_t;
   enum Type { VODS, SERIES };
 
@@ -40,8 +41,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
             const urls_t& urls,
             const std::string& description,
             const url_t& preview_icon,
-            const url_t& background_icon,
-            const url_t& trailer_url,
+            const optional_url_t& background_icon,
+            const optional_url_t& trailer_url,
             double user_score,
             timestamp_t prime_date,
             const std::string& country,
@@ -64,11 +65,11 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   void SetPreviewIcon(const url_t& url);
   url_t GetPreviewIcon() const;
 
-  void SetBackgroundIcon(const url_t& url);
-  url_t GetBackgroundIcon() const;
+  void SetBackgroundIcon(const optional_url_t& url);
+  optional_url_t GetBackgroundIcon() const;
 
-  void SetTrailerUrl(const url_t& url);
-  url_t GetTrailerUrl() const;
+  void SetTrailerUrl(const optional_url_t& url);
+  optional_url_t GetTrailerUrl() const;
 
   void SetUserScore(double score);
   double GetUserScore() const;
@@ -96,8 +97,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   urls_t urls_;
   std::string description_;
   url_t preview_icon_;
-  url_t background_icon_;
-  url_t trailer_url_;
+  optional_url_t background_icon_;
+  optional_url_t trailer_url_;
   double user_score_;
   timestamp_t prime_date_;
   std::string country_;
