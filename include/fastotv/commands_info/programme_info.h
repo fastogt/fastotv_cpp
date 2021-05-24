@@ -18,70 +18,12 @@
 
 #pragma once
 
-#include <string>
-
-#include <common/serializer/json_serializer.h>
-
-#include <fastotv/types.h>
+#include <fastotv/types/programme.h>
 
 namespace fastotv {
 namespace commands_info {
 
-class ProgrammeInfo : public common::serializer::JsonSerializer<ProgrammeInfo> {
- public:
-  typedef common::Optional<std::string> category_t;
-  typedef common::Optional<std::string> description_t;
-
-  ProgrammeInfo();
-  ProgrammeInfo(const stream_id_t& id,
-                timestamp_t start_time,
-                timestamp_t stop_time,
-                const std::string& title,
-                const category_t& category,
-                const description_t& descr);
-
-  bool IsValid() const;
-
-  void SetChannel(const stream_id_t& channel);
-  stream_id_t GetChannel() const;
-
-  void SetStart(timestamp_t start);  // UTC
-  timestamp_t GetStart() const;
-
-  void SetStop(timestamp_t stop);  // UTC
-  timestamp_t GetStop() const;
-
-  void SetTitle(const std::string& title);
-  std::string GetTitle() const;
-
-  void SetCategory(const category_t& category);
-  category_t GetCategory() const;
-
-  void SetDescription(const description_t& description);
-  description_t GetDescription() const;
-
-  bool Equals(const ProgrammeInfo& prog) const;
-
- protected:
-  common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* deserialized) const override;
-
- private:
-  stream_id_t channel_;
-  timestamp_t start_time_;  // utc time
-  timestamp_t stop_time_;   // utc time
-  std::string title_;
-  category_t category_;
-  description_t description_;
-};
-
-inline bool operator==(const ProgrammeInfo& lhs, const ProgrammeInfo& rhs) {
-  return lhs.Equals(rhs);
-}
-
-inline bool operator!=(const ProgrammeInfo& x, const ProgrammeInfo& y) {
-  return !(x == y);
-}
+typedef Programme ProgrammeInfo;
 
 }  // namespace commands_info
 }  // namespace fastotv

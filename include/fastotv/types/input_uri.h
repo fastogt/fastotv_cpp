@@ -17,6 +17,7 @@
 #include <string>
 
 #include <fastotv/types/input_url.h>
+#include <fastotv/types/programme.h>
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
 
@@ -35,6 +36,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<PyFastoStream> stream_url_t;
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<SrtMode> srt_mode_t;
+  typedef common::Optional<Programme> programme_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -62,6 +64,9 @@ class InputUri : public InputUrl {
   srt_key_t GetSrtKey() const;
   void SetSrtKey(const srt_key_t& pass);
 
+  programme_t GetProgramme() const;
+  void SetProgramme(const programme_t& programme);
+
   bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -83,6 +88,9 @@ class InputUri : public InputUrl {
   // srt
   srt_mode_t srt_mode_;
   srt_key_t srt_key_;
+
+  // programme
+  programme_t programme_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {
