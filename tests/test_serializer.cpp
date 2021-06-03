@@ -103,7 +103,7 @@ TEST(ChannelInfo, serialize_deserialize) {
   ASSERT_EQ(epg_info, depg);
 
   fastotv::commands_info::ChannelInfo http_uri(stream_id, {}, 0, false, false, 0, epg_info, enable_audio, enable_video,
-                                               {}, 0, false, {}, false);
+                                               {}, 0, false, {}, 0, false);
   ASSERT_EQ(http_uri.GetStreamID(), stream_id);
   ASSERT_EQ(http_uri.IsEnableAudio(), enable_audio);
   ASSERT_EQ(http_uri.IsEnableVideo(), enable_video);
@@ -244,7 +244,7 @@ TEST(channels_t, serialize_deserialize) {
   fastotv::commands_info::ChannelsInfo channels;
   fastotv::commands_info::EpgInfo epg_info(stream_id, urls, name);
   channels.Add(fastotv::commands_info::ChannelInfo(stream_id, {}, 0, true, false, 0, epg_info, enable_audio,
-                                                   enable_video, {}, 0, 0, {}, false));
+                                                   enable_video, {}, 0, 0, {}, 0, false));
   ASSERT_EQ(channels.Get().size(), 1);
 
   serialize_t ser;
@@ -402,7 +402,7 @@ TEST(CatchupInfo, serialize_deserialize) {
   const fastotv::timestamp_t stop = 333;
 
   fastotv::commands_info::CatchupInfo cat_info(sid, groups, iarc, favorite, recent, interruption_time, epg_info,
-                                               enable_audio, enable_video, parts, views, locked, urls, start, stop);
+                                               enable_audio, enable_video, parts, views, locked, urls, 0, start, stop);
   ASSERT_EQ(cat_info.GetStreamID(), sid);
   ASSERT_EQ(cat_info.GetGroups(), groups);
   ASSERT_EQ(cat_info.GetIARC(), iarc);
@@ -577,7 +577,7 @@ TEST(MovieInfo, serialize_deserialize) {
   const bool enable_audio = true;
 
   fastotv::commands_info::VodInfo vod_info(stream_id, {}, 0, false, false, 0, dser, enable_audio, enable_video, {}, 0,
-                                           false, {});
+                                           false, {}, 0);
 
   err = vod_info.Serialize(&ser);
   ASSERT_FALSE(err);

@@ -43,7 +43,8 @@ class VodInfo : public StreamBaseInfo {
           const parts_t& parts,
           view_count_t view,
           bool locked,
-          const meta_urls_t& urls);
+          const meta_urls_t& urls,
+          fastotv::timestamp_t created_date);
 
   bool IsValid() const;
 

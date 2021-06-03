@@ -39,6 +39,7 @@ ChannelInfo::ChannelInfo(const stream_id_t& sid,
                          view_count_t view,
                          bool locked,
                          const meta_urls_t& urls,
+                         fastotv::timestamp_t created_date,
                          bool archive)
     : base_class(sid,
                  groups,
@@ -51,7 +52,8 @@ ChannelInfo::ChannelInfo(const stream_id_t& sid,
                  parts,
                  view,
                  locked,
-                 urls),
+                 urls,
+                 created_date),
       epg_(epg),
       archive_(archive) {}
 

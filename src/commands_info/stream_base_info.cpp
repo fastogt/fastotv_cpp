@@ -30,6 +30,7 @@
 #define VIEW_COUNT_FIELD "view_count"
 #define LOCKED_FIELD "locked"
 #define META_FIELD "meta"
+#define CREATED_DATE "created_date"
 
 namespace fastotv {
 namespace commands_info {
@@ -46,7 +47,8 @@ StreamBaseInfo::StreamBaseInfo()
       enable_video_(true),
       parts_(),
       locked_(false),
-      meta_urls_() {}
+      meta_urls_(),
+      created_date_(0) {}
 
 StreamBaseInfo::StreamBaseInfo(const stream_id_t& sid,
                                const groups_t& groups,
@@ -59,7 +61,8 @@ StreamBaseInfo::StreamBaseInfo(const stream_id_t& sid,
                                const parts_t& parts,
                                view_count_t view,
                                bool locked,
-                               const meta_urls_t& urls)
+                               const meta_urls_t& urls,
+                               timestamp_t created_date)
     : stream_id_(sid),
       groups_(groups),
       iarc_(iarc),
@@ -71,10 +74,19 @@ StreamBaseInfo::StreamBaseInfo(const stream_id_t& sid,
       enable_video_(enable_video),
       parts_(parts),
       locked_(locked),
-      meta_urls_(urls) {}
+      meta_urls_(urls),
+      created_date_(created_date) {}
 
 bool StreamBaseInfo::IsValid() const {
   return stream_id_ != invalid_stream_id;
+}
+
+void StreamBaseInfo::SetCreatedDate(timestamp_t date) {
+  created_date_ = date;
+}
+
+timestamp_t StreamBaseInfo::GetCreatedDate() const {
+  return created_date_;
 }
 
 stream_id_t StreamBaseInfo::GetStreamID() const {
@@ -199,6 +211,8 @@ common::Error StreamBaseInfo::SerializeFields(json_object* deserialized) const {
   if (!err) {
     ignore_result(SetObjectField(deserialized, META_FIELD, jmeta));
   }
+
+  ignore_result(SetInt64Field(deserialized, CREATED_DATE, created_date_));
   return common::Error();
 }
 
@@ -262,8 +276,11 @@ common::Error StreamBaseInfo::DoDeSerialize(json_object* serialized) {
     ignore_result(meta.DeSerialize(jmeta));
   }
 
+  timestamp_t created_date = 0;
+  ignore_result(GetInt64Field(serialized, CREATED_DATE, &created_date));
+
   *this = StreamBaseInfo(sid, groups, iart, favorite, recent, interruption_time, enable_audio, enable_video, parts,
-                         view, locked, meta);
+                         view, locked, meta, created_date);
   return common::Error();
 }
 

@@ -44,6 +44,7 @@ class ChannelInfo : public StreamBaseInfo {
               view_count_t view,
               bool locked,
               const meta_urls_t& urls,
+              timestamp_t created_date,
               bool archive);
 
   bool IsValid() const;

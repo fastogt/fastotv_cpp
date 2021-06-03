@@ -43,6 +43,7 @@ class CatchupInfo : public ChannelInfo {
               view_count_t view,
               bool locked,
               const meta_urls_t& urls,
+              fastotv::timestamp_t created_date,
               timestamp_t start,
               timestamp_t stop);
 

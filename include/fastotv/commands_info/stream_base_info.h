@@ -50,9 +50,13 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
                  const parts_t& parts,
                  view_count_t view,
                  bool locked,
-                 const meta_urls_t& urls);
+                 const meta_urls_t& urls,
+                 timestamp_t created_date);
 
   bool IsValid() const;
+
+  void SetCreatedDate(timestamp_t date);
+  timestamp_t GetCreatedDate() const;
 
   stream_id_t GetStreamID() const;
   void SetStreamID(const stream_id_t& sid);
@@ -107,6 +111,7 @@ class StreamBaseInfo : public common::serializer::JsonSerializer<StreamBaseInfo>
   parts_t parts_;
   bool locked_;
   meta_urls_t meta_urls_;
+  timestamp_t created_date_;
 };
 
 inline bool operator==(const StreamBaseInfo& left, const StreamBaseInfo& right) {

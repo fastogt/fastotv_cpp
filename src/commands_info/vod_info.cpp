@@ -37,7 +37,8 @@ VodInfo::VodInfo(const stream_id_t& sid,
                  const parts_t& parts,
                  view_count_t view,
                  bool locked,
-                 const meta_urls_t& urls)
+                 const meta_urls_t& urls,
+                 fastotv::timestamp_t created_date)
     : base_class(sid,
                  group,
                  iarc,
@@ -49,7 +50,8 @@ VodInfo::VodInfo(const stream_id_t& sid,
                  parts,
                  view,
                  locked,
-                 urls),
+                 urls,
+                 created_date),
       movie_(movie) {}
 
 bool VodInfo::IsValid() const {
