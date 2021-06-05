@@ -45,7 +45,8 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              size_t season,
              episodes_t episodes,
              view_count_t view,
-             price_t price,timestamp_t created_date);
+             price_t price,
+             timestamp_t created_date);
 
   bool IsValid() const;
 
