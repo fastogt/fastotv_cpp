@@ -45,9 +45,12 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
              size_t season,
              episodes_t episodes,
              view_count_t view,
-             price_t price);
+             price_t price,timestamp_t created_date);
 
   bool IsValid() const;
+
+  void SetCreatedDate(timestamp_t date);
+  timestamp_t GetCreatedDate() const;
 
   serial_id_t GetSerialID() const;
   void SetSerialID(const serial_id_t& sid);
@@ -95,6 +98,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   episodes_t episodes_;
   view_count_t view_count_;
   price_t price_;
+  timestamp_t created_date_;
 };
 
 inline bool operator==(const SerialInfo& left, const SerialInfo& right) {

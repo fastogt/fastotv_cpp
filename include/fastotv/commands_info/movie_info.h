@@ -65,8 +65,8 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   void SetPreviewIcon(const url_t& url);
   url_t GetPreviewIcon() const;
 
-  void SetBackgroundIcon(const optional_url_t& url);
-  optional_url_t GetBackgroundIcon() const;
+  void SetBackgroundUrl(const optional_url_t& url);
+  optional_url_t GetBackgroundUrl() const;
 
   void SetTrailerUrl(const optional_url_t& url);
   optional_url_t GetTrailerUrl() const;
@@ -97,7 +97,7 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
   urls_t urls_;
   std::string description_;
   url_t preview_icon_;
-  optional_url_t background_icon_;
+  optional_url_t background_url_;
   optional_url_t trailer_url_;
   double user_score_;
   timestamp_t prime_date_;

@@ -27,6 +27,7 @@
 #define EPISODES_FIELD "episodes"
 #define VIEW_COUNT_FIELD "view_count"
 #define PRICE_FILED "price"
+#define CREATED_DATE "created_date"
 
 namespace fastotv {
 namespace commands_info {
@@ -40,6 +41,7 @@ SerialInfo::SerialInfo()
                  0,
                  episodes_t(),
                  0,
+                 0,
                  0) {}
 
 SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
@@ -50,7 +52,8 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        size_t season,
                        episodes_t episodes,
                        view_count_t views,
-                       price_t price)
+                       price_t price,
+                       fastotv::timestamp_t created_date)
     : sid_(sid),
       name_(name),
       icon_(icon),
@@ -59,10 +62,19 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
       season_(season),
       episodes_(episodes),
       view_count_(views),
-      price_(price) {}
+      price_(price),
+      created_date_(created_date) {}
 
 bool SerialInfo::IsValid() const {
   return sid_ != invalid_stream_id && !name_.empty();
+}
+
+void SerialInfo::SetCreatedDate(timestamp_t date) {
+  created_date_ = date;
+}
+
+timestamp_t SerialInfo::GetCreatedDate() const {
+  return created_date_;
 }
 
 serial_id_t SerialInfo::GetSerialID() const {
@@ -163,7 +175,7 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
   ignore_result(SetArrayField(deserialized, EPISODES_FIELD, jepisodes));
   ignore_result(SetIntField(deserialized, VIEW_COUNT_FIELD, view_count_));
   ignore_result(SetDoubleField(deserialized, PRICE_FILED, price_));
-
+  ignore_result(SetInt64Field(deserialized, CREATED_DATE, created_date_));
   return common::Error();
 }
 
@@ -216,7 +228,11 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  *this = SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view, price);
+  timestamp_t created_date = 0;
+  ignore_result(GetInt64Field(serialized, CREATED_DATE, &created_date));
+
+  *this =
+      SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view, price, created_date);
   return common::Error();
 }
 

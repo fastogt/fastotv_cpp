@@ -38,7 +38,7 @@ MovieInfo::MovieInfo()
       urls_(),
       description_(),
       preview_icon_(),
-      background_icon_(),
+      background_url_(),
       trailer_url_(),
       user_score_(),
       prime_date_(),
@@ -61,7 +61,7 @@ MovieInfo::MovieInfo(const std::string& name,
       urls_(urls),
       description_(description),
       preview_icon_(preview_icon),
-      background_icon_(background_icon),
+      background_url_(background_icon),
       trailer_url_(trailer_url),
       user_score_(user_score),
       prime_date_(prime_date),
@@ -109,12 +109,12 @@ fastotv::commands_info::MovieInfo::url_t MovieInfo::GetPreviewIcon() const {
   return preview_icon_;
 }
 
-void MovieInfo::SetBackgroundIcon(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
-  background_icon_ = url;
+void MovieInfo::SetBackgroundUrl(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
+  background_url_ = url;
 }
 
-fastotv::commands_info::MovieInfo::optional_url_t MovieInfo::GetBackgroundIcon() const {
-  return background_icon_;
+fastotv::commands_info::MovieInfo::optional_url_t MovieInfo::GetBackgroundUrl() const {
+  return background_url_;
 }
 
 void MovieInfo::SetTrailerUrl(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
@@ -175,8 +175,8 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
   const std::string icon_url_str = preview_icon_.spec();
   ignore_result(SetStringField(deserialized, PREVIEW_ICON_FIELD, icon_url_str));
 
-  if (background_icon_) {
-    const std::string back_icon_url_str = background_icon_->spec();
+  if (background_url_) {
+    const std::string back_icon_url_str = background_url_->spec();
     ignore_result(SetStringField(deserialized, BACKGROUND_ICON_FIELD, back_icon_url_str));
   }
 
@@ -235,9 +235,9 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
     res.SetPreviewIcon(url_t(preview_icon));
   }
 
-  std::string back_icon;
-  if (GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_icon)) {
-    res.SetBackgroundIcon(url_t(back_icon));
+  std::string back_url;
+  if (GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_url)) {
+    res.SetBackgroundUrl(url_t(back_url));
   }
 
   std::string trailer_url;
@@ -276,7 +276,7 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
 
 bool MovieInfo::Equals(const MovieInfo& url) const {
   return urls_ == url.urls_ && description_ == url.description_ && preview_icon_ == url.preview_icon_ &&
-         background_icon_ == url.background_icon_ && type_ == url.type_;
+         background_url_ == url.background_url_ && type_ == url.type_;
 }
 
 }  // namespace commands_info
