@@ -21,7 +21,7 @@
 #define URLS_FIELD "urls"
 #define DESCRIPTION_FIELD "description"
 #define PREVIEW_ICON_FIELD "preview_icon"
-#define BACKGROUND_ICON_FIELD "backgorund_icon"
+#define BACKGROUND_ICON_FIELD "backgorund_url"
 #define NAME_FIELD "display_name"
 #define TRAILER_URL_FIELD "trailer_url"
 #define USER_SCORE_FIELD "user_score"
