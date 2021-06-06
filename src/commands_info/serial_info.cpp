@@ -21,6 +21,7 @@
 #define ID_FIELD "id"
 #define NAME_FIELD "name"
 #define ICON_FIELD "icon"
+#define BACKGROUND_URL_FIELD "backgorund_url"
 #define GROUPS_FIELD "groups"
 #define DESCRIPTION_FIELD "description"
 #define SEASON_FIELD "season"
@@ -36,6 +37,7 @@ SerialInfo::SerialInfo()
     : SerialInfo(invalid_stream_id,
                  std::string(),
                  common::uri::GURL(),
+                 optional_url_t(),
                  groups_t(),
                  std::string(),
                  0,
@@ -47,6 +49,7 @@ SerialInfo::SerialInfo()
 SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
                        const std::string& name,
                        const common::uri::GURL& icon,
+                       const optional_url_t& background_url,
                        const groups_t& groups,
                        const std::string& description,
                        size_t season,
@@ -57,6 +60,7 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
     : sid_(sid),
       name_(name),
       icon_(icon),
+      background_url_(background_url),
       groups_(groups),
       description_(description),
       season_(season),
@@ -75,6 +79,14 @@ void SerialInfo::SetCreatedDate(timestamp_t date) {
 
 timestamp_t SerialInfo::GetCreatedDate() const {
   return created_date_;
+}
+
+void SerialInfo::SetBackgroundUrl(const optional_url_t& url) {
+  background_url_ = url;
+}
+
+SerialInfo::optional_url_t SerialInfo::GetBackgroundUrl() const {
+  return background_url_;
 }
 
 serial_id_t SerialInfo::GetSerialID() const {
@@ -158,6 +170,11 @@ common::Error SerialInfo::SerializeFields(json_object* deserialized) const {
   ignore_result(SetStringField(deserialized, NAME_FIELD, name_));
   const std::string url_str = icon_.spec();
   ignore_result(SetStringField(deserialized, ICON_FIELD, url_str));
+  if (background_url_) {
+    const std::string back_icon_url_str = background_url_->spec();
+    ignore_result(SetStringField(deserialized, BACKGROUND_URL_FIELD, back_icon_url_str));
+  }
+
   json_object* jgroups = json_object_new_array();
   for (const auto group : groups_) {
     json_object* jgroup = json_object_new_string(group.c_str());
@@ -207,6 +224,9 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
   price_t price;
   ignore_result(GetDoubleField(serialized, PRICE_FILED, &price));
 
+  std::string back_url;
+  ignore_result(GetStringField(serialized, BACKGROUND_URL_FIELD, &back_url));
+
   json_object* jgroup;
   size_t len;
   err = GetArrayField(serialized, GROUPS_FIELD, &jgroup, &len);
@@ -231,8 +251,8 @@ common::Error SerialInfo::DoDeSerialize(json_object* serialized) {
   timestamp_t created_date = 0;
   ignore_result(GetInt64Field(serialized, CREATED_DATE, &created_date));
 
-  *this =
-      SerialInfo(sid, name, common::uri::GURL(icon), groups, description, season, episodes, view, price, created_date);
+  *this = SerialInfo(sid, name, common::uri::GURL(icon), common::uri::GURL(back_url), groups, description, season,
+                     episodes, view, price, created_date);
   return common::Error();
 }
 

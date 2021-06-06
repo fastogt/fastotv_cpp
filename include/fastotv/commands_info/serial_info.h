@@ -35,11 +35,14 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   typedef double price_t;
   typedef std::vector<stream_id_t> episodes_t;
   typedef std::vector<std::string> groups_t;
+  typedef common::uri::GURL url_t;
+  typedef common::Optional<url_t> optional_url_t;
 
   SerialInfo();
   SerialInfo(const serial_id_t& sid,
              const std::string& name,
              const common::uri::GURL& icon,
+             const optional_url_t& background_url,
              const groups_t& groups,
              const std::string& description,
              size_t season,
@@ -52,6 +55,9 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
 
   void SetCreatedDate(timestamp_t date);
   timestamp_t GetCreatedDate() const;
+
+  void SetBackgroundUrl(const optional_url_t& url);
+  optional_url_t GetBackgroundUrl() const;
 
   serial_id_t GetSerialID() const;
   void SetSerialID(const serial_id_t& sid);
@@ -93,6 +99,7 @@ class SerialInfo : public common::serializer::JsonSerializer<SerialInfo> {
   serial_id_t sid_;
   std::string name_;
   common::uri::GURL icon_;
+  optional_url_t background_url_;
   groups_t groups_;
   std::string description_;
   size_t season_;

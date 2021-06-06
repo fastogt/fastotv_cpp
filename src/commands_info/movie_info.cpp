@@ -50,7 +50,7 @@ MovieInfo::MovieInfo(const std::string& name,
                      const urls_t& urls,
                      const std::string& description,
                      const url_t& preview_icon,
-                     const optional_url_t& background_icon,
+                     const optional_url_t& background_url,
                      const optional_url_t& trailer_url,
                      double user_score,
                      timestamp_t prime_date,
@@ -61,7 +61,7 @@ MovieInfo::MovieInfo(const std::string& name,
       urls_(urls),
       description_(description),
       preview_icon_(preview_icon),
-      background_url_(background_icon),
+      background_url_(background_url),
       trailer_url_(trailer_url),
       user_score_(user_score),
       prime_date_(prime_date),
@@ -109,11 +109,11 @@ fastotv::commands_info::MovieInfo::url_t MovieInfo::GetPreviewIcon() const {
   return preview_icon_;
 }
 
-void MovieInfo::SetBackgroundUrl(const fastotv::commands_info::MovieInfo::optional_url_t& url) {
+void MovieInfo::SetBackgroundUrl(const optional_url_t& url) {
   background_url_ = url;
 }
 
-fastotv::commands_info::MovieInfo::optional_url_t MovieInfo::GetBackgroundUrl() const {
+MovieInfo::optional_url_t MovieInfo::GetBackgroundUrl() const {
   return background_url_;
 }
 

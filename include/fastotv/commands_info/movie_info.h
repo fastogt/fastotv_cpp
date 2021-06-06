@@ -41,7 +41,7 @@ class MovieInfo : public common::serializer::JsonSerializer<MovieInfo> {
             const urls_t& urls,
             const std::string& description,
             const url_t& preview_icon,
-            const optional_url_t& background_icon,
+            const optional_url_t& background_url,
             const optional_url_t& trailer_url,
             double user_score,
             timestamp_t prime_date,
