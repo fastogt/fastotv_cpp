@@ -84,7 +84,10 @@ class Client : public ProtocoledClient {
                                                   const commands_info::RuntimeChannelInfo& channel) WARN_UNUSED_RESULT;
 
   common::ErrnoError GetFavoriteInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+
   common::ErrnoError GetRecentInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError GetRecentInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
+
   common::ErrnoError GetInterruptStreamTimeInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
 
   common::ErrnoError CatchupGenerateFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
