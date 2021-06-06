@@ -358,6 +358,18 @@ common::Error FavoriteSuccess(protocol::sequance_id_t id, protocol::response_t* 
   return common::Error();
 }
 
+common::Error FavoriteResponseFail(protocol::sequance_id_t id,
+                                   const std::string& error_text,
+                                   protocol::response_t* resp) {
+  if (!resp) {
+    return common::make_error_inval();
+  }
+
+  *resp = protocol::response_t::MakeError(
+      id, common::protocols::json_rpc::JsonRPCError::MakeInternalErrorFromText(error_text));
+  return common::Error();
+}
+
 common::Error RecentResponseSuccess(protocol::sequance_id_t id, protocol::response_t* resp) {
   if (!resp) {
     return common::make_error_inval();
@@ -385,6 +397,18 @@ common::Error InterruptStreamTimeSuccess(protocol::sequance_id_t id, protocol::r
   }
 
   *resp = protocol::response_t::MakeMessage(id, common::protocols::json_rpc::JsonRPCMessage::MakeSuccessMessage());
+  return common::Error();
+}
+
+common::Error InterruptStreamTimeFail(protocol::sequance_id_t id,
+                                      const std::string& error_text,
+                                      protocol::response_t* resp) {
+  if (!resp) {
+    return common::make_error_inval();
+  }
+
+  *resp = protocol::response_t::MakeError(
+      id, common::protocols::json_rpc::JsonRPCError::MakeInternalErrorFromText(error_text));
   return common::Error();
 }
 

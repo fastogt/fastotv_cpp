@@ -188,7 +188,7 @@ common::ErrnoError Client::GetRuntimeChannelInfoSuccess(protocol::sequance_id_t 
   return WriteResponse(resp);
 }
 
-common::ErrnoError Client::GetFavoriteInfoSuccess(protocol::sequance_id_t id) {
+common::ErrnoError Client::SetFavoriteInfoSuccess(protocol::sequance_id_t id) {
   protocol::response_t resp;
   common::Error err_ser = FavoriteSuccess(id, &resp);
   if (err_ser) {
@@ -198,7 +198,18 @@ common::ErrnoError Client::GetFavoriteInfoSuccess(protocol::sequance_id_t id) {
   return WriteResponse(resp);
 }
 
-common::ErrnoError Client::GetRecentInfoSuccess(protocol::sequance_id_t id) {
+common::ErrnoError Client::SetFavoriteInfoFail(protocol::sequance_id_t id, common::Error err) {
+  const std::string error_str = err->GetDescription();
+  protocol::response_t resp;
+  common::Error err_ser = FavoriteResponseFail(id, error_str, &resp);
+  if (err_ser) {
+    return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
+  }
+
+  return WriteResponse(resp);
+}
+
+common::ErrnoError Client::SetRecentInfoSuccess(protocol::sequance_id_t id) {
   protocol::response_t resp;
   common::Error err_ser = RecentResponseSuccess(id, &resp);
   if (err_ser) {
@@ -208,7 +219,7 @@ common::ErrnoError Client::GetRecentInfoSuccess(protocol::sequance_id_t id) {
   return WriteResponse(resp);
 }
 
-common::ErrnoError Client::GetRecentInfoFail(protocol::sequance_id_t id, common::Error err) {
+common::ErrnoError Client::SetRecentInfoFail(protocol::sequance_id_t id, common::Error err) {
   const std::string error_str = err->GetDescription();
   protocol::response_t resp;
   common::Error err_ser = RecentResponseFail(id, error_str, &resp);
@@ -219,9 +230,20 @@ common::ErrnoError Client::GetRecentInfoFail(protocol::sequance_id_t id, common:
   return WriteResponse(resp);
 }
 
-common::ErrnoError Client::GetInterruptStreamTimeInfoSuccess(protocol::sequance_id_t id) {
+common::ErrnoError Client::SetInterruptStreamTimeInfoSuccess(protocol::sequance_id_t id) {
   protocol::response_t resp;
   common::Error err_ser = InterruptStreamTimeSuccess(id, &resp);
+  if (err_ser) {
+    return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
+  }
+
+  return WriteResponse(resp);
+}
+
+common::ErrnoError Client::SetInterruptStreamTimeInfoFail(protocol::sequance_id_t id, common::Error err) {
+  const std::string error_str = err->GetDescription();
+  protocol::response_t resp;
+  common::Error err_ser = InterruptStreamTimeFail(id, error_str, &resp);
   if (err_ser) {
     return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
   }

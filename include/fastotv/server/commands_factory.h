@@ -111,11 +111,17 @@ common::Error ContentRequestResponseFail(protocol::sequance_id_t id,
                                          protocol::response_t* resp);
 
 common::Error FavoriteSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
+common::Error FavoriteResponseFail(protocol::sequance_id_t id,
+                                   const std::string& error_text,
+                                   protocol::response_t* resp);
 
 common::Error RecentResponseSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
 common::Error RecentResponseFail(protocol::sequance_id_t id, const std::string& error_text, protocol::response_t* resp);
 
 common::Error InterruptStreamTimeSuccess(protocol::sequance_id_t id, protocol::response_t* resp);
+common::Error InterruptStreamTimeFail(protocol::sequance_id_t id,
+                                      const std::string& error_text,
+                                      protocol::response_t* resp);
 
 }  // namespace server
 }  // namespace fastotv

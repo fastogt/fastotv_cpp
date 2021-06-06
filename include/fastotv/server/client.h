@@ -83,12 +83,14 @@ class Client : public ProtocoledClient {
   common::ErrnoError GetRuntimeChannelInfoSuccess(protocol::sequance_id_t id,
                                                   const commands_info::RuntimeChannelInfo& channel) WARN_UNUSED_RESULT;
 
-  common::ErrnoError GetFavoriteInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError SetFavoriteInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError SetFavoriteInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
 
-  common::ErrnoError GetRecentInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
-  common::ErrnoError GetRecentInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
+  common::ErrnoError SetRecentInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError SetRecentInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
 
-  common::ErrnoError GetInterruptStreamTimeInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError SetInterruptStreamTimeInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
+  common::ErrnoError SetInterruptStreamTimeInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
 
   common::ErrnoError CatchupGenerateFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
   common::ErrnoError CatchupGenerateSuccess(protocol::sequance_id_t id,
