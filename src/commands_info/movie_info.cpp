@@ -21,7 +21,7 @@
 #define URLS_FIELD "urls"
 #define DESCRIPTION_FIELD "description"
 #define PREVIEW_ICON_FIELD "preview_icon"
-#define BACKGROUND_ICON_FIELD "backgorund_url"
+#define BACKGROUND_URL_FIELD "backgorund_url"
 #define NAME_FIELD "display_name"
 #define TRAILER_URL_FIELD "trailer_url"
 #define USER_SCORE_FIELD "user_score"
@@ -177,7 +177,7 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
 
   if (background_url_) {
     const std::string back_icon_url_str = background_url_->spec();
-    ignore_result(SetStringField(deserialized, BACKGROUND_ICON_FIELD, back_icon_url_str));
+    ignore_result(SetStringField(deserialized, BACKGROUND_URL_FIELD, back_icon_url_str));
   }
 
   if (trailer_url_) {
@@ -236,7 +236,7 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
   }
 
   std::string back_url;
-  if (GetStringField(serialized, BACKGROUND_ICON_FIELD, &back_url)) {
+  if (GetStringField(serialized, BACKGROUND_URL_FIELD, &back_url)) {
     res.SetBackgroundUrl(url_t(back_url));
   }
 
