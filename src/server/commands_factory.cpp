@@ -277,6 +277,18 @@ common::Error GetRuntimeChannelInfoResponseSuccess(protocol::sequance_id_t id,
   return common::Error();
 }
 
+common::Error GetRuntimeChannelInfoResponseFail(protocol::sequance_id_t id,
+                                                const std::string& error_text,
+                                                protocol::response_t* resp) {
+  if (!resp) {
+    return common::make_error_inval();
+  }
+
+  *resp = protocol::response_t::MakeError(
+      id, common::protocols::json_rpc::JsonRPCError::MakeInternalErrorFromText(error_text));
+  return common::Error();
+}
+
 common::Error CatchupGenerateResponseSuccess(protocol::sequance_id_t id,
                                              const commands_info::CatchupQueueInfo& params,
                                              protocol::response_t* resp) {

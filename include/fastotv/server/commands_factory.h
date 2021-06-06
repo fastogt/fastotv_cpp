@@ -89,6 +89,9 @@ common::Error GetChannelsResponseFail(protocol::sequance_id_t id,
 common::Error GetRuntimeChannelInfoResponseSuccess(protocol::sequance_id_t id,
                                                    const commands_info::RuntimeChannelInfo& params,
                                                    protocol::response_t* resp);
+common::Error GetRuntimeChannelInfoResponseFail(protocol::sequance_id_t id,
+                                                const std::string& error_text,
+                                                protocol::response_t* resp);
 
 // catchups info
 common::Error CatchupGenerateResponseSuccess(protocol::sequance_id_t id,

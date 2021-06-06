@@ -82,6 +82,7 @@ class Client : public ProtocoledClient {
                                                   size_t watchers) WARN_UNUSED_RESULT;
   common::ErrnoError GetRuntimeChannelInfoSuccess(protocol::sequance_id_t id,
                                                   const commands_info::RuntimeChannelInfo& channel) WARN_UNUSED_RESULT;
+  common::ErrnoError GetRuntimeChannelInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;
 
   common::ErrnoError SetFavoriteInfoSuccess(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
   common::ErrnoError SetFavoriteInfoFail(protocol::sequance_id_t id, common::Error err) WARN_UNUSED_RESULT;

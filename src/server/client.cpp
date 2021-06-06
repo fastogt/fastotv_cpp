@@ -188,6 +188,17 @@ common::ErrnoError Client::GetRuntimeChannelInfoSuccess(protocol::sequance_id_t 
   return WriteResponse(resp);
 }
 
+common::ErrnoError Client::GetRuntimeChannelInfoFail(protocol::sequance_id_t id, common::Error err) {
+  const std::string error_str = err->GetDescription();
+  protocol::response_t resp;
+  common::Error err_ser = GetRuntimeChannelInfoResponseFail(id, error_str, &resp);
+  if (err_ser) {
+    return common::make_errno_error(err_ser->GetDescription(), EAGAIN);
+  }
+
+  return WriteResponse(resp);
+}
+
 common::ErrnoError Client::SetFavoriteInfoSuccess(protocol::sequance_id_t id) {
   protocol::response_t resp;
   common::Error err_ser = FavoriteSuccess(id, &resp);
