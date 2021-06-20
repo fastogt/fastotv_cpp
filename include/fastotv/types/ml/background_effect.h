@@ -29,7 +29,7 @@ class BackgroundEffect : public common::serializer::JsonSerializer<BackgroundEff
   typedef common::serializer::JsonSerializer<BackgroundEffect> base_class;
   typedef common::Optional<double> blur_strength_t;
   typedef common::Optional<std::string> image_path_t;
-  typedef common::Optional<std::string> color_t;
+  typedef common::Optional<int> color_t;
 
   static BackgroundEffect MakeBlurEffect(blur_strength_t blur);        // for blur type
   static BackgroundEffect MakeImageEffect(const image_path_t& image);  // for image type

@@ -18,7 +18,7 @@
 
 #define TYPE_FIELD "type"
 #define STRENGTH_FIELD "strength"
-#define IMAGE_FIELD "path"
+#define IMAGE_FIELD "image"
 #define COLOR_FIELD "color"
 
 namespace fastotv {
@@ -90,9 +90,9 @@ common::Optional<BackgroundEffect> BackgroundEffect::Make(common::HashValue* has
     }
     return MakeImageEffect(path);
   } else if (type == COLOR) {
-    std::string color;
+    int color;
     common::Value* color_field = hash->Find(COLOR_FIELD);
-    if (!color_field || !color_field->GetAsBasicString(&color)) {
+    if (!color_field || !color_field->GetAsInteger(&color)) {
       return common::Optional<BackgroundEffect>();
     }
     return MakeColorEffect(color);
@@ -124,8 +124,8 @@ common::Error BackgroundEffect::DoDeSerialize(json_object* serialized) {
     *this = MakeImageEffect(image);
     return common::Error();
   } else if (type == COLOR) {
-    std::string color;
-    err = GetStringField(serialized, COLOR_FIELD, &color);
+    int color;
+    err = GetIntField(serialized, COLOR_FIELD, &color);
     if (err) {
       return err;
     }
@@ -145,7 +145,7 @@ common::Error BackgroundEffect::SerializeFields(json_object* out) const {
     ignore_result(SetStringField(out, IMAGE_FIELD, *image_));
   }
   if (color_) {
-    ignore_result(SetStringField(out, COLOR_FIELD, *color_));
+    ignore_result(SetIntField(out, COLOR_FIELD, *color_));
   }
   return common::Error();
 }
