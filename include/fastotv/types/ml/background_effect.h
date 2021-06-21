@@ -35,8 +35,6 @@ class BackgroundEffect : public common::serializer::JsonSerializer<BackgroundEff
   static BackgroundEffect MakeImageEffect(const image_path_t& image);  // for image type
   static BackgroundEffect MakeColorEffect(const color_t& color);       // for color type
 
-  ~BackgroundEffect() override;
-
   bool Equals(const BackgroundEffect& back) const;
 
   BackgroundEffectType GetType() const;
