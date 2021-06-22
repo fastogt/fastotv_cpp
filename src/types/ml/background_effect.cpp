@@ -33,13 +33,13 @@ BackgroundEffect BackgroundEffect::MakeBlurEffect(blur_strength_t blur) {
 }
 
 BackgroundEffect BackgroundEffect::MakeImageEffect(const image_path_t& image) {
-  auto result = BackgroundEffect(BLUR);
+  auto result = BackgroundEffect(IMAGE);
   result.image_ = image;
   return result;
 }
 
 BackgroundEffect BackgroundEffect::MakeColorEffect(const color_t& color) {
-  auto result = BackgroundEffect(BLUR);
+  auto result = BackgroundEffect(COLOR);
   result.color_ = color;
   return result;
 }
