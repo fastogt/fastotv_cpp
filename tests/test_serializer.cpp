@@ -41,6 +41,7 @@
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vod_info.h>
 #include <fastotv/types/input_uri.h>
+#include <fastotv/types/ml/background_effect.h>
 #include <fastotv/types/output_uri.h>
 #include <fastotv/types/srt_key.h>
 
@@ -661,4 +662,19 @@ TEST(NotificationInfo, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(noti, dser);
+}
+
+TEST(BackGroundEffect, serialize_deserialize) {
+  const std::string url = R"({"type": 2, "color": 4294967293})";
+  fastotv::ml::BackgroundEffect out = fastotv::ml::BackgroundEffect::MakeColorEffect(123);
+  common::Error err = out.DeSerializeFromString(url);
+  ASSERT_TRUE(!err);
+  ASSERT_EQ(out.GetType(), 2);
+  ASSERT_EQ(out.GetColor(), 4294967293);
+
+  common::HashValue* hash = common::Value::CreateHashValue();
+  hash->Insert("type", common::Value::CreateIntegerValue(2));
+  hash->Insert("color", common::Value::CreateIntegerValue(4294967293));
+  auto make = out.Make(hash);
+  ASSERT_EQ(make->GetColor(), out.GetColor());
 }

@@ -124,8 +124,8 @@ common::Error BackgroundEffect::DoDeSerialize(json_object* serialized) {
     *this = MakeImageEffect(image);
     return common::Error();
   } else if (type == COLOR) {
-    int color;
-    err = GetIntField(serialized, COLOR_FIELD, &color);
+    int64_t color;
+    err = GetInt64Field(serialized, COLOR_FIELD, &color);
     if (err) {
       return err;
     }
