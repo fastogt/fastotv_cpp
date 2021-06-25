@@ -673,8 +673,8 @@ TEST(BackGroundEffect, serialize_deserialize) {
   ASSERT_EQ(out.GetColor(), 4294967293);
 
   common::HashValue* hash = common::Value::CreateHashValue();
-  hash->Insert("type", common::Value::CreateIntegerValue(2));
-  hash->Insert("color", common::Value::CreateIntegerValue(4294967293));
+  hash->Insert("type", common::Value::CreateLongIntegerValue(2));
+  hash->Insert("color", common::Value::CreateLongIntegerValue(4294967293));
   auto make = out.Make(hash);
   fastotv::ml::BackgroundEffect bg = *make;
   ASSERT_EQ(bg.GetColor(), 4294967293);

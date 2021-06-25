@@ -120,9 +120,9 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   }
 
   OutputUri url(base->GetID(), base->GetUrl());
-  int hlssink2;
+  int64_t hlssink2;
   common::Value* hlssink2_field = hash->Find(HLSSINK_TYPE_FILED);
-  if (hlssink2_field && hlssink2_field->GetAsInteger(&hlssink2)) {
+  if (hlssink2_field && hlssink2_field->GetAsLongInteger(&hlssink2)) {
     url.SetHlsSinkType(static_cast<HlsSinkType>(hlssink2));
   }
 
@@ -133,15 +133,15 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetHttpRoot(http_root);
   }
 
-  int hls_type;
+  int64_t hls_type;
   common::Value* hls_type_field = hash->Find(HLS_TYPE_FIELD);
-  if (hls_type_field && hls_type_field->GetAsInteger(&hls_type)) {
+  if (hls_type_field && hls_type_field->GetAsLongInteger(&hls_type)) {
     url.SetHlsType(static_cast<HlsType>(hls_type));
   }
 
-  int chunk_duration;
+  int64_t chunk_duration;
   common::Value* chunk_duration_field = hash->Find(CHUNK_DURATION_FIELD);
-  if (chunk_duration_field && chunk_duration_field->GetAsInteger(&chunk_duration)) {
+  if (chunk_duration_field && chunk_duration_field->GetAsLongInteger(&chunk_duration)) {
     url.SetChunkDuration(chunk_duration);
   }
 
@@ -151,9 +151,9 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetPlaylistRoot(common::uri::GURL(playlist_root));
   }
 
-  int srt_mode;
+  int64_t srt_mode;
   common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
-  if (srt_mode_field && srt_mode_field->GetAsInteger(&srt_mode)) {
+  if (srt_mode_field && srt_mode_field->GetAsLongInteger(&srt_mode)) {
     url.SetSrtMode(static_cast<SrtMode>(srt_mode));
   }
 

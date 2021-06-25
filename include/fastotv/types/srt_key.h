@@ -25,7 +25,7 @@ class SrtKey : public common::serializer::JsonSerializer<SrtKey> {
  public:
   typedef JsonSerializer<SrtKey> base_class;
   typedef std::string srt_passphrase_t;
-  typedef int key_len_t;
+  typedef size_t key_len_t;
 
   SrtKey();
   explicit SrtKey(const srt_passphrase_t& passphrase, key_len_t key_len);

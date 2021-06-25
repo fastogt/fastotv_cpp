@@ -60,9 +60,9 @@ common::Optional<SrtKey> SrtKey::Make(common::HashValue* json) {
   }
   res.passphrase_ = pass;
 
-  key_len_t kl;
+  int64_t kl;
   common::Value* kl_field = json->Find(KEY_LEN_FIELD);
-  if (!kl_field || !kl_field->GetAsInteger(&kl)) {
+  if (!kl_field || !kl_field->GetAsLongInteger(&kl)) {
     return common::Optional<SrtKey>();
   }
   res.key_len_ = kl;
@@ -78,8 +78,8 @@ common::Error SrtKey::DoDeSerialize(json_object* serialized) {
   }
   res.passphrase_ = pass;
 
-  key_len_t kl;
-  err = GetIntField(serialized, KEY_LEN_FIELD, &kl);
+  int64_t kl;
+  err = GetInt64Field(serialized, KEY_LEN_FIELD, &kl);
   if (err) {
     return err;
   }

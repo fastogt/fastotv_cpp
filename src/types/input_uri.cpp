@@ -123,9 +123,9 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   InputUri url(base->GetID(), base->GetUrl());
-  int agent;
+  int64_t agent;
   common::Value* agent_field = hash->Find(USER_AGENT_FIELD);
-  if (agent_field && agent_field->GetAsInteger(&agent)) {
+  if (agent_field && agent_field->GetAsLongInteger(&agent)) {
     url.SetUserAgent(static_cast<UserAgent>(agent));
   }
 
@@ -142,8 +142,8 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
-  int pid;
-  if (pid_field && pid_field->GetAsInteger(&pid)) {
+  int64_t pid;
+  if (pid_field && pid_field->GetAsLongInteger(&pid)) {
     url.SetProgramNumber(pid);
   }
 
@@ -153,9 +153,9 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetMulticastIface(iface);
   }
 
-  int srt_mode;
+  int64_t srt_mode;
   common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
-  if (srt_mode_field && srt_mode_field->GetAsInteger(&srt_mode)) {
+  if (srt_mode_field && srt_mode_field->GetAsLongInteger(&srt_mode)) {
     url.SetSrtMode(static_cast<SrtMode>(srt_mode));
   }
 

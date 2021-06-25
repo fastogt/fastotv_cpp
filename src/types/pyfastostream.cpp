@@ -74,9 +74,9 @@ common::Optional<PyFastoStream> PyFastoStream::Make(common::HashValue* json) {
     res.https_proxy_ = https_proxy_t(url_str);
   }
 
-  int prefer;
+  int64_t prefer;
   common::Value* prefer_field = json->Find(PREFER_FIELD);
-  if (prefer_field && prefer_field->GetAsInteger(&prefer)) {
+  if (prefer_field && prefer_field->GetAsLongInteger(&prefer)) {
     res.prefer_ = static_cast<QualityPrefer>(prefer);
   }
   return res;

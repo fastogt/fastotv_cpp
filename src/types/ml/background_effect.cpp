@@ -70,8 +70,8 @@ common::Optional<BackgroundEffect> BackgroundEffect::Make(common::HashValue* has
   }
 
   common::Value* type_field = hash->Find(TYPE_FIELD);
-  int type;
-  if (!type_field || !type_field->GetAsInteger(&type)) {
+  int64_t type;
+  if (!type_field || !type_field->GetAsLongInteger(&type)) {
     return common::Optional<BackgroundEffect>();
   }
 
@@ -90,9 +90,9 @@ common::Optional<BackgroundEffect> BackgroundEffect::Make(common::HashValue* has
     }
     return MakeImageEffect(path);
   } else if (type == COLOR) {
-    int color;
+    int64_t color;
     common::Value* color_field = hash->Find(COLOR_FIELD);
-    if (!color_field || !color_field->GetAsInteger(&color)) {
+    if (!color_field || !color_field->GetAsLongInteger(&color)) {
       return common::Optional<BackgroundEffect>();
     }
     return MakeColorEffect(color);
@@ -145,7 +145,7 @@ common::Error BackgroundEffect::SerializeFields(json_object* out) const {
     ignore_result(SetStringField(out, IMAGE_FIELD, *image_));
   }
   if (color_) {
-    ignore_result(SetIntField(out, COLOR_FIELD, *color_));
+    ignore_result(SetInt64Field(out, COLOR_FIELD, *color_));
   }
   return common::Error();
 }

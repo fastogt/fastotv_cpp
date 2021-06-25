@@ -89,8 +89,8 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
 
   MachineLearning res;
   common::Value* learning_backend_field = hash->Find(BACKEND_FIELD);
-  int backend;
-  if (!learning_backend_field || !learning_backend_field->GetAsInteger(&backend)) {
+  int64_t backend;
+  if (!learning_backend_field || !learning_backend_field->GetAsLongInteger(&backend)) {
     return common::Optional<MachineLearning>();
   }
   res.SetBackend(static_cast<SupportedBackends>(backend));
@@ -116,9 +116,9 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
   }
   res.SetNeedDump(dump);
 
-  int clid;
+  int64_t clid;
   common::Value* clid_field = hash->Find(CLASS_ID_FIELD);
-  if (!clid_field || !clid_field->GetAsInteger(&clid)) {
+  if (!clid_field || !clid_field->GetAsLongInteger(&clid)) {
     return common::Optional<MachineLearning>();
   }
   res.SetClassID(clid);
