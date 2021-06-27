@@ -71,7 +71,7 @@ common::Optional<BackgroundEffect> BackgroundEffect::Make(common::HashValue* has
 
   common::Value* type_field = hash->Find(TYPE_FIELD);
   int64_t type;
-  if (!type_field || !type_field->GetAsLongInteger(&type)) {
+  if (!type_field || !type_field->GetAsInteger64(&type)) {
     return common::Optional<BackgroundEffect>();
   }
 
@@ -92,7 +92,7 @@ common::Optional<BackgroundEffect> BackgroundEffect::Make(common::HashValue* has
   } else if (type == COLOR) {
     int64_t color;
     common::Value* color_field = hash->Find(COLOR_FIELD);
-    if (!color_field || !color_field->GetAsLongInteger(&color)) {
+    if (!color_field || !color_field->GetAsInteger64(&color)) {
       return common::Optional<BackgroundEffect>();
     }
     return MakeColorEffect(color);

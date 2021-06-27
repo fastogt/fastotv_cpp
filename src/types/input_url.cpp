@@ -64,8 +64,8 @@ common::Optional<InputUrl> InputUrl::Make(common::HashValue* hash) {
   }
 
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  int64_t uid;
-  if (!input_id_field || !input_id_field->GetAsLongInteger(&uid)) {
+  uint64_t uid;
+  if (!input_id_field || !input_id_field->GetAsUInteger64(&uid)) {
     return common::Optional<InputUrl>();
   }
 
@@ -97,7 +97,7 @@ common::Error InputUrl::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  ignore_result(SetIntField(out, ID_FIELD, GetID()));
+  ignore_result(SetInt64Field(out, ID_FIELD, GetID()));
   const std::string url_str = url_.spec();
   ignore_result(SetStringField(out, URI_FIELD, url_str));
   return common::Error();

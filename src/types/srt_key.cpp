@@ -62,7 +62,7 @@ common::Optional<SrtKey> SrtKey::Make(common::HashValue* json) {
 
   int64_t kl;
   common::Value* kl_field = json->Find(KEY_LEN_FIELD);
-  if (!kl_field || !kl_field->GetAsLongInteger(&kl)) {
+  if (!kl_field || !kl_field->GetAsInteger64(&kl)) {
     return common::Optional<SrtKey>();
   }
   res.key_len_ = kl;

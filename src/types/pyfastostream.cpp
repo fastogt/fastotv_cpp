@@ -76,7 +76,7 @@ common::Optional<PyFastoStream> PyFastoStream::Make(common::HashValue* json) {
 
   int64_t prefer;
   common::Value* prefer_field = json->Find(PREFER_FIELD);
-  if (prefer_field && prefer_field->GetAsLongInteger(&prefer)) {
+  if (prefer_field && prefer_field->GetAsInteger64(&prefer)) {
     res.prefer_ = static_cast<QualityPrefer>(prefer);
   }
   return res;

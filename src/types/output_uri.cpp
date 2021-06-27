@@ -122,7 +122,7 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   OutputUri url(base->GetID(), base->GetUrl());
   int64_t hlssink2;
   common::Value* hlssink2_field = hash->Find(HLSSINK_TYPE_FILED);
-  if (hlssink2_field && hlssink2_field->GetAsLongInteger(&hlssink2)) {
+  if (hlssink2_field && hlssink2_field->GetAsInteger64(&hlssink2)) {
     url.SetHlsSinkType(static_cast<HlsSinkType>(hlssink2));
   }
 
@@ -135,13 +135,13 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 
   int64_t hls_type;
   common::Value* hls_type_field = hash->Find(HLS_TYPE_FIELD);
-  if (hls_type_field && hls_type_field->GetAsLongInteger(&hls_type)) {
+  if (hls_type_field && hls_type_field->GetAsInteger64(&hls_type)) {
     url.SetHlsType(static_cast<HlsType>(hls_type));
   }
 
   int64_t chunk_duration;
   common::Value* chunk_duration_field = hash->Find(CHUNK_DURATION_FIELD);
-  if (chunk_duration_field && chunk_duration_field->GetAsLongInteger(&chunk_duration)) {
+  if (chunk_duration_field && chunk_duration_field->GetAsInteger64(&chunk_duration)) {
     url.SetChunkDuration(chunk_duration);
   }
 
@@ -153,7 +153,7 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 
   int64_t srt_mode;
   common::Value* srt_mode_field = hash->Find(SRT_MODE_FIELD);
-  if (srt_mode_field && srt_mode_field->GetAsLongInteger(&srt_mode)) {
+  if (srt_mode_field && srt_mode_field->GetAsInteger64(&srt_mode)) {
     url.SetSrtMode(static_cast<SrtMode>(srt_mode));
   }
 

@@ -64,7 +64,7 @@ common::Optional<OutputUrl> OutputUrl::Make(common::HashValue* hash) {
 
   common::Value* input_id_field = hash->Find(ID_FIELD);
   int64_t uid;
-  if (!input_id_field || !input_id_field->GetAsLongInteger(&uid)) {
+  if (!input_id_field || !input_id_field->GetAsInteger64(&uid)) {
     return common::Optional<OutputUrl>();
   }
 
