@@ -276,7 +276,8 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
 
 bool MovieInfo::Equals(const MovieInfo& url) const {
   return urls_ == url.urls_ && description_ == url.description_ && preview_icon_ == url.preview_icon_ &&
-         background_url_ == url.background_url_ && type_ == url.type_;
+         background_url_ == url.background_url_ && type_ == url.type_ && trailer_url_ == url.trailer_url_ &&
+         user_score_ == url.user_score_ && prime_date_ == url.prime_date_;
 }
 
 }  // namespace commands_info

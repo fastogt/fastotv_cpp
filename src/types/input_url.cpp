@@ -64,15 +64,15 @@ common::Optional<InputUrl> InputUrl::Make(common::HashValue* hash) {
   }
 
   common::Value* input_id_field = hash->Find(ID_FIELD);
-  uint64_t uid;
-  if (!input_id_field || !input_id_field->GetAsUInteger64(&uid)) {
+  int64_t uid;
+  if (!input_id_field || !input_id_field->GetAsInteger64(&uid)) {
     return common::Optional<InputUrl>();
   }
 
   InputUrl url;
   url.SetUrl(uri);
   url.SetID(uid);
-  return url;
+  return common::Optional<InputUrl>(url);
 }
 
 common::Error InputUrl::DoDeSerialize(json_object* serialized) {

@@ -170,7 +170,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   if (programme_field && programme_field->GetAsHash(&programme)) {
     url.SetProgramme(Programme::Make(programme));
   }
-  return url;
+  return common::Optional<InputUri>(url);
 }
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {

@@ -54,7 +54,7 @@ TEST(OutputUri, serialize_deserialize) {
   ASSERT_TRUE(!err);
   ASSERT_EQ(out.GetUrl(), "http://fastocloud.com/laza");
   ASSERT_EQ(out.GetID(), 10);
-  ASSERT_TRUE(out.IsHls());
+  ASSERT_TRUE(!out.IsHls());
   ASSERT_TRUE(out.IsValid());
 }
 
@@ -79,6 +79,13 @@ TEST(InputUri, serialize_deserialize) {
   ASSERT_TRUE(!err);
 
   ASSERT_EQ(input, dinput);
+
+  common::HashValue* hash = common::Value::CreateHashValue();
+  hash->Insert("id", common::Value::CreateInteger64Value(120));
+  hash->Insert("uri", common::Value::CreateStringValueFromBasicString("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8"));
+  auto ok = fastotv::InputUri::Make(hash);
+  ASSERT_TRUE(ok);
+  delete hash;
 }
 
 TEST(ChannelInfo, serialize_deserialize) {
