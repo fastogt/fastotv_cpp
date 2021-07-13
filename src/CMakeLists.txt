@@ -166,6 +166,8 @@ IF(DEVELOPER_ENABLE_TESTS)
   SET(PROTOCOL_TEST protocol_test)
   ADD_EXECUTABLE(${PROTOCOL_TEST}
     ${CMAKE_SOURCE_DIR}/tests/test_serializer.cpp
+    ${CMAKE_SOURCE_DIR}/tests/test_output_uri.cpp
+    ${CMAKE_SOURCE_DIR}/tests/test_input_uri.cpp
   )
   TARGET_INCLUDE_DIRECTORIES(${PROTOCOL_TEST} PRIVATE
     ${CMAKE_SOURCE_DIR}/include
