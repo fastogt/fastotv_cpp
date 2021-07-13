@@ -17,6 +17,7 @@
 #include <string>
 
 #include <common/serializer/json_serializer.h>
+#include <common/uri/gurl.h>
 #include <common/value.h>
 
 namespace fastotv {
@@ -28,7 +29,7 @@ class BackgroundEffect : public common::serializer::JsonSerializer<BackgroundEff
  public:
   typedef common::serializer::JsonSerializer<BackgroundEffect> base_class;
   typedef common::Optional<double> blur_strength_t;
-  typedef common::Optional<std::string> image_path_t;
+  typedef common::Optional<common::uri::GURL> image_path_t;
   typedef common::Optional<unsigned int> color_t;
 
   static BackgroundEffect MakeBlurEffect(blur_strength_t blur);        // for blur type

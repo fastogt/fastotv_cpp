@@ -82,7 +82,8 @@ TEST(InputUri, serialize_deserialize) {
 
   common::HashValue* hash = common::Value::CreateHashValue();
   hash->Insert("id", common::Value::CreateInteger64Value(120));
-  hash->Insert("uri", common::Value::CreateStringValueFromBasicString("http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8"));
+  hash->Insert("uri", common::Value::CreateStringValueFromBasicString(
+                          "http://localhost:8080/hls/69_avformat_test_alex_2/play.m3u8"));
   auto ok = fastotv::InputUri::Make(hash);
   ASSERT_TRUE(ok);
   delete hash;
