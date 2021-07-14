@@ -28,6 +28,7 @@ class OutputUri : public OutputUrl {
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
   enum HlsSinkType { HLSSINK = 0, HLSSINK2 = 1 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
+  enum RtmpSinkType { RTMPSINK = 0, RTMP2SINK = 1 };
 
   typedef common::Optional<HlsType> hls_t;
   typedef common::Optional<common::uri::GURL> playlist_root_t;
@@ -35,6 +36,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtMode> srt_mode_t;
   typedef common::Optional<HlsSinkType> hlssink_type_t;
   typedef common::Optional<SrtKey> srt_key_t;
+  typedef common::Optional<RtmpSinkType> rtmp_type_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -42,6 +44,9 @@ class OutputUri : public OutputUrl {
   bool IsValid() const;
 
   bool IsHls() const;
+
+  rtmp_type_t GetRtmpSinkType() const;
+  void SetRtmpSinkType(rtmp_type_t rtmpsink);
 
   hlssink_type_t GetHlsSinkType() const;
   void SetHlsSinkType(hlssink_type_t hlssink);
@@ -82,6 +87,8 @@ class OutputUri : public OutputUrl {
   // srt
   srt_mode_t srt_mode_;
   srt_key_t srt_key_;
+  // rtmp
+  rtmp_type_t rtmpsink_type_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

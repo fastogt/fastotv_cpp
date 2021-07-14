@@ -21,13 +21,21 @@
 #define PLAYLIST_ROOT_FIELD "playlist_root"
 #define SRT_MODE_FIELD "srt_mode"
 #define SRT_KEY_FIELD "srt_key"
+#define RTMPSINK_TYPE_FILED "rtmpsink_type"
 
 namespace fastotv {
 
 OutputUri::OutputUri() : OutputUri(0, url_t()) {}
 
 OutputUri::OutputUri(uri_id_t id, const url_t& url)
-    : base_class(id, url), hlssink_type_(), http_root_(), hls_type_(), chunk_duration_(), srt_mode_(), srt_key_() {}
+    : base_class(id, url),
+      hlssink_type_(),
+      http_root_(),
+      hls_type_(),
+      chunk_duration_(),
+      srt_mode_(),
+      srt_key_(),
+      rtmpsink_type_() {}
 
 bool OutputUri::IsValid() const {
   return base_class::IsValid();
@@ -45,6 +53,14 @@ bool OutputUri::IsHls() const {
   }
 
   return false;
+}
+
+OutputUri::rtmp_type_t OutputUri::GetRtmpSinkType() const {
+  return rtmpsink_type_;
+}
+
+void OutputUri::SetRtmpSinkType(rtmp_type_t rtmpsink) {
+  rtmpsink_type_ = rtmpsink;
 }
 
 OutputUri::hlssink_type_t OutputUri::GetHlsSinkType() const {
@@ -163,6 +179,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetSrtKey(SrtKey::Make(srt_key));
   }
 
+  int64_t rtmpsink;
+  common::Value* rtmpsink_field = hash->Find(RTMPSINK_TYPE_FILED);
+  if (rtmpsink_field && rtmpsink_field->GetAsInteger64(&rtmpsink)) {
+    url.SetRtmpSinkType(static_cast<RtmpSinkType>(rtmpsink));
+  }
+
   return url;
 }
 
@@ -211,6 +233,12 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     if (!err) {
       res.SetSrtKey(key);
     }
+  }
+
+  RtmpSinkType rtmpsink;
+  err = GetEnumField(serialized, RTMPSINK_TYPE_FILED, &rtmpsink);
+  if (!err) {
+    res.SetRtmpSinkType(rtmpsink);
   }
 
   *this = res;
