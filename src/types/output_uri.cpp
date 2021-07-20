@@ -185,7 +185,7 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetRtmpSinkType(static_cast<RtmpSinkType>(rtmpsink));
   }
 
-  return url;
+  return common::Optional<OutputUri>(url);
 }
 
 common::Error OutputUri::DoDeSerialize(json_object* serialized) {
@@ -282,6 +282,9 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     if (!err) {
       ignore_result(SetObjectField(deserialized, SRT_KEY_FIELD, jkey));
     }
+  }
+  if (rtmpsink_type_) {
+    ignore_result(SetEnumField(deserialized, RTMPSINK_TYPE_FILED, *rtmpsink_type_));
   }
   return common::Error();
 }

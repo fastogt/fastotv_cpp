@@ -22,6 +22,7 @@
 #define SRT_KEY_FIELD "srt_key"
 #define SRT_MODE_FIELD "srt_mode"
 #define PROGRAMME_FIELD "programme"
+#define RTMPSRC_TYPE_FILED "rtmpsrc_type"
 
 namespace fastotv {
 
@@ -36,7 +37,8 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       iface_(),
       srt_mode_(),
       srt_key_(),
-      programme_() {}
+      programme_(),
+      rtmpsrc_type_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -96,6 +98,14 @@ InputUri::programme_t InputUri::GetProgramme() const {
 
 void InputUri::SetProgramme(const programme_t& programme) {
   programme_ = programme;
+}
+
+InputUri::rtmpsrc_type_t InputUri::GetRtmpSrcType() const {
+  return rtmpsrc_type_;
+}
+
+void InputUri::SetRtmpSrcType(const rtmpsrc_type_t& type) {
+  rtmpsrc_type_ = type;
 }
 
 InputUri::srt_mode_t InputUri::GetSrtMode() const {
@@ -170,6 +180,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   if (programme_field && programme_field->GetAsHash(&programme)) {
     url.SetProgramme(Programme::Make(programme));
   }
+
+  int64_t rtmpsrc;
+  common::Value* rtmpsrc_field = hash->Find(RTMPSRC_TYPE_FILED);
+  if (rtmpsrc_field && rtmpsrc_field->GetAsInteger64(&rtmpsrc)) {
+    url.SetRtmpSrcType(static_cast<RtmpSrcType>(rtmpsrc));
+  }
   return common::Optional<InputUri>(url);
 }
 
@@ -240,6 +256,12 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
+  RtmpSrcType rtmpsrc;
+  err = GetEnumField(serialized, RTMPSRC_TYPE_FILED, &rtmpsrc);
+  if (!err) {
+    res.SetRtmpSrcType(rtmpsrc);
+  }
+
   *this = res;
   return common::Error();
 }
@@ -300,6 +322,10 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (hurl) {
     const std::string proxy = hurl->spec();
     ignore_result(SetStringField(deserialized, PROXY_FIELD, proxy));
+  }
+
+  if (rtmpsrc_type_) {
+    ignore_result(SetEnumField(deserialized, RTMPSRC_TYPE_FILED, *rtmpsrc_type_));
   }
 
   return common::Error();

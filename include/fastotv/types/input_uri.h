@@ -29,6 +29,7 @@ class InputUri : public InputUrl {
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
   typedef common::Optional<UserAgent> user_agent_t;
+  enum RtmpSrcType { RTMPSRC = 0, RTMP2SRC = 1 };
   // optionals
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
@@ -37,6 +38,8 @@ class InputUri : public InputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<SrtMode> srt_mode_t;
   typedef common::Optional<Programme> programme_t;
+  // rtmp
+  typedef common::Optional<RtmpSrcType> rtmpsrc_type_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -67,6 +70,9 @@ class InputUri : public InputUrl {
   programme_t GetProgramme() const;
   void SetProgramme(const programme_t& programme);
 
+  rtmpsrc_type_t GetRtmpSrcType() const;
+  void SetRtmpSrcType(const rtmpsrc_type_t& type);
+
   bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -91,6 +97,9 @@ class InputUri : public InputUrl {
 
   // programme
   programme_t programme_;
+
+  // rtmp
+  rtmpsrc_type_t rtmpsrc_type_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {
