@@ -85,13 +85,13 @@ common::Error Programme::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  int64_t start;
+  timestamp_t start;
   err = GetInt64Field(serialized, START_FIELD, &start);
   if (err) {
     return err;
   }
 
-  int64_t stop;
+  timestamp_t stop;
   err = GetInt64Field(serialized, STOP_FIELD, &stop);
   if (err) {
     return err;
@@ -184,14 +184,14 @@ common::Optional<Programme> Programme::Make(common::HashValue* json) {
 
   common::Value* start_field = json->Find(START_FIELD);
   timestamp_t start;
-  if (!start_field || !start_field->GetAsTime(&start)) {
+  if (!start_field || !start_field->GetAsInteger64(&start)) {
     return common::Optional<Programme>();
   }
   res.start_time_ = start;
 
   common::Value* stop_field = json->Find(STOP_FIELD);
   timestamp_t stop;
-  if (!stop_field || !start_field->GetAsTime(&stop)) {
+  if (!stop_field || !start_field->GetAsInteger64(&stop)) {
     return common::Optional<Programme>();
   }
   res.stop_time_ = stop;
