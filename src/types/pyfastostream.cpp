@@ -84,7 +84,7 @@ common::Optional<PyFastoStream> PyFastoStream::Make(common::HashValue* json) {
 
 common::Error PyFastoStream::DoDeSerialize(json_object* serialized) {
   PyFastoStream res;
-  QualityPrefer prefer;
+  QualityPrefer prefer = QualityPrefer::QP_BOTH;
   common::Error err = GetEnumField(serialized, PREFER_FIELD, &prefer);
   if (err) {
     return err;

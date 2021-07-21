@@ -27,7 +27,7 @@ TEST(OutputUri, ConvertFromString) {
   ASSERT_EQ(invalid_uri.GetUrl(), common::uri::GURL());
   ASSERT_EQ(invalid_uri.GetHttpRoot(), common::file_system::ascii_file_string_path());
   std::string conv;
-  invalid_uri.SerializeToString(&conv);
+  ignore_result(invalid_uri.SerializeToString(&conv));
   ASSERT_EQ(conv, invalid_uri_json);
 
   const std::string uri_json = "{ \"id\": 1, \"uri\": \"" RTMP_OUTPUT "\", \"http_root\": \"" HTTP_OUTPUT
