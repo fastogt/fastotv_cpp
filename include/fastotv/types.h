@@ -36,7 +36,7 @@ typedef std::string user_id_t;         // mongodb id in json
 typedef size_t bandwidth_t;            // bytes/s
 typedef common::time64_t timestamp_t;  // millisecond
 
-enum StreamType : int {
+enum StreamType : unsigned {
   PROXY = 0,
   VOD_PROXY = 1,
   RELAY = 2,
@@ -52,8 +52,7 @@ enum StreamType : int {
   EVENT = 12,
   CV_DATA = 13,
   CHANGER_RELAY = 14,
-  CHANGER_ENCODE = 15,
-  SCREEN = 16  // for inner use
+  CHANGER_ENCODE = 15
 };
 
 }  // namespace fastotv
