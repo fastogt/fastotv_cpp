@@ -18,12 +18,29 @@
 
 #include <fastotv/commands_info/catchup_generate_info.h>
 
+#include <iomanip>
+
+#include <common/time.h>
+
 #define ID_FIELD "id"
 #define TITLE_FIELD "title"
 #define START_FIELD "start"
 #define STOP_FIELD "stop"
 
 #define CATCHUP_FIELD "catchup"
+
+namespace {
+common::Error EpgTimeParse(const std::string& epg_time, int64_t* out) {
+  if (epg_time.empty() || !out) {
+    return common::make_error_inval();
+  }
+
+  std::tm dt;
+  std::istringstream(epg_time) >> std::get_time(&dt, "%Y%m%d%H%M%S");
+  *out = common::time::tm2utctime(&dt, false) * 1000;
+  return common::Error();
+}
+}  // namespace
 
 namespace fastotv {
 namespace commands_info {
@@ -98,13 +115,29 @@ common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
   int64_t start;
   err = GetInt64Field(serialized, START_FIELD, &start);
   if (err) {
-    return err;
+    std::string start_str;
+    err = GetStringField(serialized, START_FIELD, &start_str);
+    if (err) {
+      return err;
+    }
+    err = EpgTimeParse(start_str, &start);
+    if (err) {
+      return err;
+    }
   }
 
   int64_t stop;
   err = GetInt64Field(serialized, STOP_FIELD, &stop);
   if (err) {
-    return err;
+    std::string stop_str;
+    err = GetStringField(serialized, STOP_FIELD, &stop_str);
+    if (err) {
+      return err;
+    }
+    err = EpgTimeParse(stop_str, &stop);
+    if (err) {
+      return err;
+    }
   }
 
   *this = CatchupGenerateInfo(cid, title, start, stop);
