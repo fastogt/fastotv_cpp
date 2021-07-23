@@ -24,12 +24,12 @@
 namespace fastotv {
 namespace commands_info {
 
-FavoriteInfo::FavoriteInfo() : id_(invalid_stream_id), favorite_(false) {}
+FavoriteInfo::FavoriteInfo() : id_(kInvalidStreamId), favorite_(false) {}
 
 FavoriteInfo::FavoriteInfo(const stream_id_t& channel, bool favorite) : id_(channel), favorite_(favorite) {}
 
 bool FavoriteInfo::IsValid() const {
-  return id_ != invalid_stream_id;
+  return id_ != kInvalidStreamId;
 }
 
 common::Error FavoriteInfo::SerializeFields(json_object* deserialized) const {

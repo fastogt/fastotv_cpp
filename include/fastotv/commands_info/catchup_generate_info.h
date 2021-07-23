@@ -35,7 +35,7 @@ class CatchupGenerateInfo : public common::serializer::JsonSerializer<CatchupGen
                                const std::string& title,
                                timestamp_t start_time,
                                timestamp_t stop_time);
-  ~CatchupGenerateInfo();
+  ~CatchupGenerateInfo() override;
 
   bool IsValid() const;
 
@@ -76,7 +76,7 @@ class CatchupQueueInfo : public common::serializer::JsonSerializer<CatchupQueueI
  public:
   CatchupQueueInfo();
   explicit CatchupQueueInfo(const CatchupInfo& info);
-  ~CatchupQueueInfo();
+  ~CatchupQueueInfo() override;
 
   bool IsValid() const;
 

@@ -36,7 +36,7 @@ namespace fastotv {
 namespace commands_info {
 
 StreamBaseInfo::StreamBaseInfo()
-    : stream_id_(invalid_stream_id),
+    : stream_id_(kInvalidStreamId),
       groups_(),
       iarc_(DEFAULT_IARC),
       view_count_(0),
@@ -78,7 +78,7 @@ StreamBaseInfo::StreamBaseInfo(const stream_id_t& sid,
       created_date_(created_date) {}
 
 bool StreamBaseInfo::IsValid() const {
-  return stream_id_ != invalid_stream_id;
+  return stream_id_ != kInvalidStreamId;
 }
 
 void StreamBaseInfo::SetCreatedDate(timestamp_t date) {

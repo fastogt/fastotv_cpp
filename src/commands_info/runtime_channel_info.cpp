@@ -24,14 +24,14 @@
 namespace fastotv {
 namespace commands_info {
 
-RuntimeChannelLiteInfo::RuntimeChannelLiteInfo() : RuntimeChannelLiteInfo(invalid_stream_id) {}
+RuntimeChannelLiteInfo::RuntimeChannelLiteInfo() : RuntimeChannelLiteInfo(kInvalidStreamId) {}
 
 RuntimeChannelLiteInfo::RuntimeChannelLiteInfo(const fastotv::stream_id_t& sid) : sid_(sid) {}
 
 RuntimeChannelLiteInfo::~RuntimeChannelLiteInfo() {}
 
 bool RuntimeChannelLiteInfo::IsValid() const {
-  return sid_ != invalid_stream_id;
+  return sid_ != kInvalidStreamId;
 }
 
 void RuntimeChannelLiteInfo::SetStreamID(const fastotv::stream_id_t& sid) {
@@ -55,7 +55,7 @@ common::Error RuntimeChannelLiteInfo::DoDeSerialize(json_object* serialized) {
   }
 
   stream_id_t cid = json_object_get_string(jcid);
-  if (cid == invalid_stream_id) {
+  if (cid == kInvalidStreamId) {
     return common::make_error_inval();
   }
   inf.sid_ = cid;

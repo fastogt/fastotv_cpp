@@ -23,14 +23,14 @@
 namespace fastotv {
 namespace commands_info {
 
-CatchupUndoInfo::CatchupUndoInfo() : sid_(invalid_stream_id) {}
+CatchupUndoInfo::CatchupUndoInfo() : sid_(kInvalidStreamId) {}
 
 CatchupUndoInfo::CatchupUndoInfo(const stream_id_t& sid) : sid_(sid) {}
 
 CatchupUndoInfo::~CatchupUndoInfo() {}
 
 bool CatchupUndoInfo::IsValid() const {
-  return sid_ != invalid_stream_id;
+  return sid_ != kInvalidStreamId;
 }
 
 void CatchupUndoInfo::SetStreamID(const stream_id_t& sid) {
@@ -52,7 +52,7 @@ common::Error CatchupUndoInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  if (cid == invalid_stream_id) {
+  if (cid == kInvalidStreamId) {
     return common::make_error_inval();
   }
 

@@ -28,7 +28,7 @@
 namespace fastotv {
 namespace commands_info {
 
-CatchupGenerateInfo::CatchupGenerateInfo() : sid_(invalid_stream_id), title_(), start_time_(0), stop_time_(0) {}
+CatchupGenerateInfo::CatchupGenerateInfo() : sid_(kInvalidStreamId), title_(), start_time_(0), stop_time_(0) {}
 
 CatchupGenerateInfo::CatchupGenerateInfo(const stream_id_t& sid,
                                          const std::string& title,
@@ -39,7 +39,7 @@ CatchupGenerateInfo::CatchupGenerateInfo(const stream_id_t& sid,
 CatchupGenerateInfo::~CatchupGenerateInfo() {}
 
 bool CatchupGenerateInfo::IsValid() const {
-  return sid_ != invalid_stream_id && start_time_ != 0 && stop_time_ != 0;
+  return sid_ != kInvalidStreamId && start_time_ != 0 && stop_time_ != 0;
 }
 
 void CatchupGenerateInfo::SetStreamID(const stream_id_t& sid) {
@@ -85,7 +85,7 @@ common::Error CatchupGenerateInfo::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  if (cid == invalid_stream_id) {
+  if (cid == kInvalidStreamId) {
     return common::make_error_inval();
   }
 

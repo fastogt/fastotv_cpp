@@ -41,7 +41,7 @@ have everyone listening!</desc>
 namespace fastotv {
 
 Programme::Programme()
-    : channel_(invalid_stream_id), start_time_(0), stop_time_(0), title_(), category_(), description_() {}
+    : channel_(kInvalidStreamId), start_time_(0), stop_time_(0), title_(), category_(), description_() {}
 
 Programme::Programme(const stream_id_t& channel,
                      timestamp_t start,
@@ -57,7 +57,7 @@ Programme::Programme(const stream_id_t& channel,
       description_(descr) {}
 
 bool Programme::IsValid() const {
-  return channel_ != invalid_stream_id && !title_.empty();
+  return channel_ != kInvalidStreamId && !title_.empty();
 }
 
 common::Error Programme::SerializeFields(json_object* deserialized) const {

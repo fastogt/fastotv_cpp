@@ -92,7 +92,7 @@ bool CreateContentRequestInfo::Equals(const CreateContentRequestInfo& auth) cons
   return text_ == auth.text_ && type_ == auth.type_ && status_ == auth.status_;
 }
 
-ContentRequestInfo::ContentRequestInfo() : base_class(), rid_(invalid_stream_id) {}
+ContentRequestInfo::ContentRequestInfo() : base_class(), rid_(kInvalidStreamId) {}
 
 ContentRequestInfo::ContentRequestInfo(const content_request_id_t& rid,
                                        const std::string& text,
@@ -101,7 +101,7 @@ ContentRequestInfo::ContentRequestInfo(const content_request_id_t& rid,
     : base_class(text, type, status), rid_(rid) {}
 
 bool ContentRequestInfo::IsValid() const {
-  return rid_ != invalid_stream_id;
+  return rid_ != kInvalidStreamId;
 }
 
 common::Error ContentRequestInfo::SerializeFields(json_object* deserialized) const {

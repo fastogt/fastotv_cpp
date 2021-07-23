@@ -24,13 +24,13 @@
 namespace fastotv {
 namespace commands_info {
 
-InterruptStreamTimeInfo::InterruptStreamTimeInfo() : id_(invalid_stream_id), time_(0) {}
+InterruptStreamTimeInfo::InterruptStreamTimeInfo() : id_(kInvalidStreamId), time_(0) {}
 
 InterruptStreamTimeInfo::InterruptStreamTimeInfo(const stream_id_t& channel, timestamp_t time)
     : id_(channel), time_(time) {}
 
 bool InterruptStreamTimeInfo::IsValid() const {
-  return id_ != invalid_stream_id;
+  return id_ != kInvalidStreamId;
 }
 
 common::Error InterruptStreamTimeInfo::SerializeFields(json_object* deserialized) const {

@@ -34,7 +34,7 @@ namespace fastotv {
 namespace commands_info {
 
 SerialInfo::SerialInfo()
-    : SerialInfo(invalid_stream_id,
+    : SerialInfo(kInvalidStreamId,
                  std::string(),
                  common::uri::GURL(),
                  optional_url_t(),
@@ -70,7 +70,7 @@ SerialInfo::SerialInfo(const fastotv::serial_id_t& sid,
       created_date_(created_date) {}
 
 bool SerialInfo::IsValid() const {
-  return sid_ != invalid_stream_id && !name_.empty();
+  return sid_ != kInvalidStreamId && !name_.empty();
 }
 
 void SerialInfo::SetCreatedDate(timestamp_t date) {
