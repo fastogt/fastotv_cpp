@@ -19,6 +19,7 @@
 #include <fastotv/commands_info/catchup_generate_info.h>
 
 #include <iomanip>
+#include <sstream>
 
 #include <common/time.h>
 
