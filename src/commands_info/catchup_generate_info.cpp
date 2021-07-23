@@ -36,7 +36,7 @@ common::Error EpgTimeParse(const std::string& epg_time, int64_t* out) {
   }
 
   std::tm dt;
-  std::istringstream(epg_time) >> std::get_time(&dt, "%Y%m%d%H%M%S");
+  std::stringstream(epg_time) >> std::get_time(&dt, "%Y%m%d%H%M%S");
   *out = common::time::tm2utctime(&dt, false) * 1000;
   return common::Error();
 }
