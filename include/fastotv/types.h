@@ -26,7 +26,7 @@ namespace fastotv {
 
 typedef std::string stream_id_t;  // must be unique
 static const stream_id_t kInvalidStreamId = stream_id_t();
-typedef uint32_t channel_id_t;
+typedef size_t channel_id_t;
 
 typedef std::string content_request_id_t;
 typedef std::string serial_id_t;
