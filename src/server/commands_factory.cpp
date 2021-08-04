@@ -26,7 +26,6 @@
 #define PRIVATE_VODS_FIELD "private_vods"
 #define CATCHUPS_FIELD "catchups"
 #define SERIES_FIELD "series"
-#define CONTENT_REQUESTS_FIELD "content_requests"
 #define DEVICES_FILED "devices"
 
 namespace fastotv {
@@ -183,7 +182,6 @@ common::Error GetChannelsResponseSuccess(protocol::sequance_id_t id,
                                          const commands_info::VodsInfo& private_vods,
                                          const commands_info::CatchupsInfo& catchups,
                                          const commands_info::SeriesInfo& series,
-                                         const commands_info::ContentRequestsInfo& requests,
                                          protocol::response_t* resp) {
   if (!resp) {
     return common::make_error_inval();
@@ -225,12 +223,6 @@ common::Error GetChannelsResponseSuccess(protocol::sequance_id_t id,
     return err_ser;
   }
 
-  json_object* prequests = nullptr;
-  err_ser = requests.Serialize(&prequests);
-  if (err_ser) {
-    return err_ser;
-  }
-
   json_object* parent = json_object_new_object();
   json_object_object_add(parent, CHANNELS_FIELD, cobj);
   json_object_object_add(parent, VODS_FIELD, vobj);
@@ -238,7 +230,6 @@ common::Error GetChannelsResponseSuccess(protocol::sequance_id_t id,
   json_object_object_add(parent, PRIVATE_VODS_FIELD, pvobj);
   json_object_object_add(parent, CATCHUPS_FIELD, pcatch);
   json_object_object_add(parent, SERIES_FIELD, pseries);
-  json_object_object_add(parent, CONTENT_REQUESTS_FIELD, prequests);
   const std::string chan_json = json_object_get_string(parent);
   json_object_put(parent);
 

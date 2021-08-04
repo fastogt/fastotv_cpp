@@ -25,7 +25,6 @@
 #include <fastotv/commands_info/channel_info.h>
 #include <fastotv/commands_info/channels_info.h>
 #include <fastotv/commands_info/client_info.h>
-#include <fastotv/commands_info/content_request_info.h>
 #include <fastotv/commands_info/device_info.h>
 #include <fastotv/commands_info/epg_info.h>
 #include <fastotv/commands_info/favorite_info.h>
@@ -444,27 +443,6 @@ TEST(CatchupUndoInfo, serialize_deserialize) {
   common::Error err = rinf_info.Serialize(&ser);
   ASSERT_TRUE(!err);
   fastotv::commands_info::CatchupUndoInfo dser;
-  err = dser.DeSerialize(ser);
-  ASSERT_TRUE(!err);
-
-  ASSERT_EQ(rinf_info, dser);
-}
-
-TEST(CreateContentRequestInfo, serialize_deserialize) {
-  const std::string text = "Test";
-  const fastotv::commands_info::CreateContentRequestInfo::ContentType cont =
-      fastotv::commands_info::CreateContentRequestInfo::VODS;
-  const fastotv::commands_info::CreateContentRequestInfo::RequestStatus res =
-      fastotv::commands_info::CreateContentRequestInfo::DONE;
-
-  fastotv::commands_info::CreateContentRequestInfo rinf_info(text, cont, res);
-  ASSERT_EQ(rinf_info.GetText(), text);
-  ASSERT_EQ(rinf_info.GetType(), cont);
-  ASSERT_EQ(rinf_info.GetStatus(), res);
-  serialize_t ser;
-  common::Error err = rinf_info.Serialize(&ser);
-  ASSERT_TRUE(!err);
-  fastotv::commands_info::CreateContentRequestInfo dser;
   err = dser.DeSerialize(ser);
   ASSERT_TRUE(!err);
 
