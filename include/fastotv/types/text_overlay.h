@@ -31,10 +31,10 @@ class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
 
   bool Equals(const TextOverlay& back) const;
 
-  text_t GetText();
+  text_t GetText() const;
   void SetText(const text_t& text);
 
-  font_t GetFont();
+  font_t GetFont() const;
   void SetFont(const font_t& font);
 
   static common::Optional<TextOverlay> Make(common::HashValue* hash);

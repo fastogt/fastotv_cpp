@@ -27,7 +27,7 @@ bool TextOverlay::Equals(const TextOverlay& back) const {
   return back.text_ == text_ && back.font_ == font_;
 }
 
-TextOverlay::text_t TextOverlay::GetText() {
+TextOverlay::text_t TextOverlay::GetText() const {
   return text_;
 }
 
@@ -35,7 +35,7 @@ void TextOverlay::SetText(const TextOverlay::text_t& text) {
   text_ = text;
 }
 
-TextOverlay::font_t TextOverlay::GetFont() {
+TextOverlay::font_t TextOverlay::GetFont() const {
   return font_;
 }
 
