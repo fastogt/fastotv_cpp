@@ -27,6 +27,22 @@ bool TextOverlay::Equals(const TextOverlay& back) const {
   return back.text_ == text_ && back.font_ == font_;
 }
 
+TextOverlay::text_t TextOverlay::GetText() {
+  return text_;
+}
+
+void TextOverlay::SetText(const TextOverlay::text_t& text) {
+  text_ = text;
+}
+
+TextOverlay::font_t TextOverlay::GetFont() {
+  return font_;
+}
+
+void TextOverlay::SetFont(const TextOverlay::font_t& font) {
+  font_ = font;
+}
+
 common::Optional<TextOverlay> TextOverlay::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<TextOverlay>();
