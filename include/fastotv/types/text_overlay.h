@@ -25,9 +25,10 @@ class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
  public:
   typedef common::serializer::JsonSerializer<TextOverlay> base_class;
   typedef std::string text_t;
+  typedef double absolute_t;
   typedef common::Optional<std::string> font_t;
 
-  TextOverlay(const text_t& text, const font_t& font = font_t());
+  TextOverlay(const text_t& text, absolute_t x, absolute_t y, const font_t& font = font_t());
 
   bool Equals(const TextOverlay& back) const;
 
@@ -37,6 +38,12 @@ class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
   font_t GetFont() const;
   void SetFont(const font_t& font);
 
+  absolute_t GetXAbsolute() const;
+  void SetXAbsolute(absolute_t absolute);
+
+  absolute_t GetYAbsolute() const;
+  void SetYAbsolute(absolute_t absolute_t);
+
   static common::Optional<TextOverlay> Make(common::HashValue* hash);
 
  protected:
@@ -45,6 +52,9 @@ class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
 
  private:
   text_t text_;
+  absolute_t x_absolute_;
+  absolute_t y_absolute_;
+
   font_t font_;
 };
 

@@ -17,11 +17,18 @@
 #include <common/sprintf.h>
 
 #define TEXT_FIELD "text"
+#define X_ABSOLUTE_FIELD "x_aboslute"
+#define Y_ABSOLUTE_FIELD "y_aboslute"
+
 #define FONT_FIELD "font"
 
 namespace fastotv {
 
-TextOverlay::TextOverlay(const text_t& text, const font_t& font) : text_(text), font_(font) {}
+TextOverlay::TextOverlay(const text_t& text,
+                         fastotv::TextOverlay::absolute_t x,
+                         fastotv::TextOverlay::absolute_t y,
+                         const font_t& font)
+    : text_(text), x_absolute_(x), y_absolute_(y), font_(font) {}
 
 bool TextOverlay::Equals(const TextOverlay& back) const {
   return back.text_ == text_ && back.font_ == font_;
@@ -43,6 +50,22 @@ void TextOverlay::SetFont(const TextOverlay::font_t& font) {
   font_ = font;
 }
 
+TextOverlay::absolute_t TextOverlay::GetXAbsolute() const {
+  return x_absolute_;
+}
+
+void TextOverlay::SetXAbsolute(absolute_t absolute) {
+  x_absolute_ = absolute;
+}
+
+TextOverlay::absolute_t TextOverlay::GetYAbsolute() const {
+  return y_absolute_;
+}
+
+void TextOverlay::SetYAbsolute(absolute_t absolute) {
+  y_absolute_ = absolute;
+}
+
 common::Optional<TextOverlay> TextOverlay::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<TextOverlay>();
@@ -54,13 +77,25 @@ common::Optional<TextOverlay> TextOverlay::Make(common::HashValue* hash) {
     return common::Optional<TextOverlay>();
   }
 
+  common::Value* xabs_field = hash->Find(X_ABSOLUTE_FIELD);
+  absolute_t xabs;
+  if (!xabs_field || !xabs_field->GetAsDouble(&xabs)) {
+    return common::Optional<TextOverlay>();
+  }
+
+  common::Value* yabs_field = hash->Find(Y_ABSOLUTE_FIELD);
+  absolute_t yabs;
+  if (!yabs_field || !yabs_field->GetAsDouble(&yabs)) {
+    return common::Optional<TextOverlay>();
+  }
+
   std::string font;
   common::Value* font_field = hash->Find(FONT_FIELD);
   if (font_field && font_field->GetAsBasicString(&font)) {
-    return TextOverlay(text, font);
+    return TextOverlay(text, xabs, yabs, font);
   }
 
-  return TextOverlay(text);
+  return TextOverlay(text, xabs, yabs);
 }
 
 common::Error TextOverlay::DoDeSerialize(json_object* serialized) {
@@ -70,19 +105,33 @@ common::Error TextOverlay::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
+  absolute_t xabs;
+  err = GetDoubleField(serialized, X_ABSOLUTE_FIELD, &xabs);
+  if (err) {
+    return err;
+  }
+
+  absolute_t yabs;
+  err = GetDoubleField(serialized, Y_ABSOLUTE_FIELD, &yabs);
+  if (err) {
+    return err;
+  }
+
   std::string font;
   err = GetStringField(serialized, FONT_FIELD, &font);
   if (err) {
-    *this = TextOverlay(text);
+    *this = TextOverlay(text, xabs, yabs);
     return common::Error();
   }
 
-  *this = TextOverlay(text, font);
+  *this = TextOverlay(text, xabs, yabs, font);
   return common::Error();
 }
 
 common::Error TextOverlay::SerializeFields(json_object* out) const {
   ignore_result(SetStringField(out, TEXT_FIELD, text_));
+  ignore_result(SetDoubleField(out, X_ABSOLUTE_FIELD, x_absolute_));
+  ignore_result(SetDoubleField(out, Y_ABSOLUTE_FIELD, y_absolute_));
   if (font_) {
     ignore_result(SetStringField(out, FONT_FIELD, *font_));
   }
