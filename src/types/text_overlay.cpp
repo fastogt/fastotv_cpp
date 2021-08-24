@@ -17,8 +17,8 @@
 #include <common/sprintf.h>
 
 #define TEXT_FIELD "text"
-#define X_ABSOLUTE_FIELD "x_aboslute"
-#define Y_ABSOLUTE_FIELD "y_aboslute"
+#define X_ABSOLUTE_FIELD "x_absolute"
+#define Y_ABSOLUTE_FIELD "y_absolute"
 
 #define FONT_FIELD "font"
 
