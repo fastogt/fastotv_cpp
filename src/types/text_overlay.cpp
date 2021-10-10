@@ -22,7 +22,67 @@
 
 #define FONT_FIELD "font"
 
+#define FONT_FAMILY "family"
+#define FONT_SIZE "size"
+
 namespace fastotv {
+
+Font::Font() : family_(), size_(0) {}
+
+Font::Font(const family_t& family, int size) : family_(family), size_(size) {}
+
+bool Font::IsValid() const {
+  return !family_.empty() && size_ != 0;
+}
+
+bool Font::Equals(const Font& back) const {
+  return back.family_ == family_ && back.size_ == size_;
+}
+
+common::Optional<Font> Font::Make(common::HashValue* json) {
+  if (!json) {
+    return common::Optional<Font>();
+  }
+
+  Font res;
+  common::Value* pass_field = json->Find(FONT_FAMILY);
+  std::string pass;
+  if (!pass_field || !pass_field->GetAsBasicString(&pass)) {
+    return common::Optional<Font>();
+  }
+  res.family_ = pass;
+
+  int64_t kl;
+  common::Value* kl_field = json->Find(FONT_SIZE);
+  if (!kl_field || !kl_field->GetAsInteger64(&kl)) {
+    return common::Optional<Font>();
+  }
+  res.size_ = kl;
+  return res;
+}
+
+common::Error Font::DoDeSerialize(json_object* serialized) {
+  family_t text;
+  common::Error err = GetStringField(serialized, FONT_FAMILY, &text);
+  if (err) {
+    return err;
+  }
+
+  int64_t size;
+  err = GetInt64Field(serialized, FONT_SIZE, &size);
+  if (err) {
+    return err;
+  }
+
+  *this = Font(text, size);
+  return common::Error();
+}
+
+common::Error Font::SerializeFields(json_object* out) const {
+  ignore_result(SetStringField(out, FONT_FAMILY, family_));
+  ignore_result(SetInt64Field(out, X_ABSOLUTE_FIELD, size_));
+  return common::Error();
+}
 
 TextOverlay::TextOverlay(const text_t& text,
                          fastotv::TextOverlay::absolute_t x,
@@ -91,8 +151,9 @@ common::Optional<TextOverlay> TextOverlay::Make(common::HashValue* hash) {
 
   std::string font;
   common::Value* font_field = hash->Find(FONT_FIELD);
-  if (font_field && font_field->GetAsBasicString(&font)) {
-    return TextOverlay(text, xabs, yabs, font);
+  common::HashValue* font_hash = nullptr;
+  if (font_field && font_field->GetAsHash(&font_hash)) {
+    return TextOverlay(text, xabs, yabs, Font::Make(font_hash));
   }
 
   return TextOverlay(text, xabs, yabs);
@@ -117,11 +178,17 @@ common::Error TextOverlay::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  std::string font;
-  err = GetStringField(serialized, FONT_FIELD, &font);
+  json_object* jfont;
+  err = GetObjectField(serialized, FONT_FIELD, &jfont);
   if (err) {
     *this = TextOverlay(text, xabs, yabs);
     return common::Error();
+  }
+
+  Font font;
+  err = font.DeSerialize(jfont);
+  if (err) {
+    return err;
   }
 
   *this = TextOverlay(text, xabs, yabs, font);
@@ -133,7 +200,11 @@ common::Error TextOverlay::SerializeFields(json_object* out) const {
   ignore_result(SetDoubleField(out, X_ABSOLUTE_FIELD, x_absolute_));
   ignore_result(SetDoubleField(out, Y_ABSOLUTE_FIELD, y_absolute_));
   if (font_) {
-    ignore_result(SetStringField(out, FONT_FIELD, *font_));
+    json_object* jkey = nullptr;
+    common::Error err = font_->Serialize(&jkey);
+    if (!err) {
+      ignore_result(SetObjectField(out, FONT_FAMILY, jkey));
+    }
   }
   return common::Error();
 }

@@ -33,6 +33,22 @@
 
 namespace fastotv {
 
+namespace {
+json_object* MakeSize(const common::draw::Size& size) {
+  json_object* result = json_object_new_object();
+  json_object_object_add(result, LOGO_WIDTH_FIELD, json_object_new_int(size.width()));
+  json_object_object_add(result, LOGO_HEIGHT_FIELD, json_object_new_int(size.height()));
+  return result;
+}
+
+json_object* MakePoint(const common::draw::Point& point) {
+  json_object* result = json_object_new_object();
+  json_object_object_add(result, LOGO_POSITION_X_FIELD, json_object_new_int(point.x()));
+  json_object_object_add(result, LOGO_POSITION_Y_FIELD, json_object_new_int(point.y()));
+  return result;
+}
+}  // namespace
+
 RSVGLogo::RSVGLogo() : RSVGLogo(url_t(), common::draw::Point()) {}
 
 RSVGLogo::RSVGLogo(const url_t& path, const common::draw::Point& position)
@@ -138,11 +154,9 @@ common::Error RSVGLogo::DoDeSerialize(json_object* serialized) {
 common::Error RSVGLogo::SerializeFields(json_object* out) const {
   const std::string logo_path = path_.spec();
   ignore_result(SetStringField(out, LOGO_PATH_FIELD, logo_path));
-  const std::string position_str = common::ConvertToString(GetPosition());
-  ignore_result(SetStringField(out, LOGO_POSITION_FIELD, position_str));
+  ignore_result(SetObjectField(out, LOGO_POSITION_FIELD, MakePoint(GetPosition())));
   if (size_) {
-    std::string size_str = common::ConvertToString(*size_);
-    ignore_result(SetStringField(out, LOGO_SIZE_FIELD, size_str));
+    ignore_result(SetObjectField(out, LOGO_SIZE_FIELD, MakeSize(*size_)));
   }
 
   return common::Error();

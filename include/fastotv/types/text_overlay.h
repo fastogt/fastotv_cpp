@@ -21,12 +21,42 @@
 
 namespace fastotv {
 
+class Font : public common::serializer::JsonSerializer<Font> {
+ public:
+  typedef common::serializer::JsonSerializer<Font> base_class;
+  typedef std::string family_t;
+
+  Font();
+  Font(const family_t& family, int size);
+
+  bool Equals(const Font& back) const;
+  bool IsValid() const;
+
+  static common::Optional<Font> Make(common::HashValue* json);
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+
+ private:
+  family_t family_;
+  size_t size_;
+};
+
+inline bool operator==(const Font& left, const Font& right) {
+  return left.Equals(right);
+}
+
+inline bool operator!=(const Font& x, const Font& y) {
+  return !(x == y);
+}
+
 class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
  public:
   typedef common::serializer::JsonSerializer<TextOverlay> base_class;
   typedef std::string text_t;
   typedef double absolute_t;
-  typedef common::Optional<std::string> font_t;
+  typedef common::Optional<Font> font_t;
 
   TextOverlay(const text_t& text, absolute_t x, absolute_t y, const font_t& font = font_t());
 
