@@ -32,6 +32,9 @@ class Font : public common::serializer::JsonSerializer<Font> {
   bool Equals(const Font& back) const;
   bool IsValid() const;
 
+  family_t GetFamily() const;
+  size_t GetSize() const;
+
   static common::Optional<Font> Make(common::HashValue* json);
 
  protected:

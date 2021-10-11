@@ -35,6 +35,14 @@ bool Font::IsValid() const {
   return !family_.empty() && size_ != 0;
 }
 
+Font::family_t Font::GetFamily() const {
+  return family_;
+}
+
+size_t Font::GetSize() const {
+  return size_;
+}
+
 bool Font::Equals(const Font& back) const {
   return back.family_ == family_ && back.size_ == size_;
 }

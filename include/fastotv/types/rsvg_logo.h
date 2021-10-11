@@ -42,7 +42,7 @@ class RSVGLogo : public common::serializer::JsonSerializer<RSVGLogo> {
   image_size_t GetSize() const;
   void SetSize(const image_size_t& size);
 
-  static common::Optional<RSVGLogo> MakeLogo(common::HashValue* value);
+  static common::Optional<RSVGLogo> Make(common::HashValue* value);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

@@ -62,7 +62,7 @@ void RSVGLogo::SetSize(const image_size_t& size) {
   size_ = size;
 }
 
-common::Optional<RSVGLogo> RSVGLogo::MakeLogo(common::HashValue* hash) {
+common::Optional<RSVGLogo> RSVGLogo::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<RSVGLogo>();
   }
