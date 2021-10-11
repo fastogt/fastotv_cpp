@@ -1,4 +1,9 @@
-1.2.2 / Jube 6, 2021
+1.2.5 / October 11, 2021
+[Alexandr Topilski]
+- Text overlay
+- Font struct
+
+1.2.2 / June 6, 2021
 [Alexandr Topilski]
 - Created date streams
 - Background url for VODs

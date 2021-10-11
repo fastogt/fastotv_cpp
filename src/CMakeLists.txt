@@ -40,6 +40,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/meta_url.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/text_overlay.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/font.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/machine_learning.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/background_effect.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client.h
@@ -97,6 +98,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/meta_url.cpp
   ${CMAKE_SOURCE_DIR}/src/types/text_overlay.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/font.cpp
   ${CMAKE_SOURCE_DIR}/src/types/ml/machine_learning.cpp
   ${CMAKE_SOURCE_DIR}/src/types/ml/background_effect.cpp
   ${CMAKE_SOURCE_DIR}/src/client.cpp

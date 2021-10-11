@@ -14,83 +14,13 @@
 
 #include <fastotv/types/text_overlay.h>
 
-#include <common/sprintf.h>
-
 #define TEXT_FIELD "text"
 #define X_ABSOLUTE_FIELD "x_absolute"
 #define Y_ABSOLUTE_FIELD "y_absolute"
 
 #define FONT_FIELD "font"
 
-#define FONT_FAMILY "family"
-#define FONT_SIZE "size"
-
 namespace fastotv {
-
-Font::Font() : family_(), size_(0) {}
-
-Font::Font(const family_t& family, int size) : family_(family), size_(size) {}
-
-bool Font::IsValid() const {
-  return !family_.empty() && size_ != 0;
-}
-
-Font::family_t Font::GetFamily() const {
-  return family_;
-}
-
-size_t Font::GetSize() const {
-  return size_;
-}
-
-bool Font::Equals(const Font& back) const {
-  return back.family_ == family_ && back.size_ == size_;
-}
-
-common::Optional<Font> Font::Make(common::HashValue* json) {
-  if (!json) {
-    return common::Optional<Font>();
-  }
-
-  Font res;
-  common::Value* pass_field = json->Find(FONT_FAMILY);
-  std::string pass;
-  if (!pass_field || !pass_field->GetAsBasicString(&pass)) {
-    return common::Optional<Font>();
-  }
-  res.family_ = pass;
-
-  int64_t kl;
-  common::Value* kl_field = json->Find(FONT_SIZE);
-  if (!kl_field || !kl_field->GetAsInteger64(&kl)) {
-    return common::Optional<Font>();
-  }
-  res.size_ = kl;
-  return res;
-}
-
-common::Error Font::DoDeSerialize(json_object* serialized) {
-  family_t text;
-  common::Error err = GetStringField(serialized, FONT_FAMILY, &text);
-  if (err) {
-    return err;
-  }
-
-  int64_t size;
-  err = GetInt64Field(serialized, FONT_SIZE, &size);
-  if (err) {
-    return err;
-  }
-
-  *this = Font(text, size);
-  return common::Error();
-}
-
-common::Error Font::SerializeFields(json_object* out) const {
-  ignore_result(SetStringField(out, FONT_FAMILY, family_));
-  ignore_result(SetInt64Field(out, X_ABSOLUTE_FIELD, size_));
-  return common::Error();
-}
 
 TextOverlay::TextOverlay(const text_t& text,
                          fastotv::TextOverlay::absolute_t x,
@@ -211,7 +141,7 @@ common::Error TextOverlay::SerializeFields(json_object* out) const {
     json_object* jkey = nullptr;
     common::Error err = font_->Serialize(&jkey);
     if (!err) {
-      ignore_result(SetObjectField(out, FONT_FAMILY, jkey));
+      ignore_result(SetObjectField(out, FONT_FIELD, jkey));
     }
   }
   return common::Error();

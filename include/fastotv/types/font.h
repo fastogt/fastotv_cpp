@@ -16,52 +16,43 @@
 
 #include <string>
 
-#include <fastotv/types/font.h>
+#include <common/serializer/json_serializer.h>
+#include <common/value.h>
 
 namespace fastotv {
 
-class TextOverlay : public common::serializer::JsonSerializer<TextOverlay> {
+class Font : public common::serializer::JsonSerializer<Font> {
  public:
-  typedef common::serializer::JsonSerializer<TextOverlay> base_class;
-  typedef std::string text_t;
-  typedef double absolute_t;
-  typedef common::Optional<Font> font_t;
+  typedef common::serializer::JsonSerializer<Font> base_class;
+  typedef std::string family_t;
 
-  TextOverlay(const text_t& text, absolute_t x, absolute_t y, const font_t& font = font_t());
+  Font();
+  Font(const family_t& family, int size);
 
-  bool Equals(const TextOverlay& back) const;
+  bool Equals(const Font& back) const;
 
-  text_t GetText() const;
-  void SetText(const text_t& text);
+  family_t GetFamily() const;
+  void SetFamily(const family_t& family);
 
-  font_t GetFont() const;
-  void SetFont(const font_t& font);
+  size_t GetSize() const;
+  void SetSize(size_t size);
 
-  absolute_t GetXAbsolute() const;
-  void SetXAbsolute(absolute_t absolute);
-
-  absolute_t GetYAbsolute() const;
-  void SetYAbsolute(absolute_t absolute_t);
-
-  static common::Optional<TextOverlay> Make(common::HashValue* hash);
+  static common::Optional<Font> Make(common::HashValue* json);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  text_t text_;
-  absolute_t x_absolute_;
-  absolute_t y_absolute_;
-
-  font_t font_;
+  family_t family_;
+  size_t size_;
 };
 
-inline bool operator==(const TextOverlay& left, const TextOverlay& right) {
+inline bool operator==(const Font& left, const Font& right) {
   return left.Equals(right);
 }
 
-inline bool operator!=(const TextOverlay& x, const TextOverlay& y) {
+inline bool operator!=(const Font& x, const Font& y) {
   return !(x == y);
 }
 
