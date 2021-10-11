@@ -28,6 +28,7 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/config.h.in ${PROTOCOL_CONFIG_GEN_PATH} @
 
 SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/utils.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/input_url.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/input_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/logo.h
@@ -84,6 +85,7 @@ SET(PROTOCOL_HEADERS
 )
 SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/utils.cpp
   ${CMAKE_SOURCE_DIR}/src/types/pyfastostream.cpp
   ${CMAKE_SOURCE_DIR}/src/types/srt_key.cpp
   ${CMAKE_SOURCE_DIR}/src/types/input_url.cpp

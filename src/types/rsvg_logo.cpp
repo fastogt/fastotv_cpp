@@ -21,33 +21,13 @@
 
 #include <common/sprintf.h>
 
+#include <fastotv/types/utils.h>
+
 #define LOGO_PATH_FIELD "path"
 #define LOGO_POSITION_FIELD "position"
 #define LOGO_SIZE_FIELD "size"
 
-#define LOGO_WIDTH_FIELD "width"
-#define LOGO_HEIGHT_FIELD "height"
-
-#define LOGO_POSITION_X_FIELD "x"
-#define LOGO_POSITION_Y_FIELD "y"
-
 namespace fastotv {
-
-namespace {
-json_object* MakeSize(const common::draw::Size& size) {
-  json_object* result = json_object_new_object();
-  json_object_object_add(result, LOGO_WIDTH_FIELD, json_object_new_int(size.width()));
-  json_object_object_add(result, LOGO_HEIGHT_FIELD, json_object_new_int(size.height()));
-  return result;
-}
-
-json_object* MakePoint(const common::draw::Point& point) {
-  json_object* result = json_object_new_object();
-  json_object_object_add(result, LOGO_POSITION_X_FIELD, json_object_new_int(point.x()));
-  json_object_object_add(result, LOGO_POSITION_Y_FIELD, json_object_new_int(point.y()));
-  return result;
-}
-}  // namespace
 
 RSVGLogo::RSVGLogo() : RSVGLogo(url_t(), common::draw::Point()) {}
 
@@ -97,24 +77,18 @@ common::Optional<RSVGLogo> RSVGLogo::MakeLogo(common::HashValue* hash) {
   common::Value* logo_pos_field = hash->Find(LOGO_POSITION_FIELD);
   common::HashValue* point_hash = nullptr;
   if (logo_pos_field && logo_pos_field->GetAsHash(&point_hash)) {
-    common::Value* x_field = point_hash->Find(LOGO_POSITION_X_FIELD);
-    common::Value* y_field = point_hash->Find(LOGO_POSITION_Y_FIELD);
-    int64_t x = 0;
-    int64_t y = 0;
-    if (x_field && x_field->GetAsInteger64(&x) && y_field && y_field->GetAsInteger64(&y)) {
-      res.SetPosition(common::draw::Point(x, y));
+    auto point = MakePoint(point_hash);
+    if (point) {
+      res.SetPosition(*point);
     }
   }
 
   common::Value* logo_size_field = hash->Find(LOGO_SIZE_FIELD);
   common::HashValue* size_hash = nullptr;
   if (logo_size_field && logo_size_field->GetAsHash(&size_hash)) {
-    common::Value* width_field = size_hash->Find(LOGO_WIDTH_FIELD);
-    common::Value* height_field = size_hash->Find(LOGO_HEIGHT_FIELD);
-    int64_t width = 0;
-    int64_t height = 0;
-    if (width_field && width_field->GetAsInteger64(&width) && height_field && height_field->GetAsInteger64(&height)) {
-      res.SetSize(common::draw::Size(width, height));
+    auto size = MakeSize(size_hash);
+    if (size) {
+      res.SetSize(*size);
     }
   }
 
@@ -132,18 +106,18 @@ common::Error RSVGLogo::DoDeSerialize(json_object* serialized) {
   json_object* jposition = nullptr;
   json_bool jposition_exists = json_object_object_get_ex(serialized, LOGO_POSITION_FIELD, &jposition);
   if (jposition_exists) {
-    common::draw::Point pt;
-    if (common::ConvertFromString(json_object_get_string(jposition), &pt)) {
-      res.SetPosition(pt);
+    auto point = MakePoint(jposition);
+    if (point) {
+      res.SetPosition(*point);
     }
   }
 
   json_object* jsize = nullptr;
   json_bool jsize_exists = json_object_object_get_ex(serialized, LOGO_SIZE_FIELD, &jsize);
   if (jsize_exists) {
-    common::draw::Size sz;
-    if (common::ConvertFromString(json_object_get_string(jsize), &sz)) {
-      res.SetSize(sz);
+    auto sz = MakeSize(jsize);
+    if (sz) {
+      res.SetSize(*sz);
     }
   }
 
@@ -154,9 +128,9 @@ common::Error RSVGLogo::DoDeSerialize(json_object* serialized) {
 common::Error RSVGLogo::SerializeFields(json_object* out) const {
   const std::string logo_path = path_.spec();
   ignore_result(SetStringField(out, LOGO_PATH_FIELD, logo_path));
-  ignore_result(SetObjectField(out, LOGO_POSITION_FIELD, MakePoint(GetPosition())));
+  ignore_result(SetObjectField(out, LOGO_POSITION_FIELD, MakeJson(position_)));
   if (size_) {
-    ignore_result(SetObjectField(out, LOGO_SIZE_FIELD, MakeSize(*size_)));
+    ignore_result(SetObjectField(out, LOGO_SIZE_FIELD, MakeJson(*size_)));
   }
 
   return common::Error();

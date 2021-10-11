@@ -47,7 +47,7 @@ class Logo : public common::serializer::JsonSerializer<Logo> {
   alpha_t GetAlpha() const;
   void SetAlpha(alpha_t alpha);
 
-  static common::Optional<Logo> MakeLogo(common::HashValue* value);
+  static common::Optional<Logo> Make(common::HashValue* value);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
