@@ -51,8 +51,7 @@ enum StreamType : unsigned {
   EVENT = 12,
   CV_DATA = 13,
   CHANGER_RELAY = 14,
-  CHANGER_ENCODE = 15,
-  MERGER_ENCODE = 16
+  CHANGER_ENCODE = 15
 };
 
 }  // namespace fastotv
