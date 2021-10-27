@@ -18,6 +18,7 @@
 
 #include <common/draw/point.h>
 #include <common/draw/size.h>
+#include <common/media/types.h>
 #include <common/optional.h>
 #include <common/value.h>
 
@@ -27,11 +28,14 @@ namespace fastotv {
 
 json_object* MakeJson(const common::draw::Size& size);
 json_object* MakeJson(const common::draw::Point& point);
+json_object* MakeJson(const common::media::Rational& rat);
 
 common::Optional<common::draw::Size> MakeSize(common::HashValue* value);
 common::Optional<common::draw::Point> MakePoint(common::HashValue* value);
+common::Optional<common::media::Rational> MakeRational(common::HashValue* value);
 
 common::Optional<common::draw::Size> MakeSize(json_object* serialized);
 common::Optional<common::draw::Point> MakePoint(json_object* serialized);
+common::Optional<common::media::Rational> MakeRational(json_object* serialized);
 
 }  // namespace fastotv

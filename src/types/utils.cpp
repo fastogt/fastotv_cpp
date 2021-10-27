@@ -24,6 +24,9 @@
 #define POSITION_X_FIELD "x"
 #define POSITION_Y_FIELD "y"
 
+#define NUM_FIELD "num"
+#define DEN_FIELD "den"
+
 namespace fastotv {
 
 json_object* MakeJson(const common::draw::Size& size) {
@@ -37,6 +40,13 @@ json_object* MakeJson(const common::draw::Point& point) {
   json_object* result = json_object_new_object();
   json_object_object_add(result, POSITION_X_FIELD, json_object_new_int(point.x()));
   json_object_object_add(result, POSITION_Y_FIELD, json_object_new_int(point.y()));
+  return result;
+}
+
+json_object* MakeJson(const common::media::Rational& rat) {
+  json_object* result = json_object_new_object();
+  json_object_object_add(result, NUM_FIELD, json_object_new_int(rat.num));
+  json_object_object_add(result, DEN_FIELD, json_object_new_int(rat.den));
   return result;
 }
 
@@ -70,6 +80,22 @@ common::Optional<common::draw::Point> MakePoint(common::HashValue* value) {
   }
 
   return common::Optional<common::draw::Point>();
+}
+
+common::Optional<common::media::Rational> MakeRational(common::HashValue* value) {
+  if (!value) {
+    return common::Optional<common::media::Rational>();
+  }
+
+  common::Value* num_field = value->Find(NUM_FIELD);
+  common::Value* den_field = value->Find(DEN_FIELD);
+  int64_t num = 0;
+  int64_t den = 0;
+  if (num_field && num_field->GetAsInteger64(&num) && den_field && den_field->GetAsInteger64(&den)) {
+    return common::media::Rational{static_cast<int>(num), static_cast<int>(den)};
+  }
+
+  return common::Optional<common::media::Rational>();
 }
 
 common::Optional<common::draw::Size> MakeSize(json_object* serialized) {
@@ -110,6 +136,26 @@ common::Optional<common::draw::Point> MakePoint(json_object* serialized) {
   }
 
   return common::draw::Point(x, y);
+}
+
+common::Optional<common::media::Rational> MakeRational(json_object* serialized) {
+  if (!serialized) {
+    return common::Optional<common::media::Rational>();
+  }
+
+  int num;
+  common::Error err = common::serializer::json_get_int(serialized, NUM_FIELD, &num);
+  if (err) {
+    return common::Optional<common::media::Rational>();
+  }
+
+  int den;
+  err = common::serializer::json_get_int(serialized, DEN_FIELD, &den);
+  if (err) {
+    return common::Optional<common::media::Rational>();
+  }
+
+  return common::media::Rational{static_cast<int>(num), static_cast<int>(den)};
 }
 
 }  // namespace fastotv
