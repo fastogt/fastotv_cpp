@@ -18,11 +18,6 @@
 
 #include <fastotv/commands_info/login_info.h>
 
-#include <string>  // for string
-
-#include <common/convert2string.h>
-#include <common/sprintf.h>
-
 #define LOGIN_FIELD "login"
 #define PASSWORD_FIELD "password"
 

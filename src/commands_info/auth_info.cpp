@@ -18,11 +18,6 @@
 
 #include <fastotv/commands_info/auth_info.h>
 
-#include <string>  // for string
-
-#include <common/convert2string.h>
-#include <common/sprintf.h>
-
 #define ID_FIELD "device_id"
 #define EXPIRED_DATE_FIELD "exp_date"
 
