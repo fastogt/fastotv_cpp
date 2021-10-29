@@ -18,8 +18,6 @@
 
 #include <fastotv/commands_info/notification_text_info.h>
 
-#include <string>  // for string
-
 #define TEXT_FIELD "message"
 #define TEXT_TYPE_FIELD "type"
 #define SHOW_TIME_FIELD "show_time"

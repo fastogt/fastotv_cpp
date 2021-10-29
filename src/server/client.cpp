@@ -14,8 +14,6 @@
 
 #include <fastotv/server/client.h>
 
-#include <string>
-
 #include <fastotv/server/commands_factory.h>
 
 namespace fastotv {

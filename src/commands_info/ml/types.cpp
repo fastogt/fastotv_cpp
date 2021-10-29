@@ -18,8 +18,6 @@
 
 #include <fastotv/commands_info/ml/types.h>
 
-#include <ostream>
-
 namespace fastotv {
 namespace commands_info {
 namespace ml {

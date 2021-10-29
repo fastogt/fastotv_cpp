@@ -14,13 +14,6 @@
 
 #include <fastotv/types/rsvg_logo.h>
 
-#include <string>
-
-#include <json-c/json_object.h>
-#include <json-c/json_tokener.h>
-
-#include <common/sprintf.h>
-
 #include <fastotv/types/utils.h>
 
 #define LOGO_PATH_FIELD "path"

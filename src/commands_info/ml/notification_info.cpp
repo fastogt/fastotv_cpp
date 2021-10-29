@@ -18,8 +18,6 @@
 
 #include <fastotv/commands_info/ml/notification_info.h>
 
-#include <string>  // for string
-
 #define ID_FIELD "id"
 #define IMAGES_FIELD "images"
 

@@ -14,8 +14,6 @@
 
 #include <fastotv/types/utils.h>
 
-#include <json-c/json_object.h>
-
 #include <common/serializer/json_serializer.h>
 
 #define WIDTH_FIELD "width"
