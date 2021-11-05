@@ -29,13 +29,17 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   enum BackgroundColor { CHECKER = 0, BLACK, WHITE, TRANSPARENT };
   typedef common::uri::GURL url_t;
   typedef common::Optional<BackgroundColor> background_color_t;
+  typedef common::Optional<double> alpha_t;
 
-  StreamOverlay(const url_t& url, const background_color_t& color = background_color_t());
+  StreamOverlay(const url_t& url, const background_color_t& color = background_color_t(), alpha_t alpha = alpha_t());
 
   bool Equals(const StreamOverlay& back) const;
 
   url_t GetUrl() const;
   void SetUrl(const url_t& url);
+
+  alpha_t GetAlpha() const;
+  void SetAlpha(alpha_t alpha);
 
   const background_color_t& GetBackgroundColor() const;
   void SetBackgroundColor(background_color_t color);
@@ -49,6 +53,7 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
  private:
   url_t url_;
   background_color_t background_color_;
+  alpha_t alpha_;
 };
 
 inline bool operator==(const StreamOverlay& left, const StreamOverlay& right) {

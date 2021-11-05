@@ -16,10 +16,12 @@
 
 #define URL_FIELD "url"
 #define BACKGROUND_FIELD "background"
+#define ALPHA_FIELD "alpha"
 
 namespace fastotv {
 
-StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color) : url_(url), background_color_(color) {}
+StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color, alpha_t alpha)
+    : url_(url), background_color_(color), alpha_(alpha) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
   return back.url_ == url_;
@@ -31,6 +33,14 @@ StreamOverlay::url_t StreamOverlay::GetUrl() const {
 
 void StreamOverlay::SetUrl(const url_t& url) {
   url_ = url;
+}
+
+StreamOverlay::alpha_t StreamOverlay::GetAlpha() const {
+  return alpha_;
+}
+
+void StreamOverlay::SetAlpha(alpha_t alpha) {
+  alpha_ = alpha;
 }
 
 const StreamOverlay::background_color_t& StreamOverlay::GetBackgroundColor() const {
@@ -59,6 +69,12 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
     stream.SetBackgroundColor(static_cast<BackgroundColor>(color));
   }
 
+  double alpha;
+  common::Value* alpha_field = hash->Find(ALPHA_FIELD);
+  if (alpha_field && alpha_field->GetAsDouble(&alpha)) {
+    stream.SetAlpha(alpha);
+  }
+
   return stream;
 }
 
@@ -75,6 +91,11 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
   if (!err) {
     stream.SetBackgroundColor(back);
   }
+  double alpha;
+  err = GetDoubleField(serialized, ALPHA_FIELD, &alpha);
+  if (!err) {
+    stream.SetAlpha(alpha);
+  }
 
   *this = stream;
   return common::Error();
@@ -84,6 +105,9 @@ common::Error StreamOverlay::SerializeFields(json_object* out) const {
   ignore_result(SetStringField(out, URL_FIELD, url_.spec()));
   if (background_color_) {
     ignore_result(SetEnumField(out, BACKGROUND_FIELD, *background_color_));
+  }
+  if (alpha_) {
+    ignore_result(SetEnumField(out, ALPHA_FIELD, *alpha_));
   }
   return common::Error();
 }
