@@ -36,6 +36,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/programme.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/pyfastostream.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/srt_key.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/kvs_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_url.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/meta_url.h
@@ -90,6 +91,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/utils.cpp
   ${CMAKE_SOURCE_DIR}/src/types/pyfastostream.cpp
   ${CMAKE_SOURCE_DIR}/src/types/srt_key.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/kvs_prop.cpp
   ${CMAKE_SOURCE_DIR}/src/types/input_url.cpp
   ${CMAKE_SOURCE_DIR}/src/types/input_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/logo.cpp

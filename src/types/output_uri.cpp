@@ -22,6 +22,7 @@
 #define SRT_MODE_FIELD "srt_mode"
 #define SRT_KEY_FIELD "srt_key"
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
+#define KVS_FIELD "kvs"
 
 namespace fastotv {
 
@@ -35,7 +36,8 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       chunk_duration_(),
       srt_mode_(),
       srt_key_(),
-      rtmpsink_type_() {}
+      rtmpsink_type_(),
+      kvs_() {}
 
 bool OutputUri::IsValid() const {
   return base_class::IsValid();
@@ -119,10 +121,18 @@ void OutputUri::SetPlaylistRoot(const OutputUri::playlist_root_t& playlist) {
   playlist_root_ = playlist;
 }
 
+OutputUri::kvs_t OutputUri::GetKVS() const {
+  return kvs_;
+}
+
+void OutputUri::SetKVS(const kvs_t& kvs) {
+  kvs_ = kvs;
+}
+
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -185,6 +195,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetRtmpSinkType(static_cast<RtmpSinkType>(rtmpsink));
   }
 
+  common::HashValue* kvs;
+  common::Value* kvs_field = hash->Find(KVS_FIELD);
+  if (kvs_field && kvs_field->GetAsHash(&kvs)) {
+    url.SetKVS(KVSProp::Make(kvs));
+  }
+
   return common::Optional<OutputUri>(url);
 }
 
@@ -241,6 +257,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     res.SetRtmpSinkType(rtmpsink);
   }
 
+  json_object* jkvs = nullptr;
+  err = GetObjectField(serialized, KVS_FIELD, &jkvs);
+  if (!err) {
+    KVSProp prop;
+    err = prop.DeSerialize(jkvs);
+    if (!err) {
+      res.SetKVS(prop);
+    }
+  }
+
   *this = res;
   return common::Error();
 }
@@ -285,6 +311,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   }
   if (rtmpsink_type_) {
     ignore_result(SetEnumField(deserialized, RTMPSINK_TYPE_FILED, *rtmpsink_type_));
+  }
+  if (kvs_) {
+    json_object* jkvs = nullptr;
+    err = kvs_->Serialize(&jkvs);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, KVS_FIELD, jkvs));
+    }
   }
   return common::Error();
 }

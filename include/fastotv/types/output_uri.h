@@ -16,6 +16,7 @@
 
 #include <common/file_system/path.h>
 
+#include <fastotv/types/kvs_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
 
@@ -37,6 +38,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<HlsSinkType> hlssink_type_t;
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
+  typedef common::Optional<KVSProp> kvs_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -69,6 +71,9 @@ class OutputUri : public OutputUrl {
   playlist_root_t GetPlaylistRoot() const;
   void SetPlaylistRoot(const playlist_root_t& playlist);
 
+  kvs_t GetKVS() const;
+  void SetKVS(const kvs_t& kvs);
+
   bool Equals(const OutputUri& url) const;
 
   static common::Optional<OutputUri> Make(common::HashValue* hash);
@@ -89,6 +94,8 @@ class OutputUri : public OutputUrl {
   srt_key_t srt_key_;
   // rtmp
   rtmp_type_t rtmpsink_type_;
+  //
+  kvs_t kvs_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {
