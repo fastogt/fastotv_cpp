@@ -16,12 +16,12 @@
 
 #define URL_FIELD "url"
 #define BACKGROUND_FIELD "background"
-#define ALPHA_FIELD "alpha"
+#define METHOD_FIELD "method"
 
 namespace fastotv {
 
-StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color, alpha_t alpha)
-    : url_(url), background_color_(color), alpha_(alpha) {}
+StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color)
+    : url_(url), background_color_(color), method_() {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
   return back.url_ == url_;
@@ -35,20 +35,20 @@ void StreamOverlay::SetUrl(const url_t& url) {
   url_ = url;
 }
 
-StreamOverlay::alpha_t StreamOverlay::GetAlpha() const {
-  return alpha_;
-}
-
-void StreamOverlay::SetAlpha(alpha_t alpha) {
-  alpha_ = alpha;
-}
-
 const StreamOverlay::background_color_t& StreamOverlay::GetBackgroundColor() const {
   return background_color_;
 }
 
 void StreamOverlay::SetBackgroundColor(background_color_t color) {
   background_color_ = color;
+}
+
+const StreamOverlay::alpha_method_t& StreamOverlay::GetAlphaMethod() const {
+  return method_;
+}
+
+void StreamOverlay::SetAlphaMethod(alpha_method_t method) {
+  method_ = method;
 }
 
 common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
@@ -69,10 +69,10 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
     stream.SetBackgroundColor(static_cast<BackgroundColor>(color));
   }
 
-  double alpha;
-  common::Value* alpha_field = hash->Find(ALPHA_FIELD);
-  if (alpha_field && alpha_field->GetAsDouble(&alpha)) {
-    stream.SetAlpha(alpha);
+  common::HashValue* method;
+  common::Value* method_field = hash->Find(METHOD_FIELD);
+  if (method_field && method_field->GetAsHash(&method)) {
+    stream.SetAlphaMethod(AlphaMethod::Make(method));
   }
 
   return stream;
@@ -91,10 +91,15 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
   if (!err) {
     stream.SetBackgroundColor(back);
   }
-  double alpha;
-  err = GetDoubleField(serialized, ALPHA_FIELD, &alpha);
+
+  json_object* jmethod = nullptr;
+  err = GetObjectField(serialized, METHOD_FIELD, &jmethod);
   if (!err) {
-    stream.SetAlpha(alpha);
+    AlphaMethod prop = AlphaMethod::MakeBlue();
+    err = prop.DeSerialize(jmethod);
+    if (!err) {
+      stream.SetAlphaMethod(prop);
+    }
   }
 
   *this = stream;
@@ -106,8 +111,12 @@ common::Error StreamOverlay::SerializeFields(json_object* out) const {
   if (background_color_) {
     ignore_result(SetEnumField(out, BACKGROUND_FIELD, *background_color_));
   }
-  if (alpha_) {
-    ignore_result(SetEnumField(out, ALPHA_FIELD, *alpha_));
+  if (method_) {
+    json_object* jmethod = nullptr;
+    common::Error err = method_->Serialize(&jmethod);
+    if (!err) {
+      ignore_result(SetObjectField(out, METHOD_FIELD, jmethod));
+    }
   }
   return common::Error();
 }
