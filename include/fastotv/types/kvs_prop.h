@@ -51,6 +51,9 @@ class KVSProp : public common::serializer::JsonSerializer<KVSProp> {
   aws_region_t GetAwsRegion() const;
   void SetAwsRegion(const aws_region_t& region);
 
+  storage_size_t GetStorageSize() const;
+  void SetStorageSize(storage_size_t size);
+
   bool Equals(const KVSProp& key) const;
 
   static common::Optional<KVSProp> Make(common::HashValue* json);

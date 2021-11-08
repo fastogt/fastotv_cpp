@@ -71,6 +71,14 @@ void KVSProp::SetAwsRegion(const aws_region_t& region) {
   aws_region_ = region;
 }
 
+KVSProp::storage_size_t KVSProp::GetStorageSize() const {
+  return storage_size_;
+}
+
+void KVSProp::SetStorageSize(storage_size_t size) {
+  storage_size_ = size;
+}
+
 bool KVSProp::Equals(const KVSProp& key) const {
   return stream_name_ == key.stream_name_ && access_key_ == key.access_key_ && secret_key_ == key.secret_key_ &&
          aws_region_ == key.aws_region_ && storage_size_ == key.storage_size_;
