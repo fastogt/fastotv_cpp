@@ -84,9 +84,12 @@ common::Optional<AlphaMethod> AlphaMethod::Make(common::HashValue* hash) {
     if (!color_field || !color_field->GetAsInteger64(&color)) {
       return common::Optional<AlphaMethod>();
     }
-    return MakeCustom(color);
+    auto res = MakeCustom(color);
+    res.SetAlpha(alpha);
+    return res;
   }
   auto res = AlphaMethod(static_cast<method_t>(method));
+  res.SetAlpha(alpha);
   return res;
 }
 
@@ -110,13 +113,15 @@ common::Error AlphaMethod::DoDeSerialize(json_object* serialized) {
     if (err) {
       return err;
     }
-    *this = MakeCustom(color);
-    SetAlpha(alpha);
+    auto res = MakeCustom(color);
+    res.SetAlpha(alpha);
+    *this = res;
     return common::Error();
   }
 
-  *this = AlphaMethod(static_cast<method_t>(method));
-  SetAlpha(alpha);
+  auto res = AlphaMethod(static_cast<method_t>(method));
+  res.SetAlpha(alpha);
+  *this = res;
   return common::Error();
 }
 
