@@ -25,14 +25,31 @@ class KVSProp : public common::serializer::JsonSerializer<KVSProp> {
  public:
   typedef JsonSerializer<KVSProp> base_class;
   typedef std::string stream_name_t;
+  typedef uint32_t storage_size_t;
+  typedef std::string access_key_t;
+  typedef std::string secret_key_t;
+  typedef std::string aws_region_t;
 
   KVSProp();
-  explicit KVSProp(const stream_name_t& name);
+  explicit KVSProp(const stream_name_t& name,
+                   const access_key_t& access_key,
+                   const secret_key_t& secret_key,
+                   const aws_region_t& aws_region,
+                   storage_size_t storage = 512);
 
   bool IsValid() const;
 
   stream_name_t GetStreamName() const;
   void SetStreamName(const stream_name_t& name);
+
+  access_key_t GetAccessKey() const;
+  void SetAccessKey(const access_key_t& key);
+
+  secret_key_t GetSecretKey() const;
+  void SetSecretKey(const secret_key_t& key);
+
+  aws_region_t GetAwsRegion() const;
+  void SetAwsRegion(const aws_region_t& region);
 
   bool Equals(const KVSProp& key) const;
 
@@ -44,6 +61,10 @@ class KVSProp : public common::serializer::JsonSerializer<KVSProp> {
 
  private:
   stream_name_t stream_name_;
+  access_key_t access_key_;
+  secret_key_t secret_key_;
+  aws_region_t aws_region_;
+  storage_size_t storage_size_;
 };
 
 inline bool operator==(const KVSProp& left, const KVSProp& right) {
