@@ -30,7 +30,9 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   typedef common::Optional<BackgroundColor> background_color_t;
   typedef common::Optional<AlphaMethod> alpha_method_t;
 
-  StreamOverlay(const url_t& url, const background_color_t& color = background_color_t());
+  StreamOverlay(const url_t& url,
+                const background_color_t& color = background_color_t(),
+                const alpha_method_t& method = alpha_method_t());
 
   bool Equals(const StreamOverlay& back) const;
 

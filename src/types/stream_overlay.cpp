@@ -20,8 +20,8 @@
 
 namespace fastotv {
 
-StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color)
-    : url_(url), background_color_(color), method_() {}
+StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color, const alpha_method_t& method)
+    : url_(url), background_color_(color), method_(method) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
   return back.url_ == url_;
