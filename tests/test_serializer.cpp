@@ -43,6 +43,7 @@
 #include <fastotv/types/ml/background_effect.h>
 #include <fastotv/types/output_uri.h>
 #include <fastotv/types/srt_key.h>
+#include <fastotv/types/alpha_method.h>
 
 typedef fastotv::commands_info::AuthInfo::serialize_type serialize_t;
 
@@ -664,4 +665,24 @@ TEST(BackGroundEffect, serialize_deserialize) {
   auto make = out.Make(hash);
   fastotv::ml::BackgroundEffect bg = *make;
   ASSERT_EQ(bg.GetColor(), 4294967293);
+}
+
+TEST(Alpha, serialize_deserialize) {
+  const std::string url = R"({"method": 3, "alpha": 0.9, "color": 4278255360})";
+  fastotv::AlphaMethod out = fastotv::AlphaMethod::MakeCustom(4278255360);
+  out.SetAlpha(0.9);
+  common::Error err = out.DeSerializeFromString(url);
+  ASSERT_TRUE(!err);
+  ASSERT_EQ(out.GetMethod(), 3);
+  ASSERT_EQ(out.GetColor(), 4278255360);
+  ASSERT_EQ(out.GetAlpha(), 0.9);
+
+  common::HashValue* hash = common::Value::CreateHashValue();
+  hash->Insert("method", common::Value::CreateInteger64Value(3));
+  hash->Insert("color", common::Value::CreateInteger64Value(4278255360));
+  hash->Insert("alpha", common::Value::CreateDoubleValue(0.9));
+  auto make = out.Make(hash);
+  fastotv::AlphaMethod bg = *make;
+  ASSERT_EQ(bg.GetColor(), 4278255360);
+  ASSERT_EQ(bg.GetAlpha(), 0.9);
 }
