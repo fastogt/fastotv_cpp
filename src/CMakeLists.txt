@@ -46,6 +46,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/font.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/machine_learning.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/background_effect.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/ml/audio_stabilization.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/commands/commands.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/client/commands_factory.h
@@ -107,6 +108,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/font.cpp
   ${CMAKE_SOURCE_DIR}/src/types/ml/machine_learning.cpp
   ${CMAKE_SOURCE_DIR}/src/types/ml/background_effect.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/ml/audio_stabilization.cpp
   ${CMAKE_SOURCE_DIR}/src/client.cpp
   ${CMAKE_SOURCE_DIR}/src/commands/commands.cpp
   ${CMAKE_SOURCE_DIR}/src/client/commands_factory.cpp
