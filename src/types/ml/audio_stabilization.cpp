@@ -30,6 +30,10 @@ AudioEffectType AudioStabilization::GetType() const {
   return type_;
 }
 
+GpuModel AudioStabilization::GetGpuModel() const {
+  return gpu_;
+}
+
 common::Optional<AudioStabilization> AudioStabilization::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<AudioStabilization>();

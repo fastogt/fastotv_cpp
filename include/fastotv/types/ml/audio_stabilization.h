@@ -35,6 +35,7 @@ class AudioStabilization : public common::serializer::JsonSerializer<AudioStabil
   bool Equals(const AudioStabilization& back) const;
 
   AudioEffectType GetType() const;
+  GpuModel GetGpuModel() const;
 
   static common::Optional<AudioStabilization> Make(common::HashValue* hash);
 
