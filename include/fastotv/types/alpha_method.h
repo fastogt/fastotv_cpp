@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2021 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2022 FastoGT. All right reserved.
     This file is part of fastocloud.
     fastocloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class AlphaMethod : public common::serializer::JsonSerializer<AlphaMethod> {
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  AlphaMethod(method_t type);
+  explicit AlphaMethod(method_t type);
 
   method_t method_;
   alpha_t alpha_;
