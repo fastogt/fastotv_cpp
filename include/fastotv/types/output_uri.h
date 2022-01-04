@@ -19,6 +19,7 @@
 #include <fastotv/types/kvs_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
+#include <fastotv/types/webrtc_prop.h>
 
 namespace fastotv {
 
@@ -39,6 +40,8 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
   typedef common::Optional<KVSProp> kvs_t;
+  // webrtc
+  typedef common::Optional<WebRTCProp> webrtc_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -74,6 +77,9 @@ class OutputUri : public OutputUrl {
   kvs_t GetKVS() const;
   void SetKVS(const kvs_t& kvs);
 
+  webrtc_t GetWebRTC() const;
+  void SetWebRTC(const webrtc_t& web);
+
   bool Equals(const OutputUri& url) const;
 
   static common::Optional<OutputUri> Make(common::HashValue* hash);
@@ -96,6 +102,8 @@ class OutputUri : public OutputUrl {
   rtmp_type_t rtmpsink_type_;
   //
   kvs_t kvs_;
+  // webrtc
+  webrtc_t webrtc_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

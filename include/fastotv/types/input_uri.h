@@ -20,6 +20,7 @@
 #include <fastotv/types/programme.h>
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
+#include <fastotv/types/webrtc_prop.h>
 
 namespace fastotv {
 
@@ -40,6 +41,8 @@ class InputUri : public InputUrl {
   typedef common::Optional<Programme> programme_t;
   // rtmp
   typedef common::Optional<RtmpSrcType> rtmpsrc_type_t;
+  // webrtc
+  typedef common::Optional<WebRTCProp> webrtc_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -73,6 +76,9 @@ class InputUri : public InputUrl {
   rtmpsrc_type_t GetRtmpSrcType() const;
   void SetRtmpSrcType(const rtmpsrc_type_t& type);
 
+  webrtc_t GetWebRTC() const;
+  void SetWebRTC(const webrtc_t& web);
+
   bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -100,6 +106,8 @@ class InputUri : public InputUrl {
 
   // rtmp
   rtmpsrc_type_t rtmpsrc_type_;
+  // webrtc
+  webrtc_t webrtc_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {

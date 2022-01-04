@@ -23,6 +23,7 @@
 #define SRT_KEY_FIELD "srt_key"
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
 #define KVS_FIELD "kvs"
+#define WEBRTC_FIELD "webrtc"
 
 namespace fastotv {
 
@@ -37,7 +38,8 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       srt_mode_(),
       srt_key_(),
       rtmpsink_type_(),
-      kvs_() {}
+      kvs_(),
+      webrtc_() {}
 
 bool OutputUri::IsValid() const {
   return base_class::IsValid();
@@ -129,10 +131,18 @@ void OutputUri::SetKVS(const kvs_t& kvs) {
   kvs_ = kvs;
 }
 
+OutputUri::webrtc_t OutputUri::GetWebRTC() const {
+  return webrtc_;
+}
+
+void OutputUri::SetWebRTC(const webrtc_t& web) {
+  webrtc_ = web;
+}
+
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -201,6 +211,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetKVS(KVSProp::Make(kvs));
   }
 
+  common::HashValue* webrtc;
+  common::Value* webrtc_field = hash->Find(WEBRTC_FIELD);
+  if (webrtc_field && webrtc_field->GetAsHash(&webrtc)) {
+    url.SetWebRTC(WebRTCProp::Make(webrtc));
+  }
+
   return common::Optional<OutputUri>(url);
 }
 
@@ -267,6 +283,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jweb = nullptr;
+  err = GetObjectField(serialized, WEBRTC_FIELD, &jweb);
+  if (!err) {
+    WebRTCProp prop;
+    err = prop.DeSerialize(jweb);
+    if (!err) {
+      res.SetWebRTC(prop);
+    }
+  }
+
   *this = res;
   return common::Error();
 }
@@ -317,6 +343,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     err = kvs_->Serialize(&jkvs);
     if (!err) {
       ignore_result(SetObjectField(deserialized, KVS_FIELD, jkvs));
+    }
+  }
+  if (webrtc_) {
+    json_object* jweb = nullptr;
+    err = webrtc_->Serialize(&jweb);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, WEBRTC_FIELD, jweb));
     }
   }
   return common::Error();

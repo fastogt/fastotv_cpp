@@ -23,6 +23,7 @@
 #define SRT_MODE_FIELD "srt_mode"
 #define PROGRAMME_FIELD "programme"
 #define RTMPSRC_TYPE_FILED "rtmpsrc_type"
+#define WEBRTC_FIELD "webrtc"
 
 namespace fastotv {
 
@@ -38,7 +39,8 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       srt_mode_(),
       srt_key_(),
       programme_(),
-      rtmpsrc_type_() {}
+      rtmpsrc_type_(),
+      webrtc_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -116,10 +118,19 @@ void InputUri::SetSrtMode(srt_mode_t mode) {
   srt_mode_ = mode;
 }
 
+InputUri::webrtc_t InputUri::GetWebRTC() const {
+  return webrtc_;
+}
+
+void InputUri::SetWebRTC(const webrtc_t& web) {
+  webrtc_ = web;
+}
+
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && programme_ == url.programme_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && programme_ == url.programme_ &&
+         webrtc_ == url.webrtc_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -185,6 +196,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* rtmpsrc_field = hash->Find(RTMPSRC_TYPE_FILED);
   if (rtmpsrc_field && rtmpsrc_field->GetAsInteger64(&rtmpsrc)) {
     url.SetRtmpSrcType(static_cast<RtmpSrcType>(rtmpsrc));
+  }
+
+  common::HashValue* webrtc;
+  common::Value* webrtc_field = hash->Find(WEBRTC_FIELD);
+  if (webrtc_field && webrtc_field->GetAsHash(&webrtc)) {
+    url.SetWebRTC(WebRTCProp::Make(webrtc));
   }
   return common::Optional<InputUri>(url);
 }
@@ -262,6 +279,16 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetRtmpSrcType(rtmpsrc);
   }
 
+  json_object* jweb = nullptr;
+  err = GetObjectField(serialized, WEBRTC_FIELD, &jweb);
+  if (!err) {
+    WebRTCProp prop;
+    err = prop.DeSerialize(jweb);
+    if (!err) {
+      res.SetWebRTC(prop);
+    }
+  }
+
   *this = res;
   return common::Error();
 }
@@ -327,7 +354,13 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (rtmpsrc_type_) {
     ignore_result(SetEnumField(deserialized, RTMPSRC_TYPE_FILED, *rtmpsrc_type_));
   }
-
+  if (webrtc_) {
+    json_object* jweb = nullptr;
+    err = webrtc_->Serialize(&jweb);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, WEBRTC_FIELD, jweb));
+    }
+  }
   return common::Error();
 }
 
