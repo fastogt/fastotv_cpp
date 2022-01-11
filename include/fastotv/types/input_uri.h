@@ -32,10 +32,13 @@ class InputUri : public InputUrl {
   typedef common::Optional<UserAgent> user_agent_t;
   enum RtmpSrcType { RTMPSRC = 0, RTMP2SRC = 1 };
   // optionals
-  typedef common::Optional<int> program_number_t;
-  typedef common::Optional<std::string> multicast_iface_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<PyFastoStream> stream_url_t;
+  typedef common::Optional<bool> wpe_t;
+  // udp
+  typedef common::Optional<int> program_number_t;
+  typedef common::Optional<std::string> multicast_iface_t;
+  // srt
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<SrtMode> srt_mode_t;
   typedef common::Optional<Programme> programme_t;
@@ -57,6 +60,9 @@ class InputUri : public InputUrl {
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
+
+  wpe_t GetWPE() const;
+  void SetWPE(const wpe_t& wpe);
 
   program_number_t GetProgramNumber() const;
   void SetProgramNumber(program_number_t id);
@@ -92,6 +98,7 @@ class InputUri : public InputUrl {
   user_agent_t user_agent_;
   stream_url_t stream_url_;
   http_proxy_url_t http_proxy_url_;
+  wpe_t wpe_;
 
   // udp
   program_number_t program_number_;

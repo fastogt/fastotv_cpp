@@ -17,6 +17,7 @@
 #define USER_AGENT_FIELD "user_agent"
 #define PYFASTOSTREAM_URL_FIELD "stream_link"
 #define PROXY_FIELD "proxy"
+#define WPE_FIELD "wpe"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
@@ -34,6 +35,7 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       user_agent_(),
       stream_url_(),
       http_proxy_url_(),
+      wpe_(),
       program_number_(),
       iface_(),
       srt_mode_(),
@@ -70,7 +72,15 @@ void InputUri::SetHttpProxyUrl(const http_proxy_url_t& url) {
   http_proxy_url_ = url;
 }
 
-fastotv::InputUri::program_number_t InputUri::GetProgramNumber() const {
+InputUri::wpe_t InputUri::GetWPE() const {
+  return wpe_;
+}
+
+void InputUri::SetWPE(const wpe_t& wpe) {
+  wpe_ = wpe;
+}
+
+InputUri::program_number_t InputUri::GetProgramNumber() const {
   return program_number_;
 }
 
@@ -128,9 +138,9 @@ void InputUri::SetWebRTC(const webrtc_t& web) {
 
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
-         http_proxy_url_ == url.http_proxy_url_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && programme_ == url.programme_ &&
-         webrtc_ == url.webrtc_;
+         http_proxy_url_ == url.http_proxy_url_ && wpe_ == url.wpe_ && program_number_ == url.program_number_ &&
+         iface_ == url.iface_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ &&
+         programme_ == url.programme_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -160,6 +170,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* http_proxy_field = hash->Find(PROXY_FIELD);
   if (http_proxy_field && http_proxy_field->GetAsBasicString(&http_url_str)) {
     url.SetHttpProxyUrl(url_t(http_url_str));
+  }
+
+  bool wpe;
+  common::Value* wpe_field = hash->Find(WPE_FIELD);
+  if (wpe_field && wpe_field->GetAsBoolean(&wpe)) {
+    url.SetWPE(wpe);
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
@@ -273,6 +289,12 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
+  bool wpe;
+  err = GetBoolField(serialized, WPE_FIELD, &wpe);
+  if (!err) {
+    res.SetWPE(wpe);
+  }
+
   RtmpSrcType rtmpsrc;
   err = GetEnumField(serialized, RTMPSRC_TYPE_FILED, &rtmpsrc);
   if (!err) {
@@ -349,6 +371,11 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (hurl) {
     const std::string proxy = hurl->spec();
     ignore_result(SetStringField(deserialized, PROXY_FIELD, proxy));
+  }
+
+  const auto wpe = GetWPE();
+  if (wpe) {
+    ignore_result(SetBoolField(deserialized, WPE_FIELD, *wpe));
   }
 
   if (rtmpsrc_type_) {
