@@ -15,16 +15,17 @@
 #include <fastotv/types/stream_overlay.h>
 
 #define URL_FIELD "url"
+#define WPE_FIELD "wpe"
 #define BACKGROUND_FIELD "background"
 #define METHOD_FIELD "method"
 
 namespace fastotv {
 
-StreamOverlay::StreamOverlay(const url_t& url, const background_color_t& color, const alpha_method_t& method)
-    : url_(url), background_color_(color), method_(method) {}
+StreamOverlay::StreamOverlay(const url_t& url, bool wpe, const background_color_t& color, const alpha_method_t& method)
+    : url_(url), wpe_(wpe), background_color_(color), method_(method) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
-  return back.url_ == url_;
+  return back.url_ == url_ && back.wpe_ == wpe_;
 }
 
 StreamOverlay::url_t StreamOverlay::GetUrl() const {
@@ -51,6 +52,14 @@ void StreamOverlay::SetAlphaMethod(alpha_method_t method) {
   method_ = method;
 }
 
+void StreamOverlay::SetWPE(bool wpe) {
+  wpe_ = wpe;
+}
+
+bool StreamOverlay::GetWPE() const {
+  return wpe_;
+}
+
 common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<StreamOverlay>();
@@ -62,7 +71,13 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
     return common::Optional<StreamOverlay>();
   }
 
-  StreamOverlay stream = StreamOverlay(url_t(url));
+  common::Value* wpe_field = hash->Find(WPE_FIELD);
+  bool wpe;
+  if (!wpe_field || !wpe_field->GetAsBoolean(&wpe)) {
+    return common::Optional<StreamOverlay>();
+  }
+
+  StreamOverlay stream = StreamOverlay(url_t(url), wpe);
   int64_t color;
   common::Value* back_field = hash->Find(BACKGROUND_FIELD);
   if (back_field && back_field->GetAsInteger64(&color)) {
@@ -85,7 +100,13 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  StreamOverlay stream = StreamOverlay(url_t(url));
+  bool wpe;
+  err = GetEnumField(serialized, WPE_FIELD, &wpe);
+  if (err) {
+    return err;
+  }
+
+  StreamOverlay stream = StreamOverlay(url_t(url), wpe);
   BackgroundColor back;
   err = GetEnumField(serialized, BACKGROUND_FIELD, &back);
   if (!err) {
@@ -108,6 +129,7 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
 
 common::Error StreamOverlay::SerializeFields(json_object* out) const {
   ignore_result(SetStringField(out, URL_FIELD, url_.spec()));
+  ignore_result(SetBoolField(out, WPE_FIELD, wpe_));
   if (background_color_) {
     ignore_result(SetEnumField(out, BACKGROUND_FIELD, *background_color_));
   }

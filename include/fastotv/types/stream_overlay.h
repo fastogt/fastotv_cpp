@@ -27,10 +27,11 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   typedef common::serializer::JsonSerializer<StreamOverlay> base_class;
   enum BackgroundColor { CHECKER = 0, BLACK, WHITE, TRANSPARENT };
   typedef common::uri::GURL url_t;
+  typedef bool wpe_t;
   typedef common::Optional<BackgroundColor> background_color_t;
   typedef common::Optional<AlphaMethod> alpha_method_t;
 
-  StreamOverlay(const url_t& url,
+  StreamOverlay(const url_t& url, bool wpe,
                 const background_color_t& color = background_color_t(),
                 const alpha_method_t& method = alpha_method_t());
 
@@ -45,6 +46,9 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   const alpha_method_t& GetAlphaMethod() const;
   void SetAlphaMethod(alpha_method_t method);
 
+  void SetWPE(bool wpe);
+  bool GetWPE() const;
+
   static common::Optional<StreamOverlay> Make(common::HashValue* hash);
 
  protected:
@@ -53,6 +57,7 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
 
  private:
   url_t url_;
+  wpe_t wpe_;
   background_color_t background_color_;
   alpha_method_t method_;
 };
