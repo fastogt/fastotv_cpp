@@ -35,8 +35,7 @@ TEST(InputUri, ConvertFromString) {
   ASSERT_EQ(invalid_uri.GetUrl(), common::uri::GURL());
   std::string conv;
   common::Error err = invalid_uri.SerializeToString(&conv);
-  ASSERT_FALSE(err);
-  ASSERT_EQ(conv, invalid_uri_json);
+  ASSERT_TRUE(err);
 
   const std::string uri_json = "{ \"id\": 1, \"uri\": \"" RTMP_INPUT "\"}";
   fastotv::InputUri uri;
@@ -61,7 +60,7 @@ TEST(InputUri, ConvertFromString) {
   common::uri::GURL dev_ro(DEVICE_INPUT);
   ASSERT_EQ(dev_uri.GetUrl(), dev_ro);
   ASSERT_TRUE(dev_ro.SchemeIsDev());
-  ASSERT_EQ(dev_ro.PathForRequest(), DEVICE_VIDEO);
+  ASSERT_EQ(dev_ro.PathForRequest(), DEVICE_VIDEO "?" QUERY);
   ASSERT_EQ(dev_ro.query(), QUERY);
   ASSERT_EQ(dev_uri.GetUserAgent(), fastotv::InputUri::WINK);
 }

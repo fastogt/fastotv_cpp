@@ -190,7 +190,7 @@ common::Error MovieInfo::SerializeFields(json_object* deserialized) const {
   ignore_result(SetInt64Field(deserialized, DURATION_FIELD, duration_));
 
   json_object* jurls = json_object_new_array();
-  for (auto url : urls_) {
+  for (const auto& url : urls_) {
     std::string url_str = url.spec();
     json_object* jurl = json_object_new_string(url_str.c_str());
     json_object_array_add(jurls, jurl);
@@ -226,47 +226,56 @@ common::Error MovieInfo::DoDeSerialize(json_object* serialized) {
 
   // optional
   std::string description;
-  if (GetStringField(serialized, DESCRIPTION_FIELD, &description)) {
+  err = GetStringField(serialized, DESCRIPTION_FIELD, &description);
+  if (!err) {
     res.SetDescription(description);
   }
 
   std::string preview_icon;
-  if (GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon)) {
+  err = GetStringField(serialized, PREVIEW_ICON_FIELD, &preview_icon);
+  if (!err) {
     res.SetPreviewIcon(url_t(preview_icon));
   }
 
   std::string back_url;
-  if (GetStringField(serialized, BACKGROUND_URL_FIELD, &back_url)) {
+  err = GetStringField(serialized, BACKGROUND_URL_FIELD, &back_url);
+  if (!err) {
     res.SetBackgroundUrl(url_t(back_url));
   }
 
   std::string trailer_url;
-  if (GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url)) {
+  err = GetStringField(serialized, TRAILER_URL_FIELD, &trailer_url);
+  if (!err) {
     res.SetTrailerUrl(url_t(trailer_url));
   }
 
   double user_score = 0;
-  if (GetDoubleField(serialized, USER_SCORE_FIELD, &user_score)) {
+  err = GetDoubleField(serialized, USER_SCORE_FIELD, &user_score);
+  if (!err) {
     res.SetUserScore(user_score);
   }
 
   timestamp_t prime_date = 0;
-  if (GetInt64Field(serialized, PRIME_DATE_FIELD, &prime_date)) {
+  err = GetInt64Field(serialized, PRIME_DATE_FIELD, &prime_date);
+  if (!err) {
     res.SetPrimeDate(prime_date);
   }
 
   std::string country;
-  if (GetStringField(serialized, COUNTRY_FIELD, &country)) {
+  err = GetStringField(serialized, COUNTRY_FIELD, &country);
+  if (!err) {
     res.SetCountry(country);
   }
 
   timestamp_t duration = 0;
-  if (GetInt64Field(serialized, DURATION_FIELD, &prime_date)) {
+  err = GetInt64Field(serialized, DURATION_FIELD, &prime_date);
+  if (!err) {
     res.SetDuration(duration);
   }
 
   Type type = VODS;
-  if (GetEnumField(serialized, TYPE_FIELD, &type)) {
+  err = GetEnumField(serialized, TYPE_FIELD, &type);
+  if (!err) {
     res.SetType(type);
   }
 

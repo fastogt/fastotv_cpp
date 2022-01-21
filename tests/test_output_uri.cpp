@@ -25,15 +25,15 @@ TEST(OutputUri, ConvertFromString) {
   fastotv::OutputUri invalid_uri;
   ASSERT_EQ(invalid_uri.GetID(), 0);
   ASSERT_EQ(invalid_uri.GetUrl(), common::uri::GURL());
-  ASSERT_EQ(invalid_uri.GetHttpRoot(), common::file_system::ascii_file_string_path());
+  ASSERT_EQ(invalid_uri.GetHttpRoot(), fastotv::OutputUri::http_root_t());
   std::string conv;
-  ignore_result(invalid_uri.SerializeToString(&conv));
-  ASSERT_EQ(conv, invalid_uri_json);
+  common::Error err = invalid_uri.SerializeToString(&conv);
+  ASSERT_TRUE(err);
 
   const std::string uri_json = "{ \"id\": 1, \"uri\": \"" RTMP_OUTPUT "\", \"http_root\": \"" HTTP_OUTPUT
                                "\", \"size\": \"0x0\", \"video_bitrate\": 0, \"audio_bitrate\": 0 }";
   fastotv::OutputUri uri;
-  common::Error err = uri.DeSerializeFromString(uri_json);
+  err = uri.DeSerializeFromString(uri_json);
   ASSERT_FALSE(err);
   ASSERT_EQ(uri.GetID(), 1);
   common::uri::GURL ro(RTMP_OUTPUT);
