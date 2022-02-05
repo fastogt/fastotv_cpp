@@ -14,15 +14,22 @@
 
 #include <fastotv/types/stream_overlay.h>
 
+#include <fastotv/types/utils.h>
+
 #define URL_FIELD "url"
 #define WPE_FIELD "wpe"
 #define BACKGROUND_FIELD "background"
 #define METHOD_FIELD "method"
+#define SIZE_FIELD "size"
 
 namespace fastotv {
 
-StreamOverlay::StreamOverlay(const url_t& url, bool wpe, const background_color_t& color, const alpha_method_t& method)
-    : url_(url), wpe_(wpe), background_color_(color), method_(method) {}
+StreamOverlay::StreamOverlay(const url_t& url,
+                             bool wpe,
+                             const background_color_t& color,
+                             const alpha_method_t& method,
+                             const vsize_t size)
+    : url_(url), wpe_(wpe), background_color_(color), method_(method), size_(size) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
   return back.url_ == url_ && back.wpe_ == wpe_;
@@ -60,6 +67,14 @@ bool StreamOverlay::GetWPE() const {
   return wpe_;
 }
 
+const StreamOverlay::vsize_t& StreamOverlay::GetSize() const {
+  return size_;
+}
+
+void StreamOverlay::SetSize(vsize_t size) {
+  size_ = size;
+}
+
 common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<StreamOverlay>();
@@ -88,6 +103,12 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
   common::Value* method_field = hash->Find(METHOD_FIELD);
   if (method_field && method_field->GetAsHash(&method)) {
     stream.SetAlphaMethod(AlphaMethod::Make(method));
+  }
+
+  common::HashValue* size;
+  common::Value* size_field = hash->Find(SIZE_FIELD);
+  if (size_field && size_field->GetAsHash(&size)) {
+    stream.SetSize(MakeSize(size));
   }
 
   return stream;
@@ -123,6 +144,15 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jsize = nullptr;
+  json_bool jsize_exists = json_object_object_get_ex(serialized, SIZE_FIELD, &jsize);
+  if (jsize_exists) {
+    auto sz = MakeSize(jsize);
+    if (sz) {
+      stream.SetSize(*sz);
+    }
+  }
+
   *this = stream;
   return common::Error();
 }
@@ -139,6 +169,9 @@ common::Error StreamOverlay::SerializeFields(json_object* out) const {
     if (!err) {
       ignore_result(SetObjectField(out, METHOD_FIELD, jmethod));
     }
+  }
+  if (size_) {
+    ignore_result(SetObjectField(out, SIZE_FIELD, MakeJson(*size_)));
   }
   return common::Error();
 }

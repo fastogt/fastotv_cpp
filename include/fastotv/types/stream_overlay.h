@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include <common/draw/size.h>
 #include <common/uri/gurl.h>
 
 #include <fastotv/types/alpha_method.h>
@@ -30,11 +31,13 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   typedef bool wpe_t;
   typedef common::Optional<BackgroundColor> background_color_t;
   typedef common::Optional<AlphaMethod> alpha_method_t;
+  typedef common::Optional<common::draw::Size> vsize_t;
 
   StreamOverlay(const url_t& url,
                 bool wpe,
                 const background_color_t& color = background_color_t(),
-                const alpha_method_t& method = alpha_method_t());
+                const alpha_method_t& method = alpha_method_t(),
+                const vsize_t size = vsize_t());
 
   bool Equals(const StreamOverlay& back) const;
 
@@ -50,6 +53,9 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   void SetWPE(bool wpe);
   bool GetWPE() const;
 
+  const vsize_t& GetSize() const;
+  void SetSize(vsize_t size);
+
   static common::Optional<StreamOverlay> Make(common::HashValue* hash);
 
  protected:
@@ -61,6 +67,7 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   wpe_t wpe_;
   background_color_t background_color_;
   alpha_method_t method_;
+  vsize_t size_;
 };
 
 inline bool operator==(const StreamOverlay& left, const StreamOverlay& right) {
