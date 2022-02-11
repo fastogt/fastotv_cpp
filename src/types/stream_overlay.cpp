@@ -18,23 +18,24 @@
 
 #define URL_FIELD "url"
 #define WPE_FIELD "wpe"
+#define GL_FIELD "gl"
+
 #define BACKGROUND_FIELD "background"
 #define METHOD_FIELD "method"
 #define SIZE_FIELD "size"
-#define GL_FIELD "gl"
 
 namespace fastotv {
 
 StreamOverlay::StreamOverlay(const url_t& url,
                              wpe_t wpe,
+                             gl_t gl,
                              const background_color_t& color,
                              const alpha_method_t& method,
-                             const vsize_t& size,
-                             const gl_t& gl)
-    : url_(url), wpe_(wpe), background_color_(color), method_(method), size_(size), gl_(gl) {}
+                             const vsize_t& size)
+    : url_(url), wpe_(wpe), gl_(gl), background_color_(color), method_(method), size_(size) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
-  return back.url_ == url_ && back.wpe_ == wpe_;
+  return back.url_ == url_ && back.wpe_ == wpe_ && back.gl_ == gl_;
 }
 
 StreamOverlay::url_t StreamOverlay::GetUrl() const {
@@ -73,7 +74,7 @@ void StreamOverlay::SetGL(gl_t gl) {
   gl_ = gl;
 }
 
-const StreamOverlay::gl_t& StreamOverlay::GetGL() const {
+StreamOverlay::gl_t StreamOverlay::GetGL() const {
   return gl_;
 }
 
@@ -102,7 +103,13 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
     return common::Optional<StreamOverlay>();
   }
 
-  StreamOverlay stream = StreamOverlay(url_t(url), wpe);
+  bool gl;
+  common::Value* gl_field = hash->Find(GL_FIELD);
+  if (!gl_field || !gl_field->GetAsBoolean(&gl)) {
+    return common::Optional<StreamOverlay>();
+  }
+
+  StreamOverlay stream = StreamOverlay(url_t(url), wpe, gl);
   int64_t color;
   common::Value* back_field = hash->Find(BACKGROUND_FIELD);
   if (back_field && back_field->GetAsInteger64(&color)) {
@@ -121,12 +128,6 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
     stream.SetSize(MakeSize(size));
   }
 
-  bool gl;
-  common::Value* gl_field = hash->Find(GL_FIELD);
-  if (gl_field && gl_field->GetAsBoolean(&gl)) {
-    stream.SetGL(gl);
-  }
-
   return stream;
 }
 
@@ -143,7 +144,13 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
     return err;
   }
 
-  StreamOverlay stream = StreamOverlay(url_t(url), wpe);
+  bool gl;
+  err = GetBoolField(serialized, GL_FIELD, &gl);
+  if (!err) {
+    return err;
+  }
+
+  StreamOverlay stream = StreamOverlay(url_t(url), wpe, gl);
   BackgroundColor back;
   err = GetEnumField(serialized, BACKGROUND_FIELD, &back);
   if (!err) {
@@ -169,12 +176,6 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  bool gl;
-  err = GetBoolField(serialized, GL_FIELD, &gl);
-  if (!err) {
-    stream.SetGL(gl);
-  }
-
   *this = stream;
   return common::Error();
 }
@@ -182,6 +183,7 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
 common::Error StreamOverlay::SerializeFields(json_object* out) const {
   ignore_result(SetStringField(out, URL_FIELD, url_.spec()));
   ignore_result(SetBoolField(out, WPE_FIELD, wpe_));
+  ignore_result(SetBoolField(out, GL_FIELD, gl_));
   if (background_color_) {
     ignore_result(SetEnumField(out, BACKGROUND_FIELD, *background_color_));
   }
@@ -194,9 +196,6 @@ common::Error StreamOverlay::SerializeFields(json_object* out) const {
   }
   if (size_) {
     ignore_result(SetObjectField(out, SIZE_FIELD, MakeJson(*size_)));
-  }
-  if (gl_) {
-    ignore_result(SetBoolField(out, GL_FIELD, *gl_));
   }
   return common::Error();
 }
