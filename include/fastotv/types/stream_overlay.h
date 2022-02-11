@@ -32,12 +32,14 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   typedef common::Optional<BackgroundColor> background_color_t;
   typedef common::Optional<AlphaMethod> alpha_method_t;
   typedef common::Optional<common::draw::Size> vsize_t;
+  typedef common::Optional<bool> gl_t;
 
   StreamOverlay(const url_t& url,
-                bool wpe,
+                wpe_t wpe,
                 const background_color_t& color = background_color_t(),
                 const alpha_method_t& method = alpha_method_t(),
-                const vsize_t size = vsize_t());
+                const vsize_t& size = vsize_t(),
+                const gl_t& gl = gl_t());
 
   bool Equals(const StreamOverlay& back) const;
 
@@ -50,8 +52,11 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   const alpha_method_t& GetAlphaMethod() const;
   void SetAlphaMethod(alpha_method_t method);
 
-  void SetWPE(bool wpe);
-  bool GetWPE() const;
+  void SetWPE(wpe_t wpe);
+  wpe_t GetWPE() const;
+
+  void SetGL(gl_t gl);
+  const gl_t& GetGL() const;
 
   const vsize_t& GetSize() const;
   void SetSize(vsize_t size);
@@ -68,6 +73,7 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   background_color_t background_color_;
   alpha_method_t method_;
   vsize_t size_;
+  gl_t gl_;
 };
 
 inline bool operator==(const StreamOverlay& left, const StreamOverlay& right) {
