@@ -17,9 +17,9 @@
 #include <string>
 
 #include <common/draw/size.h>
-#include <common/uri/gurl.h>
 
 #include <fastotv/types/alpha_method.h>
+#include <fastotv/types/overlay_url.h>
 
 namespace fastotv {
 
@@ -27,17 +27,13 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
  public:
   typedef common::serializer::JsonSerializer<StreamOverlay> base_class;
   enum BackgroundColor { CHECKER = 0, BLACK, WHITE, TRANSPARENT };
-  typedef common::uri::GURL url_t;
-  typedef bool wpe_t;
-  typedef bool gl_t;
+  typedef OverlayUrl url_t;
 
   typedef common::Optional<BackgroundColor> background_color_t;
   typedef common::Optional<AlphaMethod> alpha_method_t;
   typedef common::Optional<common::draw::Size> vsize_t;
 
   StreamOverlay(const url_t& url,
-                wpe_t wpe,
-                gl_t gl,
                 const background_color_t& color = background_color_t(),
                 const alpha_method_t& method = alpha_method_t(),
                 const vsize_t& size = vsize_t());
@@ -53,14 +49,8 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
   const alpha_method_t& GetAlphaMethod() const;
   void SetAlphaMethod(alpha_method_t method);
 
-  void SetWPE(wpe_t wpe);
-  wpe_t GetWPE() const;
-
-  void SetGL(gl_t gl);
-  gl_t GetGL() const;
-
   const vsize_t& GetSize() const;
-  void SetSize(vsize_t size);
+  void SetSize(const vsize_t& size);
 
   static common::Optional<StreamOverlay> Make(common::HashValue* hash);
 
@@ -70,8 +60,6 @@ class StreamOverlay : public common::serializer::JsonSerializer<StreamOverlay> {
 
  private:
   url_t url_;
-  wpe_t wpe_;
-  gl_t gl_;
   //
   background_color_t background_color_;
   alpha_method_t method_;

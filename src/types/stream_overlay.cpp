@@ -17,8 +17,6 @@
 #include <fastotv/types/utils.h>
 
 #define URL_FIELD "url"
-#define WPE_FIELD "wpe"
-#define GL_FIELD "gl"
 
 #define BACKGROUND_FIELD "background"
 #define METHOD_FIELD "method"
@@ -27,15 +25,13 @@
 namespace fastotv {
 
 StreamOverlay::StreamOverlay(const url_t& url,
-                             wpe_t wpe,
-                             gl_t gl,
                              const background_color_t& color,
                              const alpha_method_t& method,
                              const vsize_t& size)
-    : url_(url), wpe_(wpe), gl_(gl), background_color_(color), method_(method), size_(size) {}
+    : url_(url), background_color_(color), method_(method), size_(size) {}
 
 bool StreamOverlay::Equals(const StreamOverlay& back) const {
-  return back.url_ == url_ && back.wpe_ == wpe_ && back.gl_ == gl_;
+  return back.url_ == url_;
 }
 
 StreamOverlay::url_t StreamOverlay::GetUrl() const {
@@ -62,27 +58,11 @@ void StreamOverlay::SetAlphaMethod(alpha_method_t method) {
   method_ = method;
 }
 
-void StreamOverlay::SetWPE(wpe_t wpe) {
-  wpe_ = wpe;
-}
-
-StreamOverlay::wpe_t StreamOverlay::GetWPE() const {
-  return wpe_;
-}
-
-void StreamOverlay::SetGL(gl_t gl) {
-  gl_ = gl;
-}
-
-StreamOverlay::gl_t StreamOverlay::GetGL() const {
-  return gl_;
-}
-
 const StreamOverlay::vsize_t& StreamOverlay::GetSize() const {
   return size_;
 }
 
-void StreamOverlay::SetSize(vsize_t size) {
+void StreamOverlay::SetSize(const vsize_t& size) {
   size_ = size;
 }
 
@@ -92,24 +72,17 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
   }
 
   common::Value* url_field = hash->Find(URL_FIELD);
-  std::string url;
-  if (!url_field || !url_field->GetAsBasicString(&url)) {
+  common::HashValue* url = nullptr;
+  if (!url_field || !url_field->GetAsHash(&url)) {
     return common::Optional<StreamOverlay>();
   }
 
-  common::Value* wpe_field = hash->Find(WPE_FIELD);
-  bool wpe;
-  if (!wpe_field || !wpe_field->GetAsBoolean(&wpe)) {
+  auto over = OverlayUrl::Make(url);
+  if (!over) {
     return common::Optional<StreamOverlay>();
   }
 
-  bool gl;
-  common::Value* gl_field = hash->Find(GL_FIELD);
-  if (!gl_field || !gl_field->GetAsBoolean(&gl)) {
-    return common::Optional<StreamOverlay>();
-  }
-
-  StreamOverlay stream = StreamOverlay(url_t(url), wpe, gl);
+  StreamOverlay stream = StreamOverlay(*over);
   int64_t color;
   common::Value* back_field = hash->Find(BACKGROUND_FIELD);
   if (back_field && back_field->GetAsInteger64(&color)) {
@@ -132,25 +105,19 @@ common::Optional<StreamOverlay> StreamOverlay::Make(common::HashValue* hash) {
 }
 
 common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
-  std::string url;
-  common::Error err = GetStringField(serialized, URL_FIELD, &url);
+  json_object* jurl = nullptr;
+  common::Error err = GetObjectField(serialized, URL_FIELD, &jurl);
   if (err) {
     return err;
   }
 
-  bool wpe;
-  err = GetEnumField(serialized, WPE_FIELD, &wpe);
+  OverlayUrl over;
+  err = over.DeSerialize(jurl);
   if (err) {
     return err;
   }
 
-  bool gl;
-  err = GetBoolField(serialized, GL_FIELD, &gl);
-  if (!err) {
-    return err;
-  }
-
-  StreamOverlay stream = StreamOverlay(url_t(url), wpe, gl);
+  StreamOverlay stream = StreamOverlay(over);
   BackgroundColor back;
   err = GetEnumField(serialized, BACKGROUND_FIELD, &back);
   if (!err) {
@@ -171,9 +138,7 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
   json_bool jsize_exists = json_object_object_get_ex(serialized, SIZE_FIELD, &jsize);
   if (jsize_exists) {
     auto sz = MakeSize(jsize);
-    if (sz) {
-      stream.SetSize(*sz);
-    }
+    stream.SetSize(sz);
   }
 
   *this = stream;
@@ -181,9 +146,13 @@ common::Error StreamOverlay::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error StreamOverlay::SerializeFields(json_object* out) const {
-  ignore_result(SetStringField(out, URL_FIELD, url_.spec()));
-  ignore_result(SetBoolField(out, WPE_FIELD, wpe_));
-  ignore_result(SetBoolField(out, GL_FIELD, gl_));
+  json_object* jurl = nullptr;
+  common::Error err = url_.Serialize(&jurl);
+  if (err) {
+    return err;
+  }
+
+  ignore_result(SetObjectField(out, URL_FIELD, jurl));
   if (background_color_) {
     ignore_result(SetEnumField(out, BACKGROUND_FIELD, *background_color_));
   }
