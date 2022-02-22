@@ -84,6 +84,7 @@ class OverlayUrl : public common::serializer::JsonSerializer<OverlayUrl> {
 
   wpe_t GetWPE() const;
   cef_t GetCEF() const;
+  OverlayUrlType GetType() const;
 
   bool Equals(const OverlayUrl& inf) const;
 

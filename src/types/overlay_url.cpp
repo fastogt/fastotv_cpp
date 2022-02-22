@@ -140,6 +140,10 @@ OverlayUrl::cef_t OverlayUrl::GetCEF() const {
   return cef_;
 }
 
+OverlayUrlType OverlayUrl::GetType() const {
+  return type_;
+}
+
 OverlayUrl OverlayUrl::MakeWpeOverlayUrl(const url_t& url, const Wpe& wpe) {
   auto result = OverlayUrl(url, WPE);
   result.wpe_ = wpe;
