@@ -21,31 +21,11 @@
 #include <common/value.h>
 
 #include <fastotv/types.h>
+#include <fastotv/types/wpe.h>
 
 namespace fastotv {
 
 enum OverlayUrlType { URL, WPE, CEF };
-
-class Wpe : public common::serializer::JsonSerializer<Wpe> {
- public:
-  typedef JsonSerializer<Wpe> base_class;
-  typedef bool gl_t;
-
-  Wpe();
-  explicit Wpe(gl_t gl);
-
-  void SetGL(gl_t gl);
-  gl_t GetGL() const;
-
-  static common::Optional<Wpe> Make(common::HashValue* hash);
-
- protected:
-  common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* out) const override;
-
- private:
-  gl_t gl_;
-};
 
 class Cef : public common::serializer::JsonSerializer<Cef> {
  public:

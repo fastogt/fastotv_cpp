@@ -21,6 +21,7 @@
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
+#include <fastotv/types/wpe.h>
 
 namespace fastotv {
 
@@ -34,7 +35,7 @@ class InputUri : public InputUrl {
   // optionals
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<PyFastoStream> stream_url_t;
-  typedef common::Optional<bool> wpe_t;
+  typedef common::Optional<Wpe> wpe_t;
   // udp
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;

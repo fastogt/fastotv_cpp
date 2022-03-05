@@ -172,10 +172,11 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetHttpProxyUrl(url_t(http_url_str));
   }
 
-  bool wpe;
+  common::HashValue* wpe;
   common::Value* wpe_field = hash->Find(WPE_FIELD);
-  if (wpe_field && wpe_field->GetAsBoolean(&wpe)) {
-    url.SetWPE(wpe);
+  if (wpe_field && wpe_field->GetAsHash(&wpe)) {
+    auto wp = Wpe::Make(wpe);
+    url.SetWPE(wp);
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
@@ -289,10 +290,14 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
-  bool wpe;
-  err = GetBoolField(serialized, WPE_FIELD, &wpe);
+  json_object* jwpe = nullptr;
+  err = GetObjectField(serialized, WPE_FIELD, &jwpe);
   if (!err) {
-    res.SetWPE(wpe);
+    Wpe wp;
+    err = wp.DeSerialize(jwpe);
+    if (!err) {
+      res.SetWPE(wp);
+    }
   }
 
   RtmpSrcType rtmpsrc;
@@ -375,7 +380,11 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
 
   const auto wpe = GetWPE();
   if (wpe) {
-    ignore_result(SetBoolField(deserialized, WPE_FIELD, *wpe));
+    json_object* jwpe = nullptr;
+    err = wpe->Serialize(&jwpe);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, WPE_FIELD, jwpe));
+    }
   }
 
   if (rtmpsrc_type_) {

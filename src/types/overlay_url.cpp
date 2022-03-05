@@ -16,7 +16,6 @@
 
 #include <common/sprintf.h>
 
-#define GL_FIELD "gl"
 #define GPU_FIELD "gpu"
 //
 #define TYPE_FIELD "type"
@@ -25,47 +24,6 @@
 #define CEF_FIELD "cef"
 
 namespace fastotv {
-
-Wpe::Wpe() : gl_() {}
-
-Wpe::Wpe(gl_t gl) : gl_(gl) {}
-
-void Wpe::SetGL(gl_t gl) {
-  gl_ = gl;
-}
-
-Wpe::gl_t Wpe::GetGL() const {
-  return gl_;
-}
-
-common::Optional<Wpe> Wpe::Make(common::HashValue* hash) {
-  if (!hash) {
-    return common::Optional<Wpe>();
-  }
-
-  common::Value* gl_field = hash->Find(GL_FIELD);
-  bool gl;
-  if (!gl_field || !gl_field->GetAsBoolean(&gl)) {
-    return common::Optional<Wpe>();
-  }
-  return Wpe(gl);
-}
-
-common::Error Wpe::DoDeSerialize(json_object* serialized) {
-  bool gl;
-  common::Error err = GetBoolField(serialized, GL_FIELD, &gl);
-  if (err) {
-    return err;
-  }
-
-  *this = Wpe(gl);
-  return common::Error();
-}
-
-common::Error Wpe::SerializeFields(json_object* out) const {
-  ignore_result(SetBoolField(out, GL_FIELD, gl_));
-  return common::Error();
-}
 
 Cef::Cef() : gpu_() {}
 
@@ -268,6 +226,7 @@ common::Error OverlayUrl::SerializeFields(json_object* out) const {
 
   const std::string url_str = url_.spec();
   ignore_result(SetStringField(out, URL_FIELD, url_str));
+  NOTREACHED() << "Not implemented";
   return common::Error();
 }
 
