@@ -16,55 +16,12 @@
 
 #include <common/sprintf.h>
 
-#define GPU_FIELD "gpu"
-//
 #define TYPE_FIELD "type"
 #define URL_FIELD "url"
 #define WPE_FIELD "wpe"
 #define CEF_FIELD "cef"
 
 namespace fastotv {
-
-Cef::Cef() : gpu_() {}
-
-Cef::Cef(gpu_t gpu) : gpu_(gpu) {}
-
-void Cef::SetGL(gpu_t gpu) {
-  gpu_ = gpu;
-}
-
-Cef::gpu_t Cef::GetGPU() const {
-  return gpu_;
-}
-
-common::Optional<Cef> Cef::Make(common::HashValue* hash) {
-  if (!hash) {
-    return common::Optional<Cef>();
-  }
-
-  common::Value* gpu_field = hash->Find(GPU_FIELD);
-  bool gpu;
-  if (!gpu_field || !gpu_field->GetAsBoolean(&gpu)) {
-    return common::Optional<Cef>();
-  }
-  return Cef(gpu);
-}
-
-common::Error Cef::DoDeSerialize(json_object* serialized) {
-  bool gpu;
-  common::Error err = GetBoolField(serialized, GPU_FIELD, &gpu);
-  if (err) {
-    return err;
-  }
-
-  *this = Cef(gpu);
-  return common::Error();
-}
-
-common::Error Cef::SerializeFields(json_object* out) const {
-  ignore_result(SetBoolField(out, GPU_FIELD, gpu_));
-  return common::Error();
-}
 
 OverlayUrl::OverlayUrl(const url_t& input, OverlayUrlType type) : base_class(), url_(input), type_(type) {}
 

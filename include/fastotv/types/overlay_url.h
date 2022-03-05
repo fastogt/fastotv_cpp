@@ -22,31 +22,11 @@
 
 #include <fastotv/types.h>
 #include <fastotv/types/wpe.h>
+#include <fastotv/types/cef.h>
 
 namespace fastotv {
 
 enum OverlayUrlType { URL, WPE, CEF };
-
-class Cef : public common::serializer::JsonSerializer<Cef> {
- public:
-  typedef JsonSerializer<Cef> base_class;
-  typedef bool gpu_t;
-
-  Cef();
-  explicit Cef(gpu_t gpu);
-
-  void SetGL(gpu_t gpu);
-  gpu_t GetGPU() const;
-
-  static common::Optional<Cef> Make(common::HashValue* hash);
-
- protected:
-  common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* out) const override;
-
- private:
-  gpu_t gpu_;
-};
 
 class OverlayUrl : public common::serializer::JsonSerializer<OverlayUrl> {
  public:
