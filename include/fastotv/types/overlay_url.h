@@ -21,8 +21,8 @@
 #include <common/value.h>
 
 #include <fastotv/types.h>
-#include <fastotv/types/wpe.h>
 #include <fastotv/types/cef.h>
+#include <fastotv/types/wpe.h>
 
 namespace fastotv {
 

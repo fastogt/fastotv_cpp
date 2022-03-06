@@ -183,7 +183,20 @@ common::Error OverlayUrl::SerializeFields(json_object* out) const {
 
   const std::string url_str = url_.spec();
   ignore_result(SetStringField(out, URL_FIELD, url_str));
-  NOTREACHED() << "Not implemented";
+  ignore_result(SetIntField(out, TYPE_FIELD, type_));
+  if (wpe_) {
+    json_object* jkvs = nullptr;
+    common::Error err = wpe_->Serialize(&jkvs);
+    if (!err) {
+      ignore_result(SetObjectField(out, WPE_FIELD, jkvs));
+    }
+  } else if (cef_) {
+    json_object* jkvs = nullptr;
+    common::Error err = cef_->Serialize(&jkvs);
+    if (!err) {
+      ignore_result(SetObjectField(out, CEF_FIELD, jkvs));
+    }
+  }
   return common::Error();
 }
 
