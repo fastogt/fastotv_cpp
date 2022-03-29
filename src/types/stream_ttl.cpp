@@ -71,7 +71,7 @@ common::Optional<StreamTTL> StreamTTL::Make(common::HashValue* json) {
 
 common::Error StreamTTL::DoDeSerialize(json_object* serialized) {
   StreamTTL res;
-  ttl_t ttl;
+  int64_t ttl;
   common::Error err = GetInt64Field(serialized, TTL_FIELD, &ttl);
   if (err) {
     return err;
