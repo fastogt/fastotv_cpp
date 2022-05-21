@@ -23,6 +23,7 @@
 #define SRT_KEY_FIELD "srt_key"
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
 #define KVS_FIELD "kvs"
+#define AZURE_FIELD "azure"
 #define WEBRTC_FIELD "webrtc"
 
 namespace fastotv {
@@ -39,6 +40,7 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       srt_key_(),
       rtmpsink_type_(),
       kvs_(),
+      azure_(),
       webrtc_() {}
 
 bool OutputUri::IsValid() const {
@@ -131,6 +133,14 @@ void OutputUri::SetKVS(const kvs_t& kvs) {
   kvs_ = kvs;
 }
 
+OutputUri::azure_t OutputUri::GetAzure() const {
+  return azure_;
+}
+
+void OutputUri::SetAzure(const OutputUri::azure_t& azure) {
+  azure_ = azure;
+}
+
 OutputUri::webrtc_t OutputUri::GetWebRTC() const {
   return webrtc_;
 }
@@ -142,7 +152,8 @@ void OutputUri::SetWebRTC(const webrtc_t& web) {
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && webrtc_ == url.webrtc_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && azure_ == url.azure_ &&
+         webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -209,6 +220,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* kvs_field = hash->Find(KVS_FIELD);
   if (kvs_field && kvs_field->GetAsHash(&kvs)) {
     url.SetKVS(KVSProp::Make(kvs));
+  }
+
+  common::HashValue* azure;
+  common::Value* azure_field = hash->Find(AZURE_FIELD);
+  if (azure_field && azure_field->GetAsHash(&azure)) {
+    url.SetAzure(AzureProp::Make(azure));
   }
 
   common::HashValue* webrtc;
@@ -283,6 +300,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jazure = nullptr;
+  err = GetObjectField(serialized, AZURE_FIELD, &jazure);
+  if (!err) {
+    AzureProp prop;
+    err = prop.DeSerialize(jazure);
+    if (!err) {
+      res.SetAzure(prop);
+    }
+  }
+
   json_object* jweb = nullptr;
   err = GetObjectField(serialized, WEBRTC_FIELD, &jweb);
   if (!err) {
@@ -343,6 +370,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     err = kvs_->Serialize(&jkvs);
     if (!err) {
       ignore_result(SetObjectField(deserialized, KVS_FIELD, jkvs));
+    }
+  }
+  if (azure_) {
+    json_object* jazure = nullptr;
+    err = azure_->Serialize(&jazure);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, AZURE_FIELD, jazure));
     }
   }
   if (webrtc_) {

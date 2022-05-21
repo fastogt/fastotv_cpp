@@ -16,6 +16,7 @@
 
 #include <common/file_system/path.h>
 
+#include <fastotv/types/azure_prop.h>
 #include <fastotv/types/kvs_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
@@ -40,6 +41,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
   typedef common::Optional<KVSProp> kvs_t;
+  typedef common::Optional<AzureProp> azure_t;
   // webrtc
   typedef common::Optional<WebRTCProp> webrtc_t;
 
@@ -77,6 +79,9 @@ class OutputUri : public OutputUrl {
   kvs_t GetKVS() const;
   void SetKVS(const kvs_t& kvs);
 
+  azure_t GetAzure() const;
+  void SetAzure(const azure_t& azure);
+
   webrtc_t GetWebRTC() const;
   void SetWebRTC(const webrtc_t& web);
 
@@ -102,6 +107,8 @@ class OutputUri : public OutputUrl {
   rtmp_type_t rtmpsink_type_;
   //
   kvs_t kvs_;
+  //
+  azure_t azure_;
   // webrtc
   webrtc_t webrtc_;
 };
