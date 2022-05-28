@@ -42,7 +42,6 @@ class AzureProp : public common::serializer::JsonSerializer<AzureProp> {
   location_t GetLocation() const;
   void SetLocation(const location_t& location);
 
-
   bool Equals(const AzureProp& key) const;
 
   static common::Optional<AzureProp> Make(common::HashValue* json);
