@@ -25,6 +25,7 @@
 #define KVS_FIELD "kvs"
 #define AZURE_FIELD "azure"
 #define WEBRTC_FIELD "webrtc"
+#define MULTICAST_IFACE_FIELD "multicast_iface"
 
 namespace fastotv {
 
@@ -149,6 +150,14 @@ void OutputUri::SetWebRTC(const webrtc_t& web) {
   webrtc_ = web;
 }
 
+OutputUri::multicast_iface_t OutputUri::GetMulticastIface() const {
+  return iface_;
+}
+
+void OutputUri::SetMulticastIface(multicast_iface_t iface) {
+  iface_ = iface;
+}
+
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
@@ -232,6 +241,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* webrtc_field = hash->Find(WEBRTC_FIELD);
   if (webrtc_field && webrtc_field->GetAsHash(&webrtc)) {
     url.SetWebRTC(WebRTCProp::Make(webrtc));
+  }
+
+  common::Value* iface_field = hash->Find(MULTICAST_IFACE_FIELD);
+  std::string iface;
+  if (iface_field && iface_field->GetAsBasicString(&iface)) {
+    url.SetMulticastIface(iface);
   }
 
   return common::Optional<OutputUri>(url);
@@ -320,6 +335,12 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  std::string iface;
+  err = GetStringField(serialized, MULTICAST_IFACE_FIELD, &iface);
+  if (!err) {
+    res.SetMulticastIface(iface);
+  }
+
   *this = res;
   return common::Error();
 }
@@ -385,6 +406,11 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     if (!err) {
       ignore_result(SetObjectField(deserialized, WEBRTC_FIELD, jweb));
     }
+  }
+  const auto iface = GetMulticastIface();
+  if (iface) {
+    const std::string iface_str = *iface;
+    ignore_result(SetStringField(deserialized, MULTICAST_IFACE_FIELD, iface_str));
   }
   return common::Error();
 }

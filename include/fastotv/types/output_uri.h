@@ -15,7 +15,6 @@
 #pragma once
 
 #include <common/file_system/path.h>
-
 #include <fastotv/types/azure_prop.h>
 #include <fastotv/types/kvs_prop.h>
 #include <fastotv/types/output_url.h>
@@ -44,6 +43,8 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<AzureProp> azure_t;
   // webrtc
   typedef common::Optional<WebRTCProp> webrtc_t;
+  // udp
+  typedef common::Optional<std::string> multicast_iface_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -51,6 +52,9 @@ class OutputUri : public OutputUrl {
   bool IsValid() const;
 
   bool IsHls() const;
+
+  multicast_iface_t GetMulticastIface() const;
+  void SetMulticastIface(multicast_iface_t iface);
 
   rtmp_type_t GetRtmpSinkType() const;
   void SetRtmpSinkType(rtmp_type_t rtmpsink);
@@ -111,6 +115,8 @@ class OutputUri : public OutputUrl {
   azure_t azure_;
   // webrtc
   webrtc_t webrtc_;
+  // udp
+  multicast_iface_t iface_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {
