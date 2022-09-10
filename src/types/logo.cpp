@@ -13,7 +13,6 @@
 */
 
 #include <fastotv/types/logo.h>
-
 #include <fastotv/types/utils.h>
 
 #define LOGO_PATH_FIELD "path"

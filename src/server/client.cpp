@@ -13,7 +13,6 @@
 */
 
 #include <fastotv/server/client.h>
-
 #include <fastotv/server/commands_factory.h>
 
 namespace fastotv {

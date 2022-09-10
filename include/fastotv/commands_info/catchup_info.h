@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <fastotv/commands_info/channel_info.h>
+
+#include <string>
 
 namespace fastotv {
 namespace commands_info {

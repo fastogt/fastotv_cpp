@@ -18,11 +18,10 @@
 
 #pragma once
 
-#include <vector>
-
 #include <common/serializer/json_serializer.h>
-
 #include <fastotv/types.h>
+
+#include <vector>
 
 namespace fastotv {
 namespace commands_info {

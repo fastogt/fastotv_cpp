@@ -18,11 +18,10 @@
 
 #pragma once
 
-#include <memory>
-
 #include <common/libev/tcp/tcp_client.h>  // for TcpClient
-
 #include <fastotv/protocol/protocol.h>
+
+#include <memory>
 
 namespace fastotv {
 

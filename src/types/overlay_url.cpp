@@ -12,9 +12,8 @@
     along with fastocloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/types/overlay_url.h>
-
 #include <common/sprintf.h>
+#include <fastotv/types/overlay_url.h>
 
 #define TYPE_FIELD "type"
 #define URL_FIELD "url"

@@ -16,10 +16,8 @@
     along with FastoTV. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/client/client.h>
-
 #include <common/system_info/cpu_info.h>  // for CurrentCpuInfo
-
+#include <fastotv/client/client.h>
 #include <fastotv/client/commands_factory.h>
 
 namespace fastotv {

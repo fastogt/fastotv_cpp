@@ -18,12 +18,7 @@
 
 #pragma once
 
-#include <string>  // for string
-
 #include <common/daemon/commands/ping_info.h>
-
-#include <fastotv/protocol/types.h>
-
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
 #include <fastotv/commands_info/catchups_info.h>
@@ -33,6 +28,9 @@
 #include <fastotv/commands_info/series_info.h>
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vods_info.h>
+#include <fastotv/protocol/types.h>
+
+#include <string>  // for string
 
 namespace fastotv {
 namespace server {

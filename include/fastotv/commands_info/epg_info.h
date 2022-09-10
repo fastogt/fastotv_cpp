@@ -18,13 +18,12 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include <common/uri/gurl.h>  // for Uri
-
 #include <fastotv/commands_info/programme_info.h>
 #include <fastotv/types.h>
+
+#include <string>
+#include <vector>
 
 namespace fastotv {
 namespace commands_info {

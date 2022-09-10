@@ -18,12 +18,11 @@
 
 #pragma once
 
+#include <common/serializer/json_serializer.h>
+#include <fastotv/commands_info/catchup_info.h>
+
 #include <string>
 #include <vector>
-
-#include <common/serializer/json_serializer.h>
-
-#include <fastotv/commands_info/catchup_info.h>
 
 namespace fastotv {
 namespace commands_info {

@@ -18,12 +18,11 @@
 
 #pragma once
 
-#include <string>
-
 #include <fastotv/commands_info/operation_system_info.h>
 #include <fastotv/commands_info/project_info.h>
-
 #include <fastotv/types.h>
+
+#include <string>
 
 namespace fastotv {
 namespace commands_info {

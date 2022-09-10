@@ -18,17 +18,15 @@
 
 #pragma once
 
-#include <string>  // for string
-
 #include <common/daemon/commands/ping_info.h>
-
-#include <fastotv/protocol/types.h>
-
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
 #include <fastotv/commands_info/catchup_undo_info.h>
 #include <fastotv/commands_info/client_info.h>
 #include <fastotv/commands_info/runtime_channel_info.h>
+#include <fastotv/protocol/types.h>
+
+#include <string>  // for string
 
 namespace fastotv {
 namespace client {

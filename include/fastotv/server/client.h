@@ -14,11 +14,8 @@
 
 #pragma once
 
-#include <memory>
-
 #include <common/daemon/commands/ping_info.h>
 #include <common/net/types.h>
-
 #include <fastotv/client.h>
 #include <fastotv/commands_info/auth_info.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
@@ -30,6 +27,8 @@
 #include <fastotv/commands_info/server_info.h>
 #include <fastotv/commands_info/vods_info.h>
 #include <fastotv/protocol/types.h>
+
+#include <memory>
 
 namespace fastotv {
 namespace server {

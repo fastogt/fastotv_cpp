@@ -21,46 +21,36 @@
 
 namespace fastotv {
 
-class AzureProp : public common::serializer::JsonSerializer<AzureProp> {
+class GoogleProp : public common::serializer::JsonSerializer<GoogleProp> {
  public:
-  typedef JsonSerializer<AzureProp> base_class;
-  typedef std::string account_name_t;
-  typedef std::string account_key_t;
-  typedef std::string location_t;
+  typedef JsonSerializer<GoogleProp> base_class;
+  typedef std::string account_creds_t;
 
-  AzureProp();
-  explicit AzureProp(const account_name_t& name, const account_key_t& account_key, const location_t& location);
+  GoogleProp();
+  explicit GoogleProp(const account_creds_t& creds);
 
   bool IsValid() const;
 
-  account_name_t GetAccountName() const;
-  void SetAccountName(const account_name_t& name);
+  account_creds_t GetAccountCreds() const;
+  void SetAccountCreds(const account_creds_t& creds);
 
-  account_key_t GetAccountKey() const;
-  void SetAccountKey(const account_key_t& key);
+  bool Equals(const GoogleProp& key) const;
 
-  location_t GetLocation() const;
-  void SetLocation(const location_t& location);
-
-  bool Equals(const AzureProp& key) const;
-
-  static common::Optional<AzureProp> Make(common::HashValue* json);
+  static common::Optional<GoogleProp> Make(common::HashValue* json);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  account_name_t account_name_;
-  account_key_t account_key_;
-  location_t location_;
+  account_creds_t account_creds_;
 };
 
-inline bool operator==(const AzureProp& left, const AzureProp& right) {
+inline bool operator==(const GoogleProp& left, const GoogleProp& right) {
   return left.Equals(right);
 }
 
-inline bool operator!=(const AzureProp& x, const AzureProp& y) {
+inline bool operator!=(const GoogleProp& x, const GoogleProp& y) {
   return !(x == y);
 }
 

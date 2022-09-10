@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <fastotv/types/font.h>
+
+#include <string>
 
 namespace fastotv {
 

@@ -13,7 +13,6 @@
 */
 
 #include <fastotv/types/stream_overlay.h>
-
 #include <fastotv/types/utils.h>
 
 #define URL_FIELD "url"

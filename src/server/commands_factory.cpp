@@ -16,9 +16,8 @@
     along with FastoTV. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/server/commands_factory.h>
-
 #include <fastotv/commands/commands.h>
+#include <fastotv/server/commands_factory.h>
 
 #define CHANNELS_FIELD "channels"
 #define VODS_FIELD "vods"

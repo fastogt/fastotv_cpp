@@ -14,14 +14,14 @@
 
 #pragma once
 
-#include <string>
-
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/programme.h>
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
 #include <fastotv/types/wpe.h>
+
+#include <string>
 
 namespace fastotv {
 

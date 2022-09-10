@@ -14,13 +14,13 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/draw/point.h>
 #include <common/draw/size.h>
 #include <common/media/types.h>
 #include <common/optional.h>
 #include <common/value.h>
+
+#include <string>
 
 struct json_object;
 

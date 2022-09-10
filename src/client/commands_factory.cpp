@@ -17,7 +17,6 @@
 */
 
 #include <fastotv/client/commands_factory.h>
-
 #include <fastotv/commands/commands.h>
 
 namespace fastotv {

@@ -16,9 +16,8 @@
     along with FastoTV. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/commands_info/operation_system_info.h>
-
 #include <common/system_info/system_info.h>
+#include <fastotv/commands_info/operation_system_info.h>
 
 #define NAME_FIELD "name"
 #define VERSION_FIELD "version"

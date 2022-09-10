@@ -12,9 +12,8 @@
     along with fastocloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/types/ml/background_effect.h>
-
 #include <common/sprintf.h>
+#include <fastotv/types/ml/background_effect.h>
 
 #define TYPE_FIELD "type"
 #define STRENGTH_FIELD "strength"

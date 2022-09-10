@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/types.h>  // for time64_t
+
+#include <string>
 
 namespace fastotv {
 

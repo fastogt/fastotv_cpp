@@ -16,11 +16,10 @@
     along with FastoTV. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <common/time.h>
 #include <fastotv/commands_info/catchup_generate_info.h>
 
 #include <iomanip>
-
-#include <common/time.h>
 
 #define ID_FIELD "id"
 #define TITLE_FIELD "title"

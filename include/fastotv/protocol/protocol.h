@@ -19,7 +19,6 @@
 #pragma once
 
 #include <common/protocols/json_rpc/protocol_client.h>
-
 #include <common/text_decoders/compress_zlib_edcoder.h>
 
 namespace fastotv {

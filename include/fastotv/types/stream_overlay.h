@@ -14,12 +14,11 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/draw/size.h>
-
 #include <fastotv/types/alpha_method.h>
 #include <fastotv/types/overlay_url.h>
+
+#include <string>
 
 namespace fastotv {
 

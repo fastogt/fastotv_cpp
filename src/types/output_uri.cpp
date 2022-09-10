@@ -14,7 +14,7 @@
 
 #include <fastotv/types/output_uri.h>
 
-#define HLSSINK_TYPE_FILED "hlssink_type"
+#define HLSSINK_TYPE_FIELD "hlssink_type"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
 #define CHUNK_DURATION_FIELD "chunk_duration"
@@ -24,6 +24,7 @@
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
 #define KVS_FIELD "kvs"
 #define AZURE_FIELD "azure"
+#define GOOGLE_FIELD "google"
 #define WEBRTC_FIELD "webrtc"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 
@@ -42,6 +43,7 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       rtmpsink_type_(),
       kvs_(),
       azure_(),
+      google_(),
       webrtc_() {}
 
 bool OutputUri::IsValid() const {
@@ -142,6 +144,14 @@ void OutputUri::SetAzure(const OutputUri::azure_t& azure) {
   azure_ = azure;
 }
 
+OutputUri::google_t OutputUri::GetGoogle() const {
+  return google_;
+}
+
+void OutputUri::SetGoogle(const google_t& google) {
+  google_ = google;
+}
+
 OutputUri::webrtc_t OutputUri::GetWebRTC() const {
   return webrtc_;
 }
@@ -162,7 +172,7 @@ bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
          srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && azure_ == url.azure_ &&
-         webrtc_ == url.webrtc_;
+         google_ == url.google_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -177,7 +187,7 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
 
   OutputUri url(base->GetID(), base->GetUrl());
   int64_t hlssink2;
-  common::Value* hlssink2_field = hash->Find(HLSSINK_TYPE_FILED);
+  common::Value* hlssink2_field = hash->Find(HLSSINK_TYPE_FIELD);
   if (hlssink2_field && hlssink2_field->GetAsInteger64(&hlssink2)) {
     url.SetHlsSinkType(static_cast<HlsSinkType>(hlssink2));
   }
@@ -237,6 +247,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
     url.SetAzure(AzureProp::Make(azure));
   }
 
+  common::HashValue* google;
+  common::Value* google_field = hash->Find(GOOGLE_FIELD);
+  if (google_field && google_field->GetAsHash(&google)) {
+    url.SetGoogle(GoogleProp::Make(google));
+  }
+
   common::HashValue* webrtc;
   common::Value* webrtc_field = hash->Find(WEBRTC_FIELD);
   if (webrtc_field && webrtc_field->GetAsHash(&webrtc)) {
@@ -260,7 +276,7 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   }
 
   HlsSinkType hlssink2;
-  err = GetEnumField(serialized, HLSSINK_TYPE_FILED, &hlssink2);
+  err = GetEnumField(serialized, HLSSINK_TYPE_FIELD, &hlssink2);
   if (!err) {
     res.SetHlsSinkType(hlssink2);
   }
@@ -325,6 +341,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jgoogle = nullptr;
+  err = GetObjectField(serialized, GOOGLE_FIELD, &jgoogle);
+  if (!err) {
+    GoogleProp prop;
+    err = prop.DeSerialize(jgoogle);
+    if (!err) {
+      res.SetGoogle(prop);
+    }
+  }
+
   json_object* jweb = nullptr;
   err = GetObjectField(serialized, WEBRTC_FIELD, &jweb);
   if (!err) {
@@ -356,7 +382,7 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   }
 
   if (hlssink_type_) {
-    ignore_result(SetIntField(deserialized, HLSSINK_TYPE_FILED, *hlssink_type_));
+    ignore_result(SetIntField(deserialized, HLSSINK_TYPE_FIELD, *hlssink_type_));
   }
   auto ps = GetHttpRoot();
   if (ps) {
@@ -398,6 +424,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     err = azure_->Serialize(&jazure);
     if (!err) {
       ignore_result(SetObjectField(deserialized, AZURE_FIELD, jazure));
+    }
+  }
+  if (google_) {
+    json_object* jgoogle = nullptr;
+    err = google_->Serialize(&jgoogle);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, GOOGLE_FIELD, jgoogle));
     }
   }
   if (webrtc_) {

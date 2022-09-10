@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include <string>
-
 #include <fastotv/commands_info/epg_info.h>
 #include <fastotv/commands_info/stream_base_info.h>
+
+#include <string>
 
 namespace fastotv {
 namespace commands_info {

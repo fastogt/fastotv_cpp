@@ -18,12 +18,11 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/net/types.h>  // for HostAndPort
-
 #include <common/serializer/json_serializer.h>
 #include <common/uri/gurl.h>
+
+#include <string>
 
 namespace fastotv {
 namespace commands_info {

@@ -12,9 +12,8 @@
     along with fastocloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/types/alpha_method.h>
-
 #include <common/sprintf.h>
+#include <fastotv/types/alpha_method.h>
 
 #define METHOD_FIELD "method"
 #define COLOR_FIELD "color"

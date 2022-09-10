@@ -14,15 +14,14 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/serializer/json_serializer.h>
 #include <common/uri/gurl.h>
 #include <common/value.h>
-
 #include <fastotv/types.h>
 #include <fastotv/types/cef.h>
 #include <fastotv/types/wpe.h>
+
+#include <string>
 
 namespace fastotv {
 

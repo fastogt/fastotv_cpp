@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/protocols/json_rpc/json_rpc.h>
+
+#include <string>
 
 namespace fastotv {
 namespace protocol {

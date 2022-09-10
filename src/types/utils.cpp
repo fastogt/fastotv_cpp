@@ -12,9 +12,8 @@
     along with fastocloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fastotv/types/utils.h>
-
 #include <common/serializer/json_serializer.h>
+#include <fastotv/types/utils.h>
 
 #define WIDTH_FIELD "width"
 #define HEIGHT_FIELD "height"

@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/serializer/json_serializer.h>
+
+#include <string>
 
 namespace fastotv {
 namespace commands_info {
