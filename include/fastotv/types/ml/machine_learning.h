@@ -44,14 +44,8 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
   bool GetNeedTracking() const;
   void SetNeedTracking(bool tracking);
 
-  bool GetNeedDump() const;
-  void SetNeedDump(bool dump);
-
   bool GetNeedOverlay() const;
   void SetNeedOverlay(bool overlay);
-
-  int GetClassID() const;
-  void SetClassID(int cid);
 
   static common::Optional<MachineLearning> MakeMachineLearning(common::HashValue* hash);
 
@@ -63,8 +57,6 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
   SupportedBackends backend_;
   model_path_t model_path_;
   bool tracking_;
-  bool dump_;
-  int class_id_;
   bool overlay_;
 };
 
