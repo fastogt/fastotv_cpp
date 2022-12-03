@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <common/file_system/path.h>
 #include <common/serializer/json_serializer.h>
 #include <common/uri/gurl.h>
 #include <common/value.h>
@@ -26,20 +27,46 @@ namespace ml {
 
 enum SupportedBackends { NVIDIA = 0 };
 
+class Model : public common::serializer::JsonSerializer<Model> {
+ public:
+  typedef common::file_system::ascii_file_string_path model_path_t;
+
+  Model();
+  explicit Model(const model_path_t& path);
+
+  model_path_t GetModelPath() const;
+  void SetModelPath(const model_path_t& path);
+
+  bool Equals(const Model& model) const;
+
+  static common::Optional<Model> MakeMachineLearning(common::HashValue* hash);
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+
+ private:
+  model_path_t path_;
+};
+
+inline bool operator==(const Model& lhs, const Model& rhs) {
+  return lhs.Equals(rhs);
+}
+
+typedef common::serializer::JsonSerializerArray<Model> ModelsInfo;
+
 class MachineLearning : public common::serializer::JsonSerializer<MachineLearning> {
  public:
-  typedef common::uri::GURL model_path_t;
-
   MachineLearning();
-  MachineLearning(SupportedBackends backend, const model_path_t& model_path);
+  MachineLearning(SupportedBackends backend, const ModelsInfo& models);
 
   bool Equals(const MachineLearning& learn) const;
 
   SupportedBackends GetBackend() const;
   void SetBackend(SupportedBackends backend);
 
-  model_path_t GetModelPath() const;
-  void SetModelPath(const model_path_t& path);
+  ModelsInfo GetModels() const;
+  void SetModels(const ModelsInfo& path);
 
   bool GetNeedTracking() const;
   void SetNeedTracking(bool tracking);
@@ -55,7 +82,7 @@ class MachineLearning : public common::serializer::JsonSerializer<MachineLearnin
 
  private:
   SupportedBackends backend_;
-  model_path_t model_path_;
+  ModelsInfo models_;
   bool tracking_;
   bool overlay_;
 };
