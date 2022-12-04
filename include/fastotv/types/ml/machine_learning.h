@@ -39,7 +39,7 @@ class Model : public common::serializer::JsonSerializer<Model> {
 
   bool Equals(const Model& model) const;
 
-  static common::Optional<Model> MakeMachineLearning(common::HashValue* hash);
+  static common::Optional<Model> MakeModel(common::HashValue* hash);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

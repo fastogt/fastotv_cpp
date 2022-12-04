@@ -40,7 +40,7 @@ bool Model::Equals(const Model& model) const {
   return model.path_ == path_;
 }
 
-common::Optional<Model> Model::MakeMachineLearning(common::HashValue* hash) {
+common::Optional<Model> Model::MakeModel(common::HashValue* hash) {
   if (!hash) {
     return common::Optional<Model>();
   }
@@ -126,20 +126,22 @@ common::Optional<MachineLearning> MachineLearning::MakeMachineLearning(common::H
   }
   res.SetBackend(static_cast<SupportedBackends>(backend));
 
-  std::string models_str;
-  common::Value* model_path_field = hash->Find(MODELS_FIELD);
-  if (!model_path_field || !model_path_field->GetAsBasicString(&models_str)) {
+  common::Value* models_field = hash->Find(MODELS_FIELD);
+  common::ArrayValue* models_array = nullptr;
+  if (!models_field || !models_field->GetAsList(&models_array)) {
     return common::Optional<MachineLearning>();
   }
 
   ModelsInfo models;
-  common::Error err = models.DeSerializeFromString(models_str);
-  if (err) {
-    return common::Optional<MachineLearning>();
-  }
-
-  if (models.Empty()) {
-    return common::Optional<MachineLearning>();
+  for (size_t i = 0; i < models_array->GetSize(); ++i) {
+    common::Value* url = nullptr;
+    common::HashValue* model_hash = nullptr;
+    if (models_array->Get(i, &url) && url->GetAsHash(&model_hash)) {
+      const auto murl = Model::MakeModel(model_hash);
+      if (murl) {
+        models.Add(*murl);
+      }
+    }
   }
 
   res.SetModels(models);
