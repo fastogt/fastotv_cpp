@@ -25,6 +25,7 @@ namespace commands_info {
 namespace ml {
 
 struct ImageBox {
+  std::string sender;
   int32_t unique_component_id;
   int32_t class_id;
   uint64_t object_id;
@@ -32,7 +33,8 @@ struct ImageBox {
   common::draw::Rect rect;
 
   ImageBox();
-  ImageBox(int32_t unique_component_id,
+  ImageBox(const std::string& sender,
+           int32_t unique_component_id,
            int32_t class_id,
            uint64_t object_id,
            float confidence,

@@ -22,26 +22,28 @@ namespace fastotv {
 namespace commands_info {
 namespace ml {
 
-ImageBox::ImageBox() : unique_component_id(0), class_id(0), object_id(0), confidence(0), rect() {}
+ImageBox::ImageBox() : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), rect() {}
 
-ImageBox::ImageBox(int32_t unique_component_id,
+ImageBox::ImageBox(const std::string& sender,
+                   int32_t unique_component_id,
                    int32_t class_id,
                    uint64_t object_id,
                    float confidence,
                    const common::draw::Rect& rect)
-    : unique_component_id(unique_component_id),
+    : sender(sender),
+      unique_component_id(unique_component_id),
       class_id(class_id),
       object_id(object_id),
       confidence(confidence),
       rect(rect) {}
 
 bool ImageBox::Equals(const ImageBox& box) const {
-  return class_id == box.class_id && confidence == box.confidence && unique_component_id == box.unique_component_id &&
-         object_id == box.object_id && rect == box.rect;
+  return sender == box.sender && class_id == box.class_id && confidence == box.confidence &&
+         unique_component_id == box.unique_component_id && object_id == box.object_id && rect == box.rect;
 }
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
-  return out << "Class id: " << box.class_id << ", Confidence: " << box.confidence
+  return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
              << ", Rect: " << box.rect.ToString();
 }
