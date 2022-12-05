@@ -53,6 +53,27 @@ inline bool operator!=(const ImageBox& x, const ImageBox& y) {
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box);
 
+enum InferDataType { FLOAT = 0, HALF = 1, INT8 = 2, INT32 = 3 };
+
+struct InferLayer {
+  std::string name;
+  InferDataType type;
+  size_t size;
+  void* data;
+
+  bool Equals(const InferLayer& layer) const;
+};
+
+inline bool operator==(const InferLayer& lhs, const InferLayer& rhs) {
+  return lhs.Equals(rhs);
+}
+
+inline bool operator!=(const InferLayer& x, const InferLayer& y) {
+  return !(x == y);
+}
+
+std::ostream& operator<<(std::ostream& out, const InferLayer& box);
+
 }  // namespace ml
 }  // namespace commands_info
 }  // namespace fastotv
