@@ -24,6 +24,8 @@ namespace fastotv {
 namespace commands_info {
 namespace ml {
 
+InferLayer::InferLayer() : name(), type(FLOAT), size(0), data(nullptr) {}
+
 ImageBox::ImageBox() : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), rect(), layers() {}
 
 ImageBox::ImageBox(const std::string& sender,
@@ -56,8 +58,7 @@ std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
   }
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
-             << ", Rect: " << box.rect.ToString() << ", Layers: \n"
-             << str.str();
+             << ", Rect: " << box.rect.ToString() << ", Layers: " << str.str();
 }
 
 bool InferLayer::Equals(const InferLayer& layer) const {

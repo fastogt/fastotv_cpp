@@ -34,6 +34,8 @@ struct InferLayer {
   size_t size;
   void* data;
 
+  InferLayer();
+
   bool Equals(const InferLayer& layer) const;
 };
 
