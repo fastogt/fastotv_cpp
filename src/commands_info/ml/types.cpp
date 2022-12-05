@@ -49,7 +49,10 @@ bool ImageBox::Equals(const ImageBox& box) const {
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
   std::stringstream str;
   for (size_t i = 0; i < box.layers.size(); ++i) {
-    str << "[" << i << "] " << box.layers[i] << "\n";
+    str << "[" << i << "] " << box.layers[i];
+    if (i + 1 < box.layers.size()) {
+      str << ", ";
+    }
   }
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
