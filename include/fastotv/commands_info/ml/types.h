@@ -20,38 +20,11 @@
 
 #include <common/draw/rect.h>
 
+#include <vector>
+
 namespace fastotv {
 namespace commands_info {
 namespace ml {
-
-struct ImageBox {
-  std::string sender;
-  int32_t unique_component_id;
-  int32_t class_id;
-  uint64_t object_id;
-  float confidence;
-  common::draw::Rect rect;
-
-  ImageBox();
-  ImageBox(const std::string& sender,
-           int32_t unique_component_id,
-           int32_t class_id,
-           uint64_t object_id,
-           float confidence,
-           const common::draw::Rect& rect);
-
-  bool Equals(const ImageBox& box) const;
-};
-
-inline bool operator==(const ImageBox& lhs, const ImageBox& rhs) {
-  return lhs.Equals(rhs);
-}
-
-inline bool operator!=(const ImageBox& x, const ImageBox& y) {
-  return !(x == y);
-}
-
-std::ostream& operator<<(std::ostream& out, const ImageBox& box);
 
 enum InferDataType { FLOAT = 0, HALF = 1, INT8 = 2, INT32 = 3 };
 
@@ -73,6 +46,37 @@ inline bool operator!=(const InferLayer& x, const InferLayer& y) {
 }
 
 std::ostream& operator<<(std::ostream& out, const InferLayer& box);
+
+struct ImageBox {
+  std::string sender;
+  int32_t unique_component_id;
+  int32_t class_id;
+  uint64_t object_id;
+  float confidence;
+  common::draw::Rect rect;
+  std::vector<InferLayer> layers;
+
+  ImageBox();
+  ImageBox(const std::string& sender,
+           int32_t unique_component_id,
+           int32_t class_id,
+           uint64_t object_id,
+           float confidence,
+           const common::draw::Rect& rect,
+           const std::vector<InferLayer>& layers);
+
+  bool Equals(const ImageBox& box) const;
+};
+
+inline bool operator==(const ImageBox& lhs, const ImageBox& rhs) {
+  return lhs.Equals(rhs);
+}
+
+inline bool operator!=(const ImageBox& x, const ImageBox& y) {
+  return !(x == y);
+}
+
+std::ostream& operator<<(std::ostream& out, const ImageBox& box);
 
 }  // namespace ml
 }  // namespace commands_info
