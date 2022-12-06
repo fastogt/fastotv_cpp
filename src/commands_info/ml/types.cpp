@@ -124,7 +124,7 @@ std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
   }
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
-             << ", Rect: " << box.rect.ToString() << ", Layers: " << str.str();
+             << ", Rect: " << box.rect.ToString() << ", Layers: " << "[" << str.str() << "]";
 }
 
 }  // namespace ml
