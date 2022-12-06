@@ -51,20 +51,22 @@ json_object* make_json_from_layer(const InferLayer& layer) {
 
   json_object* jdata = json_object_new_array();
   void* raw = layer.data.get();
-  for (uint64_t i = 0; i < layer.size; ++i) {
-    json_object* jvalue = nullptr;
-    InferLayer::fp32_t* data = static_cast<InferLayer::fp32_t*>(raw);
-    auto place = data + i;
-    if (layer.type == FLOAT) {
-      jvalue = json_object_new_double(*place);
-    } else if (layer.type == HALF) {
-      jvalue = json_object_new_double(*place);
-    } else if (layer.type == INT8) {
-      jvalue = json_object_new_int(*place);
-    } else {
-      jvalue = json_object_new_int(*place);
+  if (raw) {
+    for (uint64_t i = 0; i < layer.size; ++i) {
+      json_object* jvalue = nullptr;
+      InferLayer::fp32_t* data = static_cast<InferLayer::fp32_t*>(raw);
+      auto place = data + i;
+      if (layer.type == FLOAT) {
+        jvalue = json_object_new_double(*place);
+      } else if (layer.type == HALF) {
+        jvalue = json_object_new_double(*place);
+      } else if (layer.type == INT8) {
+        jvalue = json_object_new_int(*place);
+      } else {
+        jvalue = json_object_new_int(*place);
+      }
+      json_object_array_add(jdata, jvalue);
     }
-    json_object_array_add(jdata, jvalue);
   }
   ignore_result(common::serializer::json_set_array(jlayer, LAYER_DATA_FIELD, jdata));
   return jlayer;
