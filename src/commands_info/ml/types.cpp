@@ -33,7 +33,7 @@ InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType typ
   layer.size = size;
   layer.data = AllocateData(size);
   for (uint64_t i = 0; i < size; ++i) {
-    if (layer.type == FLOAT) {
+    /*if (layer.type == FLOAT) {
       auto place = static_cast<fp32_t*>(data) + i;
       layer.data[i] = *place;
     } else if (layer.type == HALF) {
@@ -45,7 +45,7 @@ InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType typ
     } else {
       auto place = static_cast<i32_t*>(data) + i;
       layer.data[i] = *place;
-    }
+    }*/
   }
   return layer;
 }
