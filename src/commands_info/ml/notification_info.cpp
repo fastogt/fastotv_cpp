@@ -83,22 +83,24 @@ InferLayer make_layer_from_json(json_object* obj) {
   json_object* jdata = nullptr;
   size_t len = 0;
   common::Error err = common::serializer::json_get_array(obj, LAYERS_FIELD, &jdata, &len);
-  if (!err && len != 0) {
-    auto allocated = InferLayer::AllocateData(len);
-    for (size_t i = 0; i < len; ++i) {
-      json_object* jval = json_object_array_get_idx(jdata, i);
-      auto start = static_cast<InferLayer::fp32_t*>(allocated.get());
-      if (layer.type == FLOAT) {
-        *(start + i) = json_object_get_double(jval);
-      } else if (layer.type == HALF) {
-        *(start + i) = json_object_get_double(jval);
-      } else if (layer.type == INT8) {
-        *(start + i) = json_object_get_int(jval);
-      } else {
-        *(start + i) = json_object_get_int(jval);
+  if (!err) {
+    if (len != 0) {
+      auto allocated = InferLayer::AllocateData(len);
+      for (size_t i = 0; i < len; ++i) {
+        json_object* jval = json_object_array_get_idx(jdata, i);
+        auto start = static_cast<InferLayer::fp32_t*>(allocated.get());
+        if (layer.type == FLOAT) {
+          *(start + i) = json_object_get_double(jval);
+        } else if (layer.type == HALF) {
+          *(start + i) = json_object_get_double(jval);
+        } else if (layer.type == INT8) {
+          *(start + i) = json_object_get_int(jval);
+        } else {
+          *(start + i) = json_object_get_int(jval);
+        }
       }
+      layer.data = allocated;
     }
-    layer.data = allocated;
   }
   return layer;
 }

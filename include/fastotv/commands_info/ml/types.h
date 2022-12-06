@@ -19,6 +19,7 @@
 #pragma once
 
 #include <common/draw/rect.h>
+#include <common/optional.h>
 #include <memory>
 #include <vector>
 
@@ -41,7 +42,10 @@ struct InferLayer {
 
   InferLayer();
 
-  static InferLayer MakeInferLayer(const std::string& name, InferDataType type, uint64_t size, void* data);
+  static common::Optional<InferLayer> MakeInferLayer(const std::string& name,
+                                                     InferDataType type,
+                                                     void* data,
+                                                     uint64_t size);
   static std::shared_ptr<fp32_t[]> AllocateData(uint64_t size);
 
   bool Equals(const InferLayer& layer) const;

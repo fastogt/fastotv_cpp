@@ -26,26 +26,35 @@ namespace ml {
 
 InferLayer::InferLayer() : name(), type(FLOAT), size(0), data() {}
 
-InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType type, uint64_t size, void* data) {
+common::Optional<InferLayer> InferLayer::MakeInferLayer(const std::string& name,
+                                                        InferDataType type,
+                                                        void* data,
+                                                        uint64_t size) {
+  if (!data) {
+    return common::Optional<InferLayer>();
+  }
+
   InferLayer layer;
   layer.name = name;
   layer.type = type;
   layer.size = size;
-  layer.data = AllocateData(size);
-  for (uint64_t i = 0; i < size; ++i) {
-    /*if (layer.type == FLOAT) {
-      auto place = static_cast<fp32_t*>(data) + i;
-      layer.data[i] = *place;
-    } else if (layer.type == HALF) {
-      auto place = static_cast<fp16_t*>(data) + i;
-      layer.data[i] = *place;
-    } else if (layer.type == INT8) {
-      auto place = static_cast<i8_t*>(data) + i;
-      layer.data[i] = *place;
-    } else {
-      auto place = static_cast<i32_t*>(data) + i;
-      layer.data[i] = *place;
-    }*/
+  if (size != 0) {
+    layer.data = AllocateData(size);
+    for (uint64_t i = 0; i < size; ++i) {
+      if (layer.type == FLOAT) {
+        auto place = static_cast<fp32_t*>(data) + i;
+        layer.data[i] = *place;
+      } else if (layer.type == HALF) {
+        auto place = static_cast<fp16_t*>(data) + i;
+        layer.data[i] = *place;
+      } else if (layer.type == INT8) {
+        auto place = static_cast<i8_t*>(data) + i;
+        layer.data[i] = *place;
+      } else {
+        auto place = static_cast<i32_t*>(data) + i;
+        layer.data[i] = *place;
+      }
+    }
   }
   return layer;
 }
