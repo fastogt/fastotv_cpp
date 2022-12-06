@@ -35,16 +35,16 @@ InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType typ
   for (uint64_t i = 0; i < size; ++i) {
     if (layer.type == FLOAT) {
       auto place = static_cast<fp32_t*>(data) + i;
-      layer.data[i] = static_cast<fp32_t>(*place);
+      layer.data[i] = *place;
     } else if (layer.type == HALF) {
       auto place = static_cast<fp16_t*>(data) + i;
-      layer.data[i] = static_cast<fp16_t>(*place);
+      layer.data[i] = *place;
     } else if (layer.type == INT8) {
       auto place = static_cast<i8_t*>(data) + i;
-      layer.data[i] = static_cast<i8_t>(*place);
+      layer.data[i] = *place;
     } else {
       auto place = static_cast<i32_t*>(data) + i;
-      layer.data[i] = static_cast<i32_t>(*place);
+      layer.data[i] = *place;
     }
   }
   return layer;
