@@ -51,7 +51,7 @@ InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType typ
 }
 
 std::shared_ptr<InferLayer::fp32_t[]> InferLayer::AllocateData(uint64_t size) {
-  return std::shared_ptr<fp32_t[]>(new fp32_t[size]);
+  return std::shared_ptr<fp32_t[]>(new fp32_t[size]());
 }
 
 bool InferLayer::Equals(const InferLayer& layer) const {
