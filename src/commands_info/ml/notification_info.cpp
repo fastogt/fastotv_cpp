@@ -83,7 +83,7 @@ InferLayer make_layer_from_json(json_object* obj) {
   json_object* jdata = nullptr;
   size_t len = 0;
   common::Error err = common::serializer::json_get_array(obj, LAYERS_FIELD, &jdata, &len);
-  if (!err) {
+  if (!err && len != 0) {
     auto allocated = InferLayer::AllocateData(len);
     for (size_t i = 0; i < len; ++i) {
       json_object* jval = json_object_array_get_idx(jdata, i);
