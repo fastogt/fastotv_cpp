@@ -37,12 +37,12 @@ struct InferLayer {
   std::string name;
   InferDataType type;
   uint64_t size;
-  std::shared_ptr<fp32_t> data;
+  std::shared_ptr<fp32_t[]> data;
 
   InferLayer();
 
   static InferLayer MakeInferLayer(const std::string& name, InferDataType type, uint64_t size, void* data);
-  static std::shared_ptr<fp32_t> AllocateData(uint64_t size);
+  static std::shared_ptr<fp32_t[]> AllocateData(uint64_t size);
 
   bool Equals(const InferLayer& layer) const;
 };
