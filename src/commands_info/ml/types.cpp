@@ -24,7 +24,50 @@ namespace fastotv {
 namespace commands_info {
 namespace ml {
 
-InferLayer::InferLayer() : name(), type(FLOAT), size(0), data(nullptr) {}
+InferLayer::InferLayer() : name(), type(FLOAT), size(0), data() {}
+
+InferLayer InferLayer::MakeInferLayer(const std::string& name, InferDataType type, uint64_t size, void* data) {
+  InferLayer layer;
+  layer.name = name;
+  layer.type = type;
+  layer.size = size;
+  layer.data = AllocateData(size);
+  memcpy(layer.data.get(), data, size);
+  return layer;
+}
+
+std::shared_ptr<InferLayer::fp32_t> InferLayer::AllocateData(uint64_t size) {
+  return std::shared_ptr<fp32_t>(new fp32_t[size]);
+}
+
+bool InferLayer::Equals(const InferLayer& layer) const {
+  return name == layer.name && type == layer.type && size == layer.size && data == layer.data;
+}
+
+std::ostream& operator<<(std::ostream& out, const InferLayer& layer) {
+  InferLayer::fp32_t* data = static_cast<InferLayer::fp32_t*>(layer.data.get());
+  std::stringstream str;
+  if (data) {
+    for (uint64_t i = 0; i < layer.size; ++i) {
+      auto place = data + i;
+      if (layer.type == FLOAT) {
+        str << static_cast<InferLayer::fp32_t>(*place);
+      } else if (layer.type == HALF) {
+        str << static_cast<InferLayer::fp16_t>(*place);
+      } else if (layer.type == INT8) {
+        str << static_cast<InferLayer::i8_t>(*place);
+      } else {
+        str << static_cast<InferLayer::i32_t>(*place);
+      }
+
+      if (i + 1 < layer.size) {
+        str << ", ";
+      }
+    }
+  }
+  return out << "Name: " << layer.name << ", size: " << layer.size << ", type: " << layer.type << ", data: "
+             << "[" << str.str() << "]";
+}
 
 ImageBox::ImageBox() : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), rect(), layers() {}
 
@@ -59,15 +102,6 @@ std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
              << ", Rect: " << box.rect.ToString() << ", Layers: " << str.str();
-}
-
-bool InferLayer::Equals(const InferLayer& layer) const {
-  return name == layer.name && type == layer.type && size == layer.size && memcmp(data, layer.data, size) == 0;
-}
-
-std::ostream& operator<<(std::ostream& out, const InferLayer& layer) {
-  return out << "Name: " << layer.name << ", size: " << layer.size << ", type: " << layer.type
-             << ", data: " << layer.data;
 }
 
 }  // namespace ml

@@ -30,24 +30,96 @@
 #define WIDTH_FIELD "width"
 #define HEIGHT_FIELD "height"
 
+#define LAYERS_FIELD "layers"
+
+#define LAYER_NAME_FIELD "name"
+#define LAYER_SIZE_FIELD "size"
+#define LAYER_TYPE_FIELD "type"
+#define LAYER_DATA_FIELD "data"
+
 namespace fastotv {
 namespace commands_info {
 namespace ml {
 
 namespace {
+json_object* make_json_from_layer(const InferLayer& layer) {
+  json_object* jlayer = json_object_new_object();
+
+  ignore_result(common::serializer::json_set_string(jlayer, LAYER_NAME_FIELD, layer.name));
+  ignore_result(common::serializer::json_set_uint64(jlayer, LAYER_SIZE_FIELD, layer.size));
+  ignore_result(common::serializer::json_set_int(jlayer, LAYER_TYPE_FIELD, layer.type));
+
+  json_object* jdata = json_object_new_array();
+  void* raw = layer.data.get();
+  for (uint64_t i = 0; i < layer.size; ++i) {
+    json_object* jvalue = nullptr;
+    InferLayer::fp32_t* data = static_cast<InferLayer::fp32_t*>(raw);
+    auto place = data + i;
+    if (layer.type == FLOAT) {
+      jvalue = json_object_new_double(*place);
+    } else if (layer.type == HALF) {
+      jvalue = json_object_new_double(*place);
+    } else if (layer.type == INT8) {
+      jvalue = json_object_new_int(*place);
+    } else {
+      jvalue = json_object_new_int(*place);
+    }
+    json_object_array_add(jdata, jvalue);
+  }
+  ignore_result(common::serializer::json_set_array(jlayer, LAYER_DATA_FIELD, jdata));
+  return jlayer;
+}
+
+InferLayer make_layer_from_json(json_object* obj) {
+  InferLayer layer;
+  ignore_result(common::serializer::json_get_string(obj, LAYER_NAME_FIELD, &layer.name));
+  ignore_result(common::serializer::json_get_uint64(obj, LAYER_SIZE_FIELD, &layer.size));
+  int type = 0;
+  ignore_result(common::serializer::json_get_int(obj, LAYER_TYPE_FIELD, &type));
+  layer.type = static_cast<InferDataType>(type);
+
+  json_object* jdata = nullptr;
+  size_t len = 0;
+  common::Error err = common::serializer::json_get_array(obj, LAYERS_FIELD, &jdata, &len);
+  if (!err) {
+    auto allocated = InferLayer::AllocateData(len);
+    for (size_t i = 0; i < len; ++i) {
+      json_object* jval = json_object_array_get_idx(jdata, i);
+      auto start = static_cast<InferLayer::fp32_t*>(allocated.get());
+      if (layer.type == FLOAT) {
+        *(start + i) = json_object_get_double(jval);
+      } else if (layer.type == HALF) {
+        *(start + i) = json_object_get_double(jval);
+      } else if (layer.type == INT8) {
+        *(start + i) = json_object_get_int(jval);
+      } else {
+        *(start + i) = json_object_get_int(jval);
+      }
+    }
+    layer.data = allocated;
+  }
+  return layer;
+}
+
 json_object* make_json_from_image(const ImageBox& box) {
   json_object* jimage = json_object_new_object();
 
   ignore_result(common::serializer::json_set_int(jimage, UNIQUE_COMPONENT_ID_FIELD, box.unique_component_id));
   ignore_result(common::serializer::json_set_int(jimage, CLASS_ID_FIELD, box.class_id));
   ignore_result(common::serializer::json_set_double(jimage, CONFIDENCE_FIELD, box.confidence));
-  ignore_result(common::serializer::json_set_int64(jimage, OBJECT_ID_FIELD, box.object_id));
+  ignore_result(common::serializer::json_set_uint64(jimage, OBJECT_ID_FIELD, box.object_id));
   const auto point = box.rect.origin();
   ignore_result(common::serializer::json_set_int(jimage, LEFT_FIELD, point.x()));
   ignore_result(common::serializer::json_set_int(jimage, TOP_FIELD, point.y()));
   const auto size = box.rect.size();
   ignore_result(common::serializer::json_set_int(jimage, WIDTH_FIELD, size.width()));
   ignore_result(common::serializer::json_set_int(jimage, HEIGHT_FIELD, size.height()));
+
+  json_object* jlayers = json_object_new_array();
+  for (size_t i = 0; i < box.layers.size(); ++i) {
+    json_object_array_add(jlayers, make_json_from_layer(box.layers[i]));
+  }
+  ignore_result(common::serializer::json_set_array(jimage, LAYERS_FIELD, jlayers));
 
   return jimage;
 }
@@ -81,6 +153,16 @@ ImageBox make_image_from_json(json_object* obj) {
   err = common::serializer::json_get_int(obj, HEIGHT_FIELD, &height);
   if (!err) {
     image.rect.set_height(height);
+  }
+
+  json_object* jlayers = nullptr;
+  size_t len = 0;
+  err = common::serializer::json_get_array(obj, LAYERS_FIELD, &jlayers, &len);
+  if (!err) {
+    for (size_t i = 0; i < len; ++i) {
+      json_object* jlayer = json_object_array_get_idx(jlayers, i);
+      image.layers.push_back(make_layer_from_json(jlayer));
+    }
   }
 
   return image;
@@ -117,7 +199,7 @@ void NotificationInfo::ClearImages() {
 
 common::Error NotificationInfo::SerializeFields(json_object* deserialized) const {
   json_object* jimages = json_object_new_array_ext(images_.size());
-  for (const auto image : images_) {
+  for (const auto& image : images_) {
     json_object* jimage = make_json_from_image(image);
     json_object_array_add(jimages, jimage);
   }

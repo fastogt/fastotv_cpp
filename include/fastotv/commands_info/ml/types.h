@@ -19,7 +19,7 @@
 #pragma once
 
 #include <common/draw/rect.h>
-
+#include <memory>
 #include <vector>
 
 namespace fastotv {
@@ -29,12 +29,20 @@ namespace ml {
 enum InferDataType { FLOAT = 0, HALF = 1, INT8 = 2, INT32 = 3 };
 
 struct InferLayer {
+  typedef float_t fp32_t;
+  typedef float_t fp16_t;
+  typedef int8_t i8_t;
+  typedef int32_t i32_t;
+
   std::string name;
   InferDataType type;
-  size_t size;
-  void* data;
+  uint64_t size;
+  std::shared_ptr<fp32_t> data;
 
   InferLayer();
+
+  static InferLayer MakeInferLayer(const std::string& name, InferDataType type, uint64_t size, void* data);
+  static std::shared_ptr<fp32_t> AllocateData(uint64_t size);
 
   bool Equals(const InferLayer& layer) const;
 };
