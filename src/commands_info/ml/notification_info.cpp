@@ -24,6 +24,7 @@
 #define UNIQUE_COMPONENT_ID_FIELD "unique_component_id"
 #define CLASS_ID_FIELD "class_id"
 #define CONFIDENCE_FIELD "confidence"
+#define TIMESTAMP_FIELD "timestamp"
 #define OBJECT_ID_FIELD "object_id"
 #define LEFT_FIELD "left"
 #define TOP_FIELD "top"
@@ -111,6 +112,7 @@ json_object* make_json_from_image(const ImageBox& box) {
   ignore_result(common::serializer::json_set_int(jimage, UNIQUE_COMPONENT_ID_FIELD, box.unique_component_id));
   ignore_result(common::serializer::json_set_int(jimage, CLASS_ID_FIELD, box.class_id));
   ignore_result(common::serializer::json_set_double(jimage, CONFIDENCE_FIELD, box.confidence));
+  ignore_result(common::serializer::json_set_int(jimage, TIMESTAMP_FIELD, box.timestamp));
   ignore_result(common::serializer::json_set_uint64(jimage, OBJECT_ID_FIELD, box.object_id));
   const auto point = box.rect.origin();
   ignore_result(common::serializer::json_set_int(jimage, LEFT_FIELD, point.x()));
@@ -134,6 +136,7 @@ ImageBox make_image_from_json(json_object* obj) {
   ignore_result(common::serializer::json_get_int(obj, CLASS_ID_FIELD, &image.class_id));
   ignore_result(common::serializer::json_get_float(obj, CONFIDENCE_FIELD, &image.confidence));
   ignore_result(common::serializer::json_get_uint64(obj, OBJECT_ID_FIELD, &image.object_id));
+  ignore_result(common::serializer::json_get_int64(obj, TIMESTAMP_FIELD, &image.timestamp));
 
   int x;
   common::Error err = common::serializer::json_get_int(obj, LEFT_FIELD, &x);

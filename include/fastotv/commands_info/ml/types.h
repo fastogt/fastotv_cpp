@@ -20,6 +20,7 @@
 
 #include <common/draw/rect.h>
 #include <common/optional.h>
+#include <fastotv/types.h>
 #include <memory>
 #include <vector>
 
@@ -67,6 +68,7 @@ struct ImageBox {
   int32_t class_id;
   uint64_t object_id;
   float confidence;
+  timestamp_t timestamp;
   common::draw::Rect rect;
   std::vector<InferLayer> layers;
 
@@ -76,6 +78,7 @@ struct ImageBox {
            int32_t class_id,
            uint64_t object_id,
            float confidence,
+           timestamp_t ts,
            const common::draw::Rect& rect,
            const std::vector<InferLayer>& layers);
 

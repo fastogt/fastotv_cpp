@@ -92,13 +92,15 @@ std::ostream& operator<<(std::ostream& out, const InferLayer& layer) {
              << "[" << str.str() << "]";
 }
 
-ImageBox::ImageBox() : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), rect(), layers() {}
+ImageBox::ImageBox()
+    : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), timestamp(0), rect(), layers() {}
 
 ImageBox::ImageBox(const std::string& sender,
                    int32_t unique_component_id,
                    int32_t class_id,
                    uint64_t object_id,
                    float confidence,
+                   timestamp_t ts,
                    const common::draw::Rect& rect,
                    const std::vector<InferLayer>& layers)
     : sender(sender),
@@ -106,12 +108,14 @@ ImageBox::ImageBox(const std::string& sender,
       class_id(class_id),
       object_id(object_id),
       confidence(confidence),
+      timestamp(ts),
       rect(rect),
       layers(layers) {}
 
 bool ImageBox::Equals(const ImageBox& box) const {
-  return sender == box.sender && class_id == box.class_id && confidence == box.confidence &&
-         unique_component_id == box.unique_component_id && object_id == box.object_id && rect == box.rect;
+  return sender == box.sender && class_id == box.class_id && timestamp == box.timestamp &&
+         confidence == box.confidence && unique_component_id == box.unique_component_id && object_id == box.object_id &&
+         rect == box.rect;
 }
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
@@ -123,8 +127,8 @@ std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
     }
   }
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
-             << ", Unique component id: " << box.unique_component_id << ", Object id: " << box.object_id
-             << ", Rect: " << box.rect.ToString() << ", Layers: "
+             << ", Timestamp: " << box.timestamp << ", Unique component id: " << box.unique_component_id
+             << ", Object id: " << box.object_id << ", Rect: " << box.rect.ToString() << ", Layers: "
              << "[" << str.str() << "]";
 }
 
