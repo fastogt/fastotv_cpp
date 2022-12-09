@@ -21,6 +21,7 @@
 #define ID_FIELD "id"
 #define IMAGES_FIELD "images"
 
+#define SENDER_FIELD "sender"
 #define UNIQUE_COMPONENT_ID_FIELD "unique_component_id"
 #define CLASS_ID_FIELD "class_id"
 #define CONFIDENCE_FIELD "confidence"
@@ -109,6 +110,7 @@ InferLayer make_layer_from_json(json_object* obj) {
 json_object* make_json_from_image(const ImageBox& box) {
   json_object* jimage = json_object_new_object();
 
+  ignore_result(common::serializer::json_set_string(jimage, SENDER_FIELD, box.sender));
   ignore_result(common::serializer::json_set_int(jimage, UNIQUE_COMPONENT_ID_FIELD, box.unique_component_id));
   ignore_result(common::serializer::json_set_int(jimage, CLASS_ID_FIELD, box.class_id));
   ignore_result(common::serializer::json_set_double(jimage, CONFIDENCE_FIELD, box.confidence));
@@ -132,6 +134,7 @@ json_object* make_json_from_image(const ImageBox& box) {
 
 ImageBox make_image_from_json(json_object* obj) {
   ImageBox image;
+  ignore_result(common::serializer::json_get_string(obj, SENDER_FIELD, &image.sender));
   ignore_result(common::serializer::json_get_int(obj, UNIQUE_COMPONENT_ID_FIELD, &image.unique_component_id));
   ignore_result(common::serializer::json_get_int(obj, CLASS_ID_FIELD, &image.class_id));
   ignore_result(common::serializer::json_get_float(obj, CONFIDENCE_FIELD, &image.confidence));
