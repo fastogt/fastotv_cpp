@@ -92,6 +92,16 @@ std::ostream& operator<<(std::ostream& out, const InferLayer& layer) {
              << "[" << str.str() << "]";
 }
 
+LabelInfo::LabelInfo() : label(), label_id(0), result_class_id(0) {}
+
+bool LabelInfo::Equals(const LabelInfo& lb) const {
+  return lb.label == label && lb.label_id == label_id && lb.result_class_id == result_class_id;
+}
+
+std::ostream& operator<<(std::ostream& out, const LabelInfo& lb) {
+  return out << "Name: " << lb.label << ", Label id: " << lb.label_id << ", Class id: " << lb.result_class_id;
+}
+
 ImageBox::ImageBox()
     : sender(), unique_component_id(0), class_id(0), object_id(0), confidence(0), timestamp(0), rect(), layers() {}
 
@@ -115,21 +125,31 @@ ImageBox::ImageBox(const std::string& sender,
 bool ImageBox::Equals(const ImageBox& box) const {
   return sender == box.sender && class_id == box.class_id && timestamp == box.timestamp &&
          confidence == box.confidence && unique_component_id == box.unique_component_id && object_id == box.object_id &&
-         rect == box.rect;
+         rect == box.rect && layers == box.layers && labels == box.labels;
 }
 
 std::ostream& operator<<(std::ostream& out, const ImageBox& box) {
-  std::stringstream str;
+  std::stringstream layers;
   for (size_t i = 0; i < box.layers.size(); ++i) {
-    str << "[" << i << "] " << box.layers[i];
+    layers << "[" << i << "] " << box.layers[i];
     if (i + 1 < box.layers.size()) {
-      str << ", ";
+      layers << ", ";
+    }
+  }
+
+  std::stringstream labels;
+  for (size_t i = 0; i < box.labels.size(); ++i) {
+    labels << "[" << i << "] " << box.labels[i];
+    if (i + 1 < box.labels.size()) {
+      labels << ", ";
     }
   }
   return out << "Sender: " << box.sender << ", Class id: " << box.class_id << ", Confidence: " << box.confidence
              << ", Timestamp: " << box.timestamp << ", Unique component id: " << box.unique_component_id
              << ", Object id: " << box.object_id << ", Rect: " << box.rect.ToString() << ", Layers: "
-             << "[" << str.str() << "]";
+             << "[" << layers.str() << "]"
+             << ", Labels: "
+             << "[" << labels.str() << "]";
 }
 
 }  // namespace ml

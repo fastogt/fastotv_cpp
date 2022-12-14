@@ -33,17 +33,42 @@
 #define HEIGHT_FIELD "height"
 
 #define LAYERS_FIELD "layers"
+#define LABELS_FIELD "labels"
 
 #define LAYER_NAME_FIELD "name"
 #define LAYER_SIZE_FIELD "size"
 #define LAYER_TYPE_FIELD "type"
 #define LAYER_DATA_FIELD "data"
 
+#define LABEL_LABEL_FIELD "label"
+#define LABEL_CLASS_ID_FIELD "class_id"
+#define LABEL_ID_FIELD "id"
+
 namespace fastotv {
 namespace commands_info {
 namespace ml {
 
 namespace {
+json_object* make_json_from_label(const LabelInfo& label) {
+  json_object* jlabel = json_object_new_object();
+  ignore_result(common::serializer::json_set_string(jlabel, LABEL_LABEL_FIELD, label.label));
+  ignore_result(common::serializer::json_set_int(jlabel, LABEL_CLASS_ID_FIELD, label.result_class_id));
+  ignore_result(common::serializer::json_set_int(jlabel, LABEL_ID_FIELD, label.label_id));
+  return jlabel;
+}
+
+LabelInfo make_label_from_json(json_object* obj) {
+  LabelInfo label;
+  ignore_result(common::serializer::json_get_string(obj, LABEL_LABEL_FIELD, &label.label));
+  int result_class_id = 0;
+  ignore_result(common::serializer::json_get_int(obj, LABEL_CLASS_ID_FIELD, &result_class_id));
+  label.result_class_id = result_class_id;
+  int label_id = 0;
+  ignore_result(common::serializer::json_get_int(obj, LABEL_ID_FIELD, &label_id));
+  label.label_id = label_id;
+  return label;
+}
+
 json_object* make_json_from_layer(const InferLayer& layer) {
   json_object* jlayer = json_object_new_object();
 
@@ -129,6 +154,12 @@ json_object* make_json_from_image(const ImageBox& box) {
   }
   ignore_result(common::serializer::json_set_array(jimage, LAYERS_FIELD, jlayers));
 
+  json_object* jlabels = json_object_new_array();
+  for (size_t i = 0; i < box.labels.size(); ++i) {
+    json_object_array_add(jlabels, make_json_from_label(box.labels[i]));
+  }
+  ignore_result(common::serializer::json_set_array(jimage, LABELS_FIELD, jlabels));
+
   return jimage;
 }
 
@@ -172,6 +203,15 @@ ImageBox make_image_from_json(json_object* obj) {
     for (size_t i = 0; i < len; ++i) {
       json_object* jlayer = json_object_array_get_idx(jlayers, i);
       image.layers.push_back(make_layer_from_json(jlayer));
+    }
+  }
+
+  json_object* jlabels = nullptr;
+  err = common::serializer::json_get_array(obj, LABELS_FIELD, &jlabels, &len);
+  if (!err) {
+    for (size_t i = 0; i < len; ++i) {
+      json_object* jlabel = json_object_array_get_idx(jlabels, i);
+      image.labels.push_back(make_label_from_json(jlabel));
     }
   }
 

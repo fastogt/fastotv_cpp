@@ -62,6 +62,26 @@ inline bool operator!=(const InferLayer& x, const InferLayer& y) {
 
 std::ostream& operator<<(std::ostream& out, const InferLayer& box);
 
+struct LabelInfo {
+  std::string label;
+  uint32_t label_id;
+  uint32_t result_class_id;
+
+  LabelInfo();
+
+  bool Equals(const LabelInfo& lb) const;
+};
+
+inline bool operator==(const LabelInfo& lhs, const LabelInfo& rhs) {
+  return lhs.Equals(rhs);
+}
+
+inline bool operator!=(const LabelInfo& x, const LabelInfo& y) {
+  return !(x == y);
+}
+
+std::ostream& operator<<(std::ostream& out, const LabelInfo& box);
+
 struct ImageBox {
   std::string sender;
   int32_t unique_component_id;
@@ -71,6 +91,7 @@ struct ImageBox {
   timestamp_t timestamp;
   common::draw::Rect rect;
   std::vector<InferLayer> layers;
+  std::vector<LabelInfo> labels;
 
   ImageBox();
   ImageBox(const std::string& sender,
