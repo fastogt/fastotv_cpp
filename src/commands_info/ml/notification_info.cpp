@@ -42,6 +42,7 @@
 
 #define LABEL_LABEL_FIELD "label"
 #define LABEL_CLASS_ID_FIELD "class_id"
+#define LABEL_PROBABILITY_FIELD "probability"
 #define LABEL_ID_FIELD "id"
 
 namespace fastotv {
@@ -52,20 +53,22 @@ namespace {
 json_object* make_json_from_label(const LabelInfo& label) {
   json_object* jlabel = json_object_new_object();
   ignore_result(common::serializer::json_set_string(jlabel, LABEL_LABEL_FIELD, label.label));
-  ignore_result(common::serializer::json_set_int(jlabel, LABEL_CLASS_ID_FIELD, label.result_class_id));
+  ignore_result(common::serializer::json_set_int(jlabel, LABEL_CLASS_ID_FIELD, label.class_id));
   ignore_result(common::serializer::json_set_int(jlabel, LABEL_ID_FIELD, label.label_id));
+  ignore_result(common::serializer::json_set_float(jlabel, LABEL_PROBABILITY_FIELD, label.probability));
   return jlabel;
 }
 
 LabelInfo make_label_from_json(json_object* obj) {
   LabelInfo label;
   ignore_result(common::serializer::json_get_string(obj, LABEL_LABEL_FIELD, &label.label));
-  int result_class_id = 0;
-  ignore_result(common::serializer::json_get_int(obj, LABEL_CLASS_ID_FIELD, &result_class_id));
-  label.result_class_id = result_class_id;
+  int class_id = 0;
+  ignore_result(common::serializer::json_get_int(obj, LABEL_CLASS_ID_FIELD, &class_id));
+  label.class_id = class_id;
   int label_id = 0;
   ignore_result(common::serializer::json_get_int(obj, LABEL_ID_FIELD, &label_id));
   label.label_id = label_id;
+  ignore_result(common::serializer::json_get_float(obj, LABEL_ID_FIELD, &label.probability));
   return label;
 }
 

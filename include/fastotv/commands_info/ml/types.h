@@ -65,7 +65,8 @@ std::ostream& operator<<(std::ostream& out, const InferLayer& box);
 struct LabelInfo {
   std::string label;
   uint32_t label_id;
-  uint32_t result_class_id;
+  uint32_t class_id;
+  float probability;
 
   LabelInfo();
 

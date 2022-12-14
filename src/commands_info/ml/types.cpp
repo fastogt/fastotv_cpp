@@ -92,14 +92,15 @@ std::ostream& operator<<(std::ostream& out, const InferLayer& layer) {
              << "[" << str.str() << "]";
 }
 
-LabelInfo::LabelInfo() : label(), label_id(0), result_class_id(0) {}
+LabelInfo::LabelInfo() : label(), label_id(0), class_id(0), probability(0) {}
 
 bool LabelInfo::Equals(const LabelInfo& lb) const {
-  return lb.label == label && lb.label_id == label_id && lb.result_class_id == result_class_id;
+  return lb.label == label && lb.label_id == label_id && lb.class_id == class_id && lb.probability == probability;
 }
 
 std::ostream& operator<<(std::ostream& out, const LabelInfo& lb) {
-  return out << "Name: " << lb.label << ", Label id: " << lb.label_id << ", Class id: " << lb.result_class_id;
+  return out << "Name: " << lb.label << ", Label id: " << lb.label_id << ", Class id: " << lb.class_id
+             << ", Probability: " << lb.probability;
 }
 
 ImageBox::ImageBox()
