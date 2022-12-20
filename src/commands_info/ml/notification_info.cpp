@@ -68,7 +68,7 @@ LabelInfo make_label_from_json(json_object* obj) {
   int label_id = 0;
   ignore_result(common::serializer::json_get_int(obj, LABEL_ID_FIELD, &label_id));
   label.label_id = label_id;
-  ignore_result(common::serializer::json_get_float(obj, LABEL_ID_FIELD, &label.probability));
+  ignore_result(common::serializer::json_get_float(obj, LABEL_PROBABILITY_FIELD, &label.probability));
   return label;
 }
 
