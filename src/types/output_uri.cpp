@@ -24,6 +24,7 @@
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
 #define KVS_FIELD "kvs"
 #define AZURE_FIELD "azure"
+#define NDI_FIELD "ndi"
 #define GOOGLE_FIELD "google"
 #define WEBRTC_FIELD "webrtc"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
@@ -43,6 +44,7 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       rtmpsink_type_(),
       kvs_(),
       azure_(),
+      ndi_(),
       google_(),
       webrtc_() {}
 
@@ -136,6 +138,14 @@ void OutputUri::SetKVS(const kvs_t& kvs) {
   kvs_ = kvs;
 }
 
+OutputUri::ndi_t OutputUri::GetNDI() const {
+  return ndi_;
+}
+
+void OutputUri::SetNDI(const ndi_t& ndi) {
+  ndi_ = ndi;
+}
+
 OutputUri::azure_t OutputUri::GetAzure() const {
   return azure_;
 }
@@ -172,7 +182,7 @@ bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
          srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && azure_ == url.azure_ &&
-         google_ == url.google_ && webrtc_ == url.webrtc_;
+         ndi_ == url.ndi_ && google_ == url.google_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -245,6 +255,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* azure_field = hash->Find(AZURE_FIELD);
   if (azure_field && azure_field->GetAsHash(&azure)) {
     url.SetAzure(AzureProp::Make(azure));
+  }
+
+  common::HashValue* ndi;
+  common::Value* ndi_field = hash->Find(NDI_FIELD);
+  if (ndi_field && ndi_field->GetAsHash(&ndi)) {
+    url.SetNDI(NDIProp::Make(ndi));
   }
 
   common::HashValue* google;
@@ -341,6 +357,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jndi = nullptr;
+  err = GetObjectField(serialized, NDI_FIELD, &jndi);
+  if (!err) {
+    NDIProp prop;
+    err = prop.DeSerialize(jndi);
+    if (!err) {
+      res.SetNDI(prop);
+    }
+  }
+
   json_object* jgoogle = nullptr;
   err = GetObjectField(serialized, GOOGLE_FIELD, &jgoogle);
   if (!err) {
@@ -424,6 +450,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     err = azure_->Serialize(&jazure);
     if (!err) {
       ignore_result(SetObjectField(deserialized, AZURE_FIELD, jazure));
+    }
+  }
+  if (ndi_) {
+    json_object* jndi = nullptr;
+    err = ndi_->Serialize(&jndi);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, NDI_FIELD, jndi));
     }
   }
   if (google_) {

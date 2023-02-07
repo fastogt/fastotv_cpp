@@ -43,6 +43,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/webrtc_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/alpha_method.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/kvs_prop.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/ndi_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/azure_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/google_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_url.h
@@ -105,6 +106,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/azure_prop.cpp
   ${CMAKE_SOURCE_DIR}/src/types/google_prop.cpp
   ${CMAKE_SOURCE_DIR}/src/types/kvs_prop.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/ndi_prop.cpp
   ${CMAKE_SOURCE_DIR}/src/types/alpha_method.cpp
   ${CMAKE_SOURCE_DIR}/src/types/input_url.cpp
   ${CMAKE_SOURCE_DIR}/src/types/overlay_url.cpp

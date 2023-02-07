@@ -18,6 +18,7 @@
 #include <fastotv/types/azure_prop.h>
 #include <fastotv/types/google_prop.h>
 #include <fastotv/types/kvs_prop.h>
+#include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
@@ -41,6 +42,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
   typedef common::Optional<KVSProp> kvs_t;
+  typedef common::Optional<NDIProp> ndi_t;
   typedef common::Optional<AzureProp> azure_t;
   typedef common::Optional<GoogleProp> google_t;
   // webrtc
@@ -85,6 +87,9 @@ class OutputUri : public OutputUrl {
   kvs_t GetKVS() const;
   void SetKVS(const kvs_t& kvs);
 
+  ndi_t GetNDI() const;
+  void SetNDI(const ndi_t& ndi);
+
   azure_t GetAzure() const;
   void SetAzure(const azure_t& azure);
 
@@ -118,6 +123,8 @@ class OutputUri : public OutputUrl {
   kvs_t kvs_;
   //
   azure_t azure_;
+  //
+  ndi_t ndi_;
   //
   google_t google_;
   // webrtc
