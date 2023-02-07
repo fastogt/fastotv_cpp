@@ -15,6 +15,7 @@
 #pragma once
 
 #include <fastotv/types/input_url.h>
+#include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/programme.h>
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
@@ -45,6 +46,8 @@ class InputUri : public InputUrl {
   typedef common::Optional<Programme> programme_t;
   // rtmp
   typedef common::Optional<RtmpSrcType> rtmpsrc_type_t;
+  // ndi
+  typedef common::Optional<NDIProp> ndi_t;
   // webrtc
   typedef common::Optional<WebRTCProp> webrtc_t;
 
@@ -86,6 +89,9 @@ class InputUri : public InputUrl {
   webrtc_t GetWebRTC() const;
   void SetWebRTC(const webrtc_t& web);
 
+  ndi_t GetNDI() const;
+  void SetNDI(const ndi_t& ndi);
+
   bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -116,6 +122,8 @@ class InputUri : public InputUrl {
   rtmpsrc_type_t rtmpsrc_type_;
   // webrtc
   webrtc_t webrtc_;
+  // ndi
+  ndi_t ndi_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {

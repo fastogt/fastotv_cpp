@@ -25,6 +25,7 @@
 #define PROGRAMME_FIELD "programme"
 #define RTMPSRC_TYPE_FILED "rtmpsrc_type"
 #define WEBRTC_FIELD "webrtc"
+#define NDI_FIELD "ndi"
 
 namespace fastotv {
 
@@ -42,7 +43,8 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       srt_key_(),
       programme_(),
       rtmpsrc_type_(),
-      webrtc_() {}
+      webrtc_(),
+      ndi_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -136,11 +138,19 @@ void InputUri::SetWebRTC(const webrtc_t& web) {
   webrtc_ = web;
 }
 
+InputUri::ndi_t InputUri::GetNDI() const {
+  return ndi_;
+}
+
+void InputUri::SetNDI(const ndi_t& ndi) {
+  ndi_ = ndi;
+}
+
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && wpe_ == url.wpe_ && program_number_ == url.program_number_ &&
          iface_ == url.iface_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ &&
-         programme_ == url.programme_ && webrtc_ == url.webrtc_;
+         programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -219,6 +229,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* webrtc_field = hash->Find(WEBRTC_FIELD);
   if (webrtc_field && webrtc_field->GetAsHash(&webrtc)) {
     url.SetWebRTC(WebRTCProp::Make(webrtc));
+  }
+
+  common::HashValue* ndi;
+  common::Value* ndi_field = hash->Find(NDI_FIELD);
+  if (ndi_field && ndi_field->GetAsHash(&ndi)) {
+    url.SetNDI(NDIProp::Make(ndi));
   }
   return common::Optional<InputUri>(url);
 }
@@ -313,6 +329,16 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     err = prop.DeSerialize(jweb);
     if (!err) {
       res.SetWebRTC(prop);
+    }
+  }
+
+  json_object* jndi = nullptr;
+  err = GetObjectField(serialized, NDI_FIELD, &jweb);
+  if (!err) {
+    NDIProp prop;
+    err = prop.DeSerialize(jndi);
+    if (!err) {
+      res.SetNDI(prop);
     }
   }
 
