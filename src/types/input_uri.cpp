@@ -423,6 +423,13 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
       ignore_result(SetObjectField(deserialized, WEBRTC_FIELD, jweb));
     }
   }
+  if (ndi_) {
+    json_object* jndi = nullptr;
+    err = ndi_->Serialize(&jndi);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, NDI_FIELD, jndi));
+    }
+  }
   return common::Error();
 }
 
