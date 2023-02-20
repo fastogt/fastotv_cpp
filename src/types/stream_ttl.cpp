@@ -54,8 +54,8 @@ common::Optional<StreamTTL> StreamTTL::Make(common::HashValue* json) {
 
   StreamTTL res;
   common::Value* pass_field = json->Find(TTL_FIELD);
-  ttl_t ttl;
-  if (!pass_field || !pass_field->GetAsTime(&ttl)) {
+  int64_t ttl;
+  if (!pass_field || !pass_field->GetAsInteger64(&ttl)) {
     return common::Optional<StreamTTL>();
   }
   res.ttl_ = ttl;
