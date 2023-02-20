@@ -15,7 +15,7 @@
 #include <fastotv/types/stream_ttl.h>
 
 #define TTL_FIELD "ttl"
-#define PHOENIX_FIELD "pbkeylen"
+#define PHOENIX_FIELD "phoenix"
 
 namespace fastotv {
 
