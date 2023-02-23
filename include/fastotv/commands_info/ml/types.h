@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2022 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2023 FastoGT. All right reserved.
 
     This file is part of FastoTV.
 
@@ -22,6 +22,7 @@
 #include <common/optional.h>
 #include <fastotv/types.h>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace fastotv {

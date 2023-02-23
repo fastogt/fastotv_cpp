@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2022 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2023 FastoGT. All right reserved.
     This file is part of fastocloud.
     fastocloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,6 +13,8 @@
 */
 
 #pragma once
+
+#include <string>
 
 #include <common/file_system/path.h>
 #include <fastotv/types/azure_prop.h>
