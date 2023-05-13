@@ -26,6 +26,7 @@
 #define RTMPSRC_TYPE_FILED "rtmpsrc_type"
 #define WEBRTC_FIELD "webrtc"
 #define NDI_FIELD "ndi"
+#define KEYS_FIELD "keys"
 
 namespace fastotv {
 
@@ -36,6 +37,7 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       user_agent_(),
       stream_url_(),
       http_proxy_url_(),
+      keys_(),
       wpe_(),
       program_number_(),
       iface_(),
@@ -64,6 +66,14 @@ InputUri::stream_url_t InputUri::GetPyFastoStream() const {
 
 void InputUri::SetPyFastoStream(fastotv::InputUri::stream_url_t stream) {
   stream_url_ = stream;
+}
+
+InputUri::keys_t InputUri::GetKeys() const {
+  return keys_;
+}
+
+void InputUri::SetKeys(keys_t keys) {
+  keys_ = keys;
 }
 
 InputUri::http_proxy_url_t InputUri::GetHttpProxyUrl() const {
@@ -148,9 +158,9 @@ void InputUri::SetNDI(const ndi_t& ndi) {
 
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
-         http_proxy_url_ == url.http_proxy_url_ && wpe_ == url.wpe_ && program_number_ == url.program_number_ &&
-         iface_ == url.iface_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ &&
-         programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_;
+         http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ &&
+         program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
+         srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -180,6 +190,23 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* http_proxy_field = hash->Find(PROXY_FIELD);
   if (http_proxy_field && http_proxy_field->GetAsBasicString(&http_url_str)) {
     url.SetHttpProxyUrl(url_t(http_url_str));
+  }
+
+  common::Value* keys_field = hash->Find(KEYS_FIELD);
+  common::ArrayValue* keys_array = nullptr;
+  if (keys_field && keys_field->GetAsList(&keys_array)) {
+    DrmKeys keys;
+    for (size_t i = 0; i < keys_array->GetSize(); ++i) {
+      common::Value* key = nullptr;
+      common::HashValue* key_hash = nullptr;
+      if (keys_array->Get(i, &key) && key->GetAsHash(&key_hash)) {
+        const auto murl = DrmKey::Make(key_hash);
+        if (murl) {
+          keys.Add(*murl);
+        }
+      }
+    }
+    url.SetKeys(keys);
   }
 
   common::HashValue* wpe;
@@ -306,6 +333,17 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
+  size_t len;
+  json_object* jkeys;
+  err = GetArrayField(serialized, KEYS_FIELD, &jkeys, &len);
+  if (!err) {
+    DrmKeys keys;
+    err = keys.DeSerialize(jkeys);
+    if (!err) {
+      res.SetKeys(keys);
+    }
+  }
+
   json_object* jwpe = nullptr;
   err = GetObjectField(serialized, WPE_FIELD, &jwpe);
   if (!err) {
@@ -402,6 +440,15 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
   if (hurl) {
     const std::string proxy = hurl->spec();
     ignore_result(SetStringField(deserialized, PROXY_FIELD, proxy));
+  }
+
+  const auto keys = GetKeys();
+  if (keys) {
+    json_object* jkeys = nullptr;
+    err = keys->Serialize(&jkeys);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, KEYS_FIELD, jkeys));
+    }
   }
 
   const auto wpe = GetWPE();

@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <fastotv/types/drm_key.h>
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/programme.h>
@@ -31,11 +32,12 @@ class InputUri : public InputUrl {
   typedef InputUrl base_class;
   enum UserAgent : int { GSTREAMER = 0, VLC = 1, FFMPEG = 2, WINK = 3, CHROME = 4, MOZILLA = 5, SAFARI = 6 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
-  typedef common::Optional<UserAgent> user_agent_t;
   enum RtmpSrcType { RTMPSRC = 0, RTMP2SRC = 1 };
   // optionals
+  typedef common::Optional<UserAgent> user_agent_t;
   typedef common::Optional<common::uri::GURL> http_proxy_url_t;
   typedef common::Optional<PyFastoStream> stream_url_t;
+  typedef common::Optional<DrmKeys> keys_t;
   typedef common::Optional<Wpe> wpe_t;
   // udp
   typedef common::Optional<int> program_number_t;
@@ -61,6 +63,9 @@ class InputUri : public InputUrl {
 
   stream_url_t GetPyFastoStream() const;
   void SetPyFastoStream(stream_url_t stream);
+
+  keys_t GetKeys() const;
+  void SetKeys(keys_t keys);
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
@@ -105,6 +110,7 @@ class InputUri : public InputUrl {
   user_agent_t user_agent_;
   stream_url_t stream_url_;
   http_proxy_url_t http_proxy_url_;
+  keys_t keys_;
   wpe_t wpe_;
 
   // udp
