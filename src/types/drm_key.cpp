@@ -14,8 +14,8 @@
 
 #include <fastotv/types/drm_key.h>
 
-#define KID_FIELD "key"
-#define KEY_FIELD "kid"
+#define KID_FIELD "kid"
+#define KEY_FIELD "key"
 
 namespace fastotv {
 
