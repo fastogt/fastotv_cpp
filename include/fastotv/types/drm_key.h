@@ -32,6 +32,7 @@ class DrmKey : public common::serializer::JsonSerializer<DrmKey> {
 
   bool IsValid() const;
 
+  common::Optional<common::char_buffer_t> GetKey() const;
   hexed_kid_t GetHexedKid() const;
   void SetHexedKid(const hexed_kid_t& kid);
 

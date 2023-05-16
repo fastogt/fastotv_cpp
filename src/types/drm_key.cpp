@@ -14,6 +14,8 @@
 
 #include <fastotv/types/drm_key.h>
 
+#include <common/convert2string.h>
+
 #define KID_FIELD "kid"
 #define KEY_FIELD "key"
 
@@ -41,6 +43,17 @@ void DrmKey::SetHexedKey(const hexed_key_t& key) {
 
 DrmKey::hexed_key_t DrmKey::GetHexedKey() const {
   return key_;
+}
+
+common::Optional<common::char_buffer_t> DrmKey::GetKey() const {
+  common::char_buffer_t decoded;
+  bool is_ok = common::utils::hex::decode(key_, &decoded);
+  DCHECK(is_ok);
+  if (is_ok) {
+    return decoded;
+  }
+
+  return common::Optional<common::char_buffer_t>();
 }
 
 bool DrmKey::Equals(const DrmKey& key) const {
