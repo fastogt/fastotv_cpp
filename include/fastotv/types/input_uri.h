@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <fastotv/types/cef.h>
 #include <fastotv/types/drm_key.h>
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/ndi_prop.h>
@@ -39,6 +40,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<PyFastoStream> stream_url_t;
   typedef common::Optional<DrmKeys> keys_t;
   typedef common::Optional<Wpe> wpe_t;
+  typedef common::Optional<Cef> cef_t;
   // udp
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
@@ -72,6 +74,9 @@ class InputUri : public InputUrl {
 
   wpe_t GetWPE() const;
   void SetWPE(const wpe_t& wpe);
+
+  cef_t GetCef() const;
+  void SetCef(const cef_t& cef);
 
   program_number_t GetProgramNumber() const;
   void SetProgramNumber(program_number_t id);
@@ -112,6 +117,7 @@ class InputUri : public InputUrl {
   http_proxy_url_t http_proxy_url_;
   keys_t keys_;
   wpe_t wpe_;
+  cef_t cef_;
 
   // udp
   program_number_t program_number_;

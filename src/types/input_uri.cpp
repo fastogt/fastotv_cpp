@@ -18,6 +18,7 @@
 #define PYFASTOSTREAM_URL_FIELD "stream_link"
 #define PROXY_FIELD "proxy"
 #define WPE_FIELD "wpe"
+#define CEF_FIELD "cef"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
@@ -39,6 +40,7 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       http_proxy_url_(),
       keys_(),
       wpe_(),
+      cef_(),
       program_number_(),
       iface_(),
       srt_mode_(),
@@ -90,6 +92,14 @@ InputUri::wpe_t InputUri::GetWPE() const {
 
 void InputUri::SetWPE(const wpe_t& wpe) {
   wpe_ = wpe;
+}
+
+InputUri::cef_t InputUri::GetCef() const {
+  return cef_;
+}
+
+void InputUri::SetCef(const cef_t& cef) {
+  cef_ = cef;
 }
 
 InputUri::program_number_t InputUri::GetProgramNumber() const {
@@ -158,7 +168,7 @@ void InputUri::SetNDI(const ndi_t& ndi) {
 
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
-         http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ &&
+         http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
          program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
          srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_;
 }
@@ -214,6 +224,13 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   if (wpe_field && wpe_field->GetAsHash(&wpe)) {
     auto wp = Wpe::Make(wpe);
     url.SetWPE(wp);
+  }
+
+  common::HashValue* cef;
+  common::Value* cef_field = hash->Find(CEF_FIELD);
+  if (cef_field && cef_field->GetAsHash(&cef)) {
+    auto wp = Cef::Make(cef);
+    url.SetCef(wp);
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
@@ -354,6 +371,16 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     }
   }
 
+  json_object* jcef = nullptr;
+  err = GetObjectField(serialized, CEF_FIELD, &jcef);
+  if (!err) {
+    Cef cef;
+    err = cef.DeSerialize(jcef);
+    if (!err) {
+      res.SetCef(cef);
+    }
+  }
+
   RtmpSrcType rtmpsrc;
   err = GetEnumField(serialized, RTMPSRC_TYPE_FILED, &rtmpsrc);
   if (!err) {
@@ -457,6 +484,15 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     err = wpe->Serialize(&jwpe);
     if (!err) {
       ignore_result(SetObjectField(deserialized, WPE_FIELD, jwpe));
+    }
+  }
+
+  const auto cef = GetCef();
+  if (cef) {
+    json_object* jcef = nullptr;
+    err = cef->Serialize(&jcef);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, CEF_FIELD, jcef));
     }
   }
 
