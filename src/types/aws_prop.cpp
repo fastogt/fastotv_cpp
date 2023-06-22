@@ -19,61 +19,60 @@
 
 namespace fastotv {
 
-AWSProp::AWSProp() : AWSProp(std::string(), std::string()) {}
+S3Prop::S3Prop() : S3Prop(std::string(), std::string()) {}
 
-AWSProp::AWSProp(const access_key_t& access_key, const secret_key_t& secret_key)
+S3Prop::S3Prop(const access_key_t& access_key, const secret_key_t& secret_key)
     : access_key_(access_key), secret_key_(secret_key) {}
 
-bool AWSProp::IsValid() const {
+bool S3Prop::IsValid() const {
   return !access_key_.empty() && !secret_key_.empty();
 }
 
-AWSProp::access_key_t AWSProp::GetAccessKey() const {
+S3Prop::access_key_t S3Prop::GetAccessKey() const {
   return access_key_;
 }
 
-void AWSProp::SetAccessKey(const access_key_t& key) {
+void S3Prop::SetAccessKey(const access_key_t& key) {
   access_key_ = key;
 }
 
-AWSProp::secret_key_t AWSProp::GetSecretKey() const {
+S3Prop::secret_key_t S3Prop::GetSecretKey() const {
   return secret_key_;
 }
 
-void AWSProp::SetSecretKey(const secret_key_t& key) {
+void S3Prop::SetSecretKey(const secret_key_t& key) {
   secret_key_ = key;
 }
 
-bool AWSProp::Equals(const AWSProp& key) const {
+bool S3Prop::Equals(const S3Prop& key) const {
   return access_key_ == key.access_key_ && secret_key_ == key.secret_key_;
 }
 
-common::Optional<AWSProp> AWSProp::Make(common::HashValue* json) {
+common::Optional<S3Prop> S3Prop::Make(common::HashValue* json) {
   if (!json) {
-    return common::Optional<AWSProp>();
+    return common::Optional<S3Prop>();
   }
 
-  AWSProp res;
+  S3Prop res;
   common::Value* acc_field = json->Find(ACCESS_KEY_FIELD);
   std::string acc;
   if (!acc_field || !acc_field->GetAsBasicString(&acc)) {
-    return common::Optional<AWSProp>();
+    return common::Optional<S3Prop>();
   }
   res.access_key_ = acc;
 
   common::Value* sec_field = json->Find(SECRET_KEY_FIELD);
   std::string sec;
   if (!sec_field || !sec_field->GetAsBasicString(&sec)) {
-    return common::Optional<AWSProp>();
+    return common::Optional<S3Prop>();
   }
   res.secret_key_ = sec;
-
 
   return res;
 }
 
-common::Error AWSProp::DoDeSerialize(json_object* serialized) {
-  AWSProp res;
+common::Error S3Prop::DoDeSerialize(json_object* serialized) {
+  S3Prop res;
   std::string acc;
   common::Error err = GetStringField(serialized, ACCESS_KEY_FIELD, &acc);
   if (err) {
@@ -92,7 +91,7 @@ common::Error AWSProp::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-common::Error AWSProp::SerializeFields(json_object* out) const {
+common::Error S3Prop::SerializeFields(json_object* out) const {
   if (!IsValid()) {
     return common::make_error_inval();
   }

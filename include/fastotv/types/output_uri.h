@@ -17,10 +17,10 @@
 #include <string>
 
 #include <common/file_system/path.h>
+#include <fastotv/types/aws_prop.h>
 #include <fastotv/types/azure_prop.h>
 #include <fastotv/types/google_prop.h>
 #include <fastotv/types/kvs_prop.h>
-#include <fastotv/types/aws_prop.h>
 #include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
@@ -45,7 +45,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
   typedef common::Optional<KVSProp> kvs_t;
-  typedef common::Optional<AWSProp> aws_t;
+  typedef common::Optional<S3Prop> aws_t;
   typedef common::Optional<NDIProp> ndi_t;
   typedef common::Optional<AzureProp> azure_t;
   typedef common::Optional<GoogleProp> google_t;

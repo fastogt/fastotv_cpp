@@ -27,6 +27,7 @@
 #define RTMPSRC_TYPE_FILED "rtmpsrc_type"
 #define WEBRTC_FIELD "webrtc"
 #define NDI_FIELD "ndi"
+#define AWS_FIELD "aws"
 #define KEYS_FIELD "keys"
 
 namespace fastotv {
@@ -48,7 +49,8 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       programme_(),
       rtmpsrc_type_(),
       webrtc_(),
-      ndi_() {}
+      ndi_(),
+      aws_() {}
 
 bool InputUri::IsValid() const {
   return base_class::IsValid();
@@ -166,11 +168,20 @@ void InputUri::SetNDI(const ndi_t& ndi) {
   ndi_ = ndi;
 }
 
+InputUri::aws_t InputUri::GetAWS() const {
+  return aws_;
+}
+
+void InputUri::SetAWS(const aws_t& aws) {
+  aws_ = aws;
+}
+
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
          program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
-         srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_;
+         srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
+         aws_ == url.aws_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -279,6 +290,11 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* ndi_field = hash->Find(NDI_FIELD);
   if (ndi_field && ndi_field->GetAsHash(&ndi)) {
     url.SetNDI(NDIProp::Make(ndi));
+  }
+  common::HashValue* aws;
+  common::Value* aws_field = hash->Find(AWS_FIELD);
+  if (aws_field && aws_field->GetAsHash(&aws)) {
+    url.SetAWS(S3Prop::Make(aws));
   }
   return common::Optional<InputUri>(url);
 }
@@ -398,12 +414,22 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jndi = nullptr;
-  err = GetObjectField(serialized, NDI_FIELD, &jweb);
+  err = GetObjectField(serialized, NDI_FIELD, &jndi);
   if (!err) {
     NDIProp prop;
     err = prop.DeSerialize(jndi);
     if (!err) {
       res.SetNDI(prop);
+    }
+  }
+
+  json_object* jaws = nullptr;
+  err = GetObjectField(serialized, AWS_FIELD, &jaws);
+  if (!err) {
+    S3Prop prop;
+    err = prop.DeSerialize(jaws);
+    if (!err) {
+      res.SetAWS(prop);
     }
   }
 
@@ -511,6 +537,13 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     err = ndi_->Serialize(&jndi);
     if (!err) {
       ignore_result(SetObjectField(deserialized, NDI_FIELD, jndi));
+    }
+  }
+  if (aws_) {
+    json_object* jaws = nullptr;
+    err = aws_->Serialize(&jaws);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, AWS_FIELD, jaws));
     }
   }
   return common::Error();

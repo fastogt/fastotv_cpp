@@ -264,7 +264,7 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::HashValue* aws;
   common::Value* aws_field = hash->Find(AWS_FIELD);
   if (aws_field && aws_field->GetAsHash(&aws)) {
-    url.SetAWS(AWSProp::Make(aws));
+    url.SetAWS(S3Prop::Make(aws));
   }
 
   common::HashValue* azure;
@@ -356,7 +356,7 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   json_object* jaws = nullptr;
   err = GetObjectField(serialized, AWS_FIELD, &jaws);
   if (!err) {
-    AWSProp prop;
+    S3Prop prop;
     err = prop.DeSerialize(jaws);
     if (!err) {
       res.SetAWS(prop);

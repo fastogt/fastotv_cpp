@@ -21,14 +21,14 @@
 
 namespace fastotv {
 
-class AWSProp : public common::serializer::JsonSerializer<AWSProp> {
+class S3Prop : public common::serializer::JsonSerializer<S3Prop> {
  public:
-  typedef JsonSerializer<AWSProp> base_class;
+  typedef JsonSerializer<S3Prop> base_class;
   typedef std::string access_key_t;
   typedef std::string secret_key_t;
 
-  AWSProp();
-  explicit AWSProp(const access_key_t& access_key, const secret_key_t& secret_key);
+  S3Prop();
+  explicit S3Prop(const access_key_t& access_key, const secret_key_t& secret_key);
 
   bool IsValid() const;
 
@@ -38,9 +38,9 @@ class AWSProp : public common::serializer::JsonSerializer<AWSProp> {
   secret_key_t GetSecretKey() const;
   void SetSecretKey(const secret_key_t& key);
 
-  bool Equals(const AWSProp& key) const;
+  bool Equals(const S3Prop& key) const;
 
-  static common::Optional<AWSProp> Make(common::HashValue* json);
+  static common::Optional<S3Prop> Make(common::HashValue* json);
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -51,11 +51,11 @@ class AWSProp : public common::serializer::JsonSerializer<AWSProp> {
   secret_key_t secret_key_;
 };
 
-inline bool operator==(const AWSProp& left, const AWSProp& right) {
+inline bool operator==(const S3Prop& left, const S3Prop& right) {
   return left.Equals(right);
 }
 
-inline bool operator!=(const AWSProp& x, const AWSProp& y) {
+inline bool operator!=(const S3Prop& x, const S3Prop& y) {
   return !(x == y);
 }
 

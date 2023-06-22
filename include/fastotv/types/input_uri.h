@@ -23,6 +23,7 @@
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
 #include <fastotv/types/wpe.h>
+#include <fastotv/types/aws_prop.h>
 
 #include <string>
 
@@ -52,6 +53,8 @@ class InputUri : public InputUrl {
   typedef common::Optional<RtmpSrcType> rtmpsrc_type_t;
   // ndi
   typedef common::Optional<NDIProp> ndi_t;
+  // aws
+  typedef common::Optional<S3Prop> aws_t;
   // webrtc
   typedef common::Optional<WebRTCProp> webrtc_t;
 
@@ -102,6 +105,9 @@ class InputUri : public InputUrl {
   ndi_t GetNDI() const;
   void SetNDI(const ndi_t& ndi);
 
+  aws_t GetAWS() const;
+  void SetAWS(const aws_t& aws);
+
   bool Equals(const InputUri& url) const;
 
   static common::Optional<InputUri> Make(common::HashValue* hash);
@@ -136,6 +142,8 @@ class InputUri : public InputUrl {
   webrtc_t webrtc_;
   // ndi
   ndi_t ndi_;
+  // aws
+  aws_t aws_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {
