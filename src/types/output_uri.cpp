@@ -23,6 +23,7 @@
 #define SRT_KEY_FIELD "srt_key"
 #define RTMPSINK_TYPE_FILED "rtmpsink_type"
 #define KVS_FIELD "kvs"
+#define AWS_FIELD "aws"
 #define AZURE_FIELD "azure"
 #define NDI_FIELD "ndi"
 #define GOOGLE_FIELD "google"
@@ -43,6 +44,7 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       srt_key_(),
       rtmpsink_type_(),
       kvs_(),
+      aws_(),
       azure_(),
       ndi_(),
       google_(),
@@ -138,6 +140,14 @@ void OutputUri::SetKVS(const kvs_t& kvs) {
   kvs_ = kvs;
 }
 
+OutputUri::aws_t OutputUri::GetAWS() const {
+  return aws_;
+}
+
+void OutputUri::SetAWS(const aws_t& aws) {
+  aws_ = aws;
+}
+
 OutputUri::ndi_t OutputUri::GetNDI() const {
   return ndi_;
 }
@@ -181,8 +191,8 @@ void OutputUri::SetMulticastIface(multicast_iface_t iface) {
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && azure_ == url.azure_ &&
-         ndi_ == url.ndi_ && google_ == url.google_ && webrtc_ == url.webrtc_;
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && aws_ == url.aws_ &&
+         azure_ == url.azure_ && ndi_ == url.ndi_ && google_ == url.google_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -249,6 +259,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* kvs_field = hash->Find(KVS_FIELD);
   if (kvs_field && kvs_field->GetAsHash(&kvs)) {
     url.SetKVS(KVSProp::Make(kvs));
+  }
+
+  common::HashValue* aws;
+  common::Value* aws_field = hash->Find(AWS_FIELD);
+  if (aws_field && aws_field->GetAsHash(&aws)) {
+    url.SetAWS(AWSProp::Make(aws));
   }
 
   common::HashValue* azure;
@@ -335,6 +351,16 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   err = GetEnumField(serialized, RTMPSINK_TYPE_FILED, &rtmpsink);
   if (!err) {
     res.SetRtmpSinkType(rtmpsink);
+  }
+
+  json_object* jaws = nullptr;
+  err = GetObjectField(serialized, AWS_FIELD, &jaws);
+  if (!err) {
+    AWSProp prop;
+    err = prop.DeSerialize(jaws);
+    if (!err) {
+      res.SetAWS(prop);
+    }
   }
 
   json_object* jkvs = nullptr;
@@ -443,6 +469,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
     err = kvs_->Serialize(&jkvs);
     if (!err) {
       ignore_result(SetObjectField(deserialized, KVS_FIELD, jkvs));
+    }
+  }
+  if (aws_) {
+    json_object* jaws = nullptr;
+    err = aws_->Serialize(&jaws);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, AWS_FIELD, jaws));
     }
   }
   if (azure_) {

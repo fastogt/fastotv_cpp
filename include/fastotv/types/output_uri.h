@@ -20,6 +20,7 @@
 #include <fastotv/types/azure_prop.h>
 #include <fastotv/types/google_prop.h>
 #include <fastotv/types/kvs_prop.h>
+#include <fastotv/types/aws_prop.h>
 #include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
@@ -44,6 +45,7 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<RtmpSinkType> rtmp_type_t;
   typedef common::Optional<KVSProp> kvs_t;
+  typedef common::Optional<AWSProp> aws_t;
   typedef common::Optional<NDIProp> ndi_t;
   typedef common::Optional<AzureProp> azure_t;
   typedef common::Optional<GoogleProp> google_t;
@@ -89,6 +91,9 @@ class OutputUri : public OutputUrl {
   kvs_t GetKVS() const;
   void SetKVS(const kvs_t& kvs);
 
+  aws_t GetAWS() const;
+  void SetAWS(const aws_t& aws);
+
   ndi_t GetNDI() const;
   void SetNDI(const ndi_t& ndi);
 
@@ -123,6 +128,8 @@ class OutputUri : public OutputUrl {
   rtmp_type_t rtmpsink_type_;
   //
   kvs_t kvs_;
+  //
+  aws_t aws_;
   //
   azure_t azure_;
   //
