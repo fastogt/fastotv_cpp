@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <fastotv/types/aws_prop.h>
 #include <fastotv/types/cef.h>
 #include <fastotv/types/drm_key.h>
 #include <fastotv/types/input_url.h>
@@ -23,7 +24,6 @@
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
 #include <fastotv/types/wpe.h>
-#include <fastotv/types/aws_prop.h>
 
 #include <string>
 
