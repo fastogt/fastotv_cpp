@@ -40,6 +40,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/pyfastostream.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/srt_key.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/drm_key.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/login_and_password.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/stream_ttl.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/webrtc_prop.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/alpha_method.h
@@ -104,6 +105,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/pyfastostream.cpp
   ${CMAKE_SOURCE_DIR}/src/types/srt_key.cpp
   ${CMAKE_SOURCE_DIR}/src/types/drm_key.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/login_and_password.cpp
   ${CMAKE_SOURCE_DIR}/src/types/stream_ttl.cpp
   ${CMAKE_SOURCE_DIR}/src/types/webrtc_prop.cpp
   ${CMAKE_SOURCE_DIR}/src/types/azure_prop.cpp

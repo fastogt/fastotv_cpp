@@ -18,6 +18,7 @@
 #include <common/uri/gurl.h>
 #include <common/value.h>
 #include <fastotv/types.h>
+#include <fastotv/types/login_and_password.h>
 
 #include <string>
 
@@ -32,7 +33,10 @@ class PyFastoStream : public common::serializer::JsonSerializer<PyFastoStream> {
   typedef common::Optional<common::uri::GURL> https_proxy_t;
 
   PyFastoStream();
-  explicit PyFastoStream(const http_proxy_t& http, const http_proxy_t& https, QualityPrefer prefer);
+  explicit PyFastoStream(const http_proxy_t& http,
+                         const http_proxy_t& https,
+                         QualityPrefer prefer,
+                         const common::Optional<LoginAndPassword>& wwe = common::Optional<LoginAndPassword>());
 
   bool IsValid() const;
 
@@ -44,6 +48,9 @@ class PyFastoStream : public common::serializer::JsonSerializer<PyFastoStream> {
 
   QualityPrefer GetPrefer() const;
   void SetPrefer(QualityPrefer prefer);
+
+  common::Optional<LoginAndPassword> GetWWE() const;
+  void SetWWE(const LoginAndPassword& wwe);
 
   bool Equals(const PyFastoStream& url) const;
 
@@ -57,6 +64,7 @@ class PyFastoStream : public common::serializer::JsonSerializer<PyFastoStream> {
   common::Optional<common::uri::GURL> http_proxy_;
   common::Optional<common::uri::GURL> https_proxy_;
   QualityPrefer prefer_;
+  common::Optional<LoginAndPassword> wwe_;
 };
 
 inline bool operator==(const PyFastoStream& left, const PyFastoStream& right) {

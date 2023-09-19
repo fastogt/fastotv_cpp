@@ -17,13 +17,17 @@
 #define HTTP_FIELD "http_proxy"
 #define HTTPS_FIELD "https_proxy"
 #define PREFER_FIELD "prefer"
+#define WWE_FIELD "wwe"
 
 namespace fastotv {
 
-PyFastoStream::PyFastoStream() : http_proxy_(), https_proxy_(), prefer_(QP_BOTH) {}
+PyFastoStream::PyFastoStream() : http_proxy_(), https_proxy_(), prefer_(QP_BOTH), wwe_() {}
 
-PyFastoStream::PyFastoStream(const http_proxy_t& http, const http_proxy_t& https, fastotv::QualityPrefer prefer)
-    : http_proxy_(http), https_proxy_(https), prefer_(prefer) {}
+PyFastoStream::PyFastoStream(const http_proxy_t& http,
+                             const http_proxy_t& https,
+                             fastotv::QualityPrefer prefer,
+                             const common::Optional<LoginAndPassword>& wwe)
+    : http_proxy_(http), https_proxy_(https), prefer_(prefer), wwe_(wwe) {}
 
 bool PyFastoStream::IsValid() const {
   return true;
@@ -53,8 +57,16 @@ void PyFastoStream::SetPrefer(QualityPrefer prefer) {
   prefer_ = prefer;
 }
 
+common::Optional<LoginAndPassword> PyFastoStream::GetWWE() const {
+  return wwe_;
+}
+
+void PyFastoStream::SetWWE(const LoginAndPassword& wwe) {
+  wwe_ = wwe;
+}
+
 bool PyFastoStream::Equals(const PyFastoStream& url) const {
-  return http_proxy_ == url.http_proxy_ && https_proxy_ == url.https_proxy_;
+  return http_proxy_ == url.http_proxy_ && https_proxy_ == url.https_proxy_ && wwe_ == url.wwe_;
 }
 
 common::Optional<PyFastoStream> PyFastoStream::Make(common::HashValue* json) {
@@ -78,6 +90,12 @@ common::Optional<PyFastoStream> PyFastoStream::Make(common::HashValue* json) {
   common::Value* prefer_field = json->Find(PREFER_FIELD);
   if (prefer_field && prefer_field->GetAsInteger64(&prefer)) {
     res.prefer_ = static_cast<QualityPrefer>(prefer);
+  }
+
+  common::HashValue* wwe;
+  common::Value* wwe_field = json->Find(WWE_FIELD);
+  if (wwe_field && wwe_field->GetAsHash(&wwe)) {
+    res.wwe_ = LoginAndPassword::Make(wwe);
   }
   return res;
 }
@@ -103,6 +121,16 @@ common::Error PyFastoStream::DoDeSerialize(json_object* serialized) {
     res.SetHttps(https_proxy_t(https));
   }
 
+  json_object* jwwe = nullptr;
+  err = GetObjectField(serialized, WWE_FIELD, &jwwe);
+  if (!err) {
+    LoginAndPassword wwe;
+    err = wwe.DeSerialize(jwwe);
+    if (!err) {
+      res.SetWWE(wwe);
+    }
+  }
+
   *this = res;
   return common::Error();
 }
@@ -115,6 +143,13 @@ common::Error PyFastoStream::SerializeFields(json_object* out) const {
   if (https_proxy_) {
     const std::string url_path = https_proxy_->spec();
     ignore_result(SetStringField(out, HTTPS_FIELD, url_path));
+  }
+  if (wwe_) {
+    json_object* jlink = nullptr;
+    common::Error err = wwe_->Serialize(&jlink);
+    if (!err) {
+      ignore_result(SetObjectField(out, WWE_FIELD, jlink));
+    }
   }
   ignore_result(SetEnumField(out, PREFER_FIELD, prefer_));
   return common::Error();
