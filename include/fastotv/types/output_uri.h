@@ -25,6 +25,7 @@
 #include <fastotv/types/output_url.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
+#include <fastotv/types/whip_prop.h>
 
 namespace fastotv {
 
@@ -53,6 +54,8 @@ class OutputUri : public OutputUrl {
   typedef common::Optional<WebRTCProp> webrtc_t;
   // udp
   typedef common::Optional<std::string> multicast_iface_t;
+  // whip
+  typedef common::Optional<WhipProp> whip_t;
 
   OutputUri();
   explicit OutputUri(uri_id_t id, const url_t& url);
@@ -78,6 +81,9 @@ class OutputUri : public OutputUrl {
 
   hls_t GetHlsType() const;
   void SetHlsType(hls_t type);
+
+  whip_t GetWhip() const;
+  void SetWhip(whip_t whip);
 
   srt_mode_t GetSrtMode() const;
   void SetSrtMode(srt_mode_t mode);
@@ -121,6 +127,7 @@ class OutputUri : public OutputUrl {
   hls_t hls_type_;
   chunk_duration_t chunk_duration_;
   playlist_root_t playlist_root_;
+  whip_t whip_;
   // srt
   srt_mode_t srt_mode_;
   srt_key_t srt_key_;

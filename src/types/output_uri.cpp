@@ -17,6 +17,7 @@
 #define HLSSINK_TYPE_FIELD "hlssink_type"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
+#define WHIP_FIELD "whip"
 #define CHUNK_DURATION_FIELD "chunk_duration"
 #define PLAYLIST_ROOT_FIELD "playlist_root"
 #define SRT_MODE_FIELD "srt_mode"
@@ -40,6 +41,8 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       http_root_(),
       hls_type_(),
       chunk_duration_(),
+      playlist_root_(),
+      whip_(),
       srt_mode_(),
       srt_key_(),
       rtmpsink_type_(),
@@ -62,6 +65,9 @@ bool OutputUri::IsHls() const {
   }
 
   if (GetHlsSinkType() && GetHttpRoot() && GetHlsType()) {
+    if (GetWhip()) {
+      return false;
+    }
     return true;
   }
 
@@ -106,6 +112,14 @@ OutputUri::hls_t OutputUri::GetHlsType() const {
 
 void OutputUri::SetHlsType(hls_t type) {
   hls_type_ = type;
+}
+
+OutputUri::whip_t OutputUri::GetWhip() const {
+  return whip_;
+}
+
+void OutputUri::SetWhip(whip_t whip) {
+  whip_ = whip;
 }
 
 OutputUri::srt_mode_t OutputUri::GetSrtMode() const {
@@ -191,8 +205,9 @@ void OutputUri::SetMulticastIface(multicast_iface_t iface) {
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && aws_ == url.aws_ &&
-         azure_ == url.azure_ && ndi_ == url.ndi_ && google_ == url.google_ && webrtc_ == url.webrtc_;
+         whip_ == url.whip_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ &&
+         aws_ == url.aws_ && azure_ == url.azure_ && ndi_ == url.ndi_ && google_ == url.google_ &&
+         webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -235,6 +250,12 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* playlist_field = hash->Find(PLAYLIST_ROOT_FIELD);
   if (playlist_field && playlist_field->GetAsBasicString(&playlist_root)) {
     url.SetPlaylistRoot(common::uri::GURL(playlist_root));
+  }
+
+  common::HashValue* whip;
+  common::Value* whip_field = hash->Find(WHIP_FIELD);
+  if (whip_field && whip_field->GetAsHash(&whip)) {
+    url.SetWhip(WhipProp::Make(whip));
   }
 
   int64_t srt_mode;
@@ -329,6 +350,22 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
   err = GetIntField(serialized, CHUNK_DURATION_FIELD, &chunk_duration);
   if (!err) {
     res.SetChunkDuration(chunk_duration);
+  }
+
+  std::string play_list;
+  err = GetStringField(serialized, PLAYLIST_ROOT_FIELD, &play_list);
+  if (!err) {
+    res.SetPlaylistRoot(common::uri::GURL(play_list));
+  }
+
+  json_object* jwhip = nullptr;
+  err = GetObjectField(serialized, WHIP_FIELD, &jwhip);
+  if (!err) {
+    WhipProp key;
+    err = key.DeSerialize(jwhip);
+    if (!err) {
+      res.SetWhip(key);
+    }
   }
 
   SrtMode srt_mode;
@@ -450,6 +487,13 @@ common::Error OutputUri::SerializeFields(json_object* deserialized) const {
   if (playlist_root_) {
     const std::string root = playlist_root_->spec();
     ignore_result(SetStringField(deserialized, PLAYLIST_ROOT_FIELD, root));
+  }
+  if (whip_) {
+    json_object* jwhip = nullptr;
+    err = whip_->Serialize(&jwhip);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, WHIP_FIELD, jwhip));
+    }
   }
   if (srt_mode_) {
     ignore_result(SetEnumField(deserialized, SRT_MODE_FIELD, *srt_mode_));
