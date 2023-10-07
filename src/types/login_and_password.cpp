@@ -25,7 +25,8 @@ namespace fastotv {
 
 LoginAndPassword::LoginAndPassword() : LoginAndPassword(std::string(), std::string()) {}
 
-LoginAndPassword::LoginAndPassword(const login_t& login, const password_t& password) : login_(login), password_(password) {}
+LoginAndPassword::LoginAndPassword(const login_t& login, const password_t& password)
+    : login_(login), password_(password) {}
 
 bool LoginAndPassword::IsValid() const {
   return !login_.empty() && !password_.empty();
