@@ -64,10 +64,11 @@ bool OutputUri::IsHls() const {
     return false;
   }
 
+  if (GetWhip()) {
+    return false;
+  }
+
   if (GetHlsSinkType() && GetHttpRoot() && GetHlsType()) {
-    if (GetWhip()) {
-      return false;
-    }
     return true;
   }
 
