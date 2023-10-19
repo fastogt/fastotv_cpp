@@ -19,6 +19,7 @@
 #define PROXY_FIELD "proxy"
 #define WPE_FIELD "wpe"
 #define CEF_FIELD "cef"
+#define WHEP_FIELD "whep"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
@@ -42,6 +43,7 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       keys_(),
       wpe_(),
       cef_(),
+      whep_(),
       program_number_(),
       iface_(),
       srt_mode_(),
@@ -78,6 +80,15 @@ InputUri::keys_t InputUri::GetKeys() const {
 
 void InputUri::SetKeys(keys_t keys) {
   keys_ = keys;
+}
+
+
+InputUri::whep_t InputUri::GetWhep() const {
+  return whep_;
+}
+
+void InputUri::SetWhep(whep_t whep) {
+  whep_ = whep;
 }
 
 InputUri::http_proxy_url_t InputUri::GetHttpProxyUrl() const {
@@ -179,7 +190,7 @@ void InputUri::SetAWS(const aws_t& aws) {
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
-         program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
+         whep_ == url.whep_ && program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
          srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
          aws_ == url.aws_;
 }
@@ -242,6 +253,12 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   if (cef_field && cef_field->GetAsHash(&cef)) {
     auto wp = Cef::Make(cef);
     url.SetCef(wp);
+  }
+
+  common::HashValue* whep;
+  common::Value* whep_field = hash->Find(WHEP_FIELD);
+  if (whep_field && whep_field->GetAsHash(&whep)) {
+    url.SetWhep(WhepProp::Make(whep));
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
@@ -319,6 +336,16 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     err = link.DeSerialize(jstream_url);
     if (!err) {
       res.SetPyFastoStream(link);
+    }
+  }
+
+  json_object* jwhep = nullptr;
+  err = GetObjectField(serialized, WHEP_FIELD, &jwhep);
+  if (!err) {
+    WhepProp key;
+    err = key.DeSerialize(jwhep);
+    if (!err) {
+      res.SetWhep(key);
     }
   }
 
@@ -456,6 +483,14 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     err = stream_url_->Serialize(&jlink);
     if (!err) {
       ignore_result(SetObjectField(deserialized, PYFASTOSTREAM_URL_FIELD, jlink));
+    }
+  }
+
+  if (whep_) {
+    json_object* jwhep = nullptr;
+    err = whep_->Serialize(&jwhep);
+    if (!err) {
+      ignore_result(SetObjectField(deserialized, WHEP_FIELD, jwhep));
     }
   }
 

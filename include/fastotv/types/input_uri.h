@@ -23,6 +23,7 @@
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
+#include <fastotv/types/whep_prop.h>
 #include <fastotv/types/wpe.h>
 
 #include <string>
@@ -57,6 +58,8 @@ class InputUri : public InputUrl {
   typedef common::Optional<S3Prop> aws_t;
   // webrtc
   typedef common::Optional<WebRTCProp> webrtc_t;
+  // whip
+  typedef common::Optional<WhepProp> whep_t;
 
   InputUri();
   explicit InputUri(uri_id_t id, const url_t& input);
@@ -71,6 +74,9 @@ class InputUri : public InputUrl {
 
   keys_t GetKeys() const;
   void SetKeys(keys_t keys);
+
+  whep_t GetWhep() const;
+  void SetWhep(whep_t whep);
 
   http_proxy_url_t GetHttpProxyUrl() const;
   void SetHttpProxyUrl(const http_proxy_url_t& url);
@@ -124,6 +130,7 @@ class InputUri : public InputUrl {
   keys_t keys_;
   wpe_t wpe_;
   cef_t cef_;
+  whep_t whep_;
 
   // udp
   program_number_t program_number_;
