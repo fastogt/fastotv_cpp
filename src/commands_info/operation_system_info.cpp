@@ -81,8 +81,8 @@ OperationSystemInfo OperationSystemInfo::MakeOSSnapshot() {
   static const std::string name = common::system_info::OperatingSystemName();
   static const std::string version = common::system_info::OperatingSystemVersion();
   static const std::string arch = common::system_info::OperatingSystemArchitecture();
-  const auto total = common::system_info::AmountOfPhysicalMemory();
-  const auto avail = common::system_info::AmountOfAvailablePhysicalMemory();
+  const auto total = common::system_info::AmountOfTotalRAM();
+  const auto avail = common::system_info::AmountOfAvailableRAM();
   return OperationSystemInfo(name, version, arch, total ? *total : 0, avail ? *avail : 0);
 }
 
