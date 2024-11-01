@@ -39,7 +39,7 @@ MachineInfo::MachineInfo()
     : base_class(),
       cpu_load_(0),
       gpu_load_(0),
-      load_average_(),
+      load_average_("0 0 0"),
       ram_bytes_total_(0),
       ram_bytes_free_(0),
       hdd_bytes_total_(0),
