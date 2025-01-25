@@ -43,17 +43,16 @@ enum StreamType : unsigned {
   TIMESHIFT_PLAYER = 4,
   TIMESHIFT_RECORDER = 5,
   CATCHUP = 6,
-  TEST_LIFE = 7,
-  VOD_RELAY = 8,
-  VOD_ENCODE = 9,
-  COD_RELAY = 10,
-  COD_ENCODE = 11,
-  EVENT = 12,
-  CV_DATA = 13,
-  CHANGER_RELAY = 14,
-  CHANGER_ENCODE = 15,
-  LITE = 16,
-  MOSAIC = 17
+  VOD_RELAY = 7,
+  VOD_ENCODE = 8,
+  COD_RELAY = 9,
+  COD_ENCODE = 10,
+  EVENT = 11,
+  CV_DATA = 12,
+  CHANGER_RELAY = 13,
+  CHANGER_ENCODE = 14,
+  LITE = 15,
+  MOSAIC = 16
 };
 
 }  // namespace fastotv
