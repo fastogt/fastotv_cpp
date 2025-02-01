@@ -24,7 +24,6 @@
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
 #define SRT_MODE_FIELD "srt_mode"
-#define PROGRAMME_FIELD "programme"
 #define RTMPSRC_TYPE_FILED "rtmpsrc_type"
 #define WEBRTC_FIELD "webrtc"
 #define NDI_FIELD "ndi"
@@ -48,7 +47,6 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       iface_(),
       srt_mode_(),
       srt_key_(),
-      programme_(),
       rtmpsrc_type_(),
       webrtc_(),
       ndi_(),
@@ -81,7 +79,6 @@ InputUri::keys_t InputUri::GetKeys() const {
 void InputUri::SetKeys(keys_t keys) {
   keys_ = keys;
 }
-
 
 InputUri::whep_t InputUri::GetWhep() const {
   return whep_;
@@ -139,14 +136,6 @@ void InputUri::SetSrtKey(const srt_key_t& pass) {
   srt_key_ = pass;
 }
 
-InputUri::programme_t InputUri::GetProgramme() const {
-  return programme_;
-}
-
-void InputUri::SetProgramme(const programme_t& programme) {
-  programme_ = programme;
-}
-
 InputUri::rtmpsrc_type_t InputUri::GetRtmpSrcType() const {
   return rtmpsrc_type_;
 }
@@ -190,8 +179,8 @@ void InputUri::SetAWS(const aws_t& aws) {
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
-         whep_ == url.whep_ && program_number_ == url.program_number_ && iface_ == url.iface_ && srt_key_ == url.srt_key_ &&
-         srt_mode_ == url.srt_mode_ && programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
+         whep_ == url.whep_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
+         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
          aws_ == url.aws_;
 }
 
@@ -285,12 +274,6 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetSrtKey(SrtKey::Make(srt_key));
   }
 
-  common::HashValue* programme;
-  common::Value* programme_field = hash->Find(PROGRAMME_FIELD);
-  if (programme_field && programme_field->GetAsHash(&programme)) {
-    url.SetProgramme(Programme::Make(programme));
-  }
-
   int64_t rtmpsrc;
   common::Value* rtmpsrc_field = hash->Find(RTMPSRC_TYPE_FILED);
   if (rtmpsrc_field && rtmpsrc_field->GetAsInteger64(&rtmpsrc)) {
@@ -368,16 +351,6 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     err = key.DeSerialize(jsrt_key);
     if (!err) {
       res.SetSrtKey(key);
-    }
-  }
-
-  json_object* jprogramme = nullptr;
-  err = GetObjectField(serialized, PROGRAMME_FIELD, &jprogramme);
-  if (!err) {
-    Programme prog;
-    err = prog.DeSerialize(jprogramme);
-    if (!err) {
-      res.SetProgramme(prog);
     }
   }
 
@@ -513,14 +486,6 @@ common::Error InputUri::SerializeFields(json_object* deserialized) const {
     err = srt_key_->Serialize(&jkey);
     if (!err) {
       ignore_result(SetObjectField(deserialized, SRT_KEY_FIELD, jkey));
-    }
-  }
-
-  if (programme_) {
-    json_object* jprogramme = nullptr;
-    err = programme_->Serialize(&jprogramme);
-    if (!err) {
-      ignore_result(SetObjectField(deserialized, PROGRAMME_FIELD, jprogramme));
     }
   }
 

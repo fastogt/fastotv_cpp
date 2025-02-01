@@ -19,7 +19,6 @@
 #include <fastotv/types/drm_key.h>
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/ndi_prop.h>
-#include <fastotv/types/programme.h>
 #include <fastotv/types/pyfastostream.h>
 #include <fastotv/types/srt_key.h>
 #include <fastotv/types/webrtc_prop.h>
@@ -49,7 +48,6 @@ class InputUri : public InputUrl {
   // srt
   typedef common::Optional<SrtKey> srt_key_t;
   typedef common::Optional<SrtMode> srt_mode_t;
-  typedef common::Optional<Programme> programme_t;
   // rtmp
   typedef common::Optional<RtmpSrcType> rtmpsrc_type_t;
   // ndi
@@ -99,9 +97,6 @@ class InputUri : public InputUrl {
   srt_key_t GetSrtKey() const;
   void SetSrtKey(const srt_key_t& pass);
 
-  programme_t GetProgramme() const;
-  void SetProgramme(const programme_t& programme);
-
   rtmpsrc_type_t GetRtmpSrcType() const;
   void SetRtmpSrcType(const rtmpsrc_type_t& type);
 
@@ -139,9 +134,6 @@ class InputUri : public InputUrl {
   // srt
   srt_mode_t srt_mode_;
   srt_key_t srt_key_;
-
-  // programme
-  programme_t programme_;
 
   // rtmp
   rtmpsrc_type_t rtmpsrc_type_;
