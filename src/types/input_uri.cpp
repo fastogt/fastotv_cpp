@@ -247,6 +247,23 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
     url.SetWPE(wp);
   }
 
+  common::Value* headers_field = hash->Find(HTTP_HEADERS_FIELD);
+  common::ArrayValue* headers_array = nullptr;
+  if (headers_field && headers_field->GetAsList(&headers_array)) {
+    http_headers_t::value_type headers;
+    for (size_t i = 0; i < headers_array->GetSize(); ++i) {
+      common::Value* head = nullptr;
+      common::HashValue* head_item = nullptr;
+      if (headers_array->Get(i, &head) && head->GetAsHash(&head_item)) {
+        const auto murl = HttpHeader::Make(head_item);
+        if (murl) {
+          headers.Add(*murl);
+        }
+      }
+    }
+    url.SetHttpHeaders(headers);
+  }
+
   common::HashValue* cef;
   common::Value* cef_field = hash->Find(CEF_FIELD);
   if (cef_field && cef_field->GetAsHash(&cef)) {
@@ -258,23 +275,6 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* whep_field = hash->Find(WHEP_FIELD);
   if (whep_field && whep_field->GetAsHash(&whep)) {
     url.SetWhep(WhepProp::Make(whep));
-  }
-
-  common::Value* headers_field = hash->Find(HTTP_HEADERS_FIELD);
-  common::ArrayValue* headers_array = nullptr;
-  if (headers_field && headers_field->GetAsList(&headers_array)) {
-    http_headers_t::value_type headers;
-    for (size_t i = 0; i < headers_array->GetSize(); ++i) {
-      common::Value* head = nullptr;
-      common::HashValue* head_item = nullptr;
-      if (keys_array->Get(i, &head) && head->GetAsHash(&head_item)) {
-        const auto murl = HttpHeader::Make(head_item);
-        if (murl) {
-          headers.Add(*murl);
-        }
-      }
-    }
-    url.SetHttpHeaders(headers);
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);
