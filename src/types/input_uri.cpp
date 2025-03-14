@@ -20,6 +20,7 @@
 #define WPE_FIELD "wpe"
 #define CEF_FIELD "cef"
 #define WHEP_FIELD "whep"
+#define HTTP_HEADERS_FIELD "http_headers"
 #define PROGRAM_NUMBER_FIELD "program_number"
 #define MULTICAST_IFACE_FIELD "multicast_iface"
 #define SRT_KEY_FIELD "srt_key"
@@ -43,6 +44,7 @@ InputUri::InputUri(uri_id_t id, const url_t& input)
       wpe_(),
       cef_(),
       whep_(),
+      http_headers_(),
       program_number_(),
       iface_(),
       srt_mode_(),
@@ -112,6 +114,14 @@ void InputUri::SetCef(const cef_t& cef) {
   cef_ = cef;
 }
 
+InputUri::http_headers_t InputUri::GetHttpHeaders() const {
+  return http_headers_;
+}
+
+void InputUri::SetHttpHeaders(const http_headers_t& head) {
+  http_headers_ = head;
+}
+
 InputUri::program_number_t InputUri::GetProgramNumber() const {
   return program_number_;
 }
@@ -179,9 +189,15 @@ void InputUri::SetAWS(const aws_t& aws) {
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
+<<<<<<< HEAD
          whep_ == url.whep_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
          srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
          aws_ == url.aws_;
+=======
+         whep_ == url.whep_ && http_headers_ == url.http_headers_ && program_number_ == url.program_number_ &&
+         iface_ == url.iface_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ &&
+         programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ && aws_ == url.aws_;
+>>>>>>> d492033 (http_header)
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
@@ -216,7 +232,7 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* keys_field = hash->Find(KEYS_FIELD);
   common::ArrayValue* keys_array = nullptr;
   if (keys_field && keys_field->GetAsList(&keys_array)) {
-    DrmKeys keys;
+    keys_t::value_type keys;
     for (size_t i = 0; i < keys_array->GetSize(); ++i) {
       common::Value* key = nullptr;
       common::HashValue* key_hash = nullptr;
@@ -248,6 +264,23 @@ common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
   common::Value* whep_field = hash->Find(WHEP_FIELD);
   if (whep_field && whep_field->GetAsHash(&whep)) {
     url.SetWhep(WhepProp::Make(whep));
+  }
+
+  common::Value* headers_field = hash->Find(HTTP_HEADERS_FIELD);
+  common::ArrayValue* headers_array = nullptr;
+  if (headers_field && headers_field->GetAsList(&headers_array)) {
+    http_headers_t::value_type headers;
+    for (size_t i = 0; i < headers_array->GetSize(); ++i) {
+      common::Value* head = nullptr;
+      common::HashValue* head_item = nullptr;
+      if (keys_array->Get(i, &head) && head->GetAsHash(&head_item)) {
+        const auto murl = HttpHeader::Make(head_item);
+        if (murl) {
+          headers.Add(*murl);
+        }
+      }
+    }
+    url.SetHttpHeaders(headers);
   }
 
   common::Value* pid_field = hash->Find(PROGRAM_NUMBER_FIELD);

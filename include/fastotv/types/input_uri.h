@@ -17,6 +17,7 @@
 #include <fastotv/types/aws_prop.h>
 #include <fastotv/types/cef.h>
 #include <fastotv/types/drm_key.h>
+#include <fastotv/types/http_header.h>
 #include <fastotv/types/input_url.h>
 #include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/pyfastostream.h>
@@ -42,6 +43,7 @@ class InputUri : public InputUrl {
   typedef common::Optional<DrmKeys> keys_t;
   typedef common::Optional<Wpe> wpe_t;
   typedef common::Optional<Cef> cef_t;
+  typedef common::Optional<HttpHeaders> http_headers_t;
   // udp
   typedef common::Optional<int> program_number_t;
   typedef common::Optional<std::string> multicast_iface_t;
@@ -85,6 +87,9 @@ class InputUri : public InputUrl {
   cef_t GetCef() const;
   void SetCef(const cef_t& cef);
 
+  http_headers_t GetHttpHeaders() const;
+  void SetHttpHeaders(const http_headers_t& head);
+
   program_number_t GetProgramNumber() const;
   void SetProgramNumber(program_number_t id);
 
@@ -126,6 +131,7 @@ class InputUri : public InputUrl {
   wpe_t wpe_;
   cef_t cef_;
   whep_t whep_;
+  http_headers_t http_headers_;
 
   // udp
   program_number_t program_number_;

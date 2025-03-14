@@ -54,6 +54,7 @@ SET(PROTOCOL_HEADERS
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_url.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/output_uri.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/meta_url.h
+  ${CMAKE_SOURCE_DIR}/include/fastotv/types/http_header.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/text_overlay.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/stream_overlay.h
   ${CMAKE_SOURCE_DIR}/include/fastotv/types/font.h
@@ -129,6 +130,7 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/types/output_url.cpp
   ${CMAKE_SOURCE_DIR}/src/types/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/types/meta_url.cpp
+  ${CMAKE_SOURCE_DIR}/src/types/http_header.cpp
   ${CMAKE_SOURCE_DIR}/src/types/text_overlay.cpp
   ${CMAKE_SOURCE_DIR}/src/types/stream_overlay.cpp
   ${CMAKE_SOURCE_DIR}/src/types/font.cpp
