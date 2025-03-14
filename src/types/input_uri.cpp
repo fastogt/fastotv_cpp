@@ -189,15 +189,9 @@ void InputUri::SetAWS(const aws_t& aws) {
 bool InputUri::Equals(const InputUri& url) const {
   return base_class::Equals(url) && url.user_agent_ == user_agent_ && stream_url_ == url.stream_url_ &&
          http_proxy_url_ == url.http_proxy_url_ && keys_ == url.keys_ && wpe_ == url.wpe_ && cef_ == url.cef_ &&
-<<<<<<< HEAD
-         whep_ == url.whep_ && program_number_ == url.program_number_ && iface_ == url.iface_ &&
-         srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ &&
-         aws_ == url.aws_;
-=======
          whep_ == url.whep_ && http_headers_ == url.http_headers_ && program_number_ == url.program_number_ &&
          iface_ == url.iface_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ &&
-         programme_ == url.programme_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ && aws_ == url.aws_;
->>>>>>> d492033 (http_header)
+         rtmpsrc_type_ == url.rtmpsrc_type_ && webrtc_ == url.webrtc_ && ndi_ == url.ndi_ && aws_ == url.aws_;
 }
 
 common::Optional<InputUri> InputUri::Make(common::HashValue* hash) {
