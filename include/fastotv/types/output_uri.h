@@ -20,6 +20,7 @@
 #include <fastotv/types/aws_prop.h>
 #include <fastotv/types/azure_prop.h>
 #include <fastotv/types/google_prop.h>
+#include <fastotv/types/http_header.h>
 #include <fastotv/types/kvs_prop.h>
 #include <fastotv/types/ndi_prop.h>
 #include <fastotv/types/output_url.h>
@@ -38,6 +39,7 @@ class OutputUri : public OutputUrl {
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
   enum RtmpSinkType { RTMPSINK = 0, RTMP2SINK = 1 };
 
+  typedef common::Optional<HttpHeaders> http_headers_t;
   typedef common::Optional<HlsType> hls_t;
   typedef common::Optional<common::uri::GURL> playlist_root_t;
   typedef common::Optional<unsigned> chunk_duration_t;
@@ -72,6 +74,9 @@ class OutputUri : public OutputUrl {
 
   hlssink_type_t GetHlsSinkType() const;
   void SetHlsSinkType(hlssink_type_t hlssink);
+
+  http_headers_t GetHttpHeaders() const;
+  void SetHttpHeaders(const http_headers_t& head);
 
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
@@ -128,6 +133,7 @@ class OutputUri : public OutputUrl {
   chunk_duration_t chunk_duration_;
   playlist_root_t playlist_root_;
   whip_t whip_;
+  http_headers_t http_headers_;
   // srt
   srt_mode_t srt_mode_;
   srt_key_t srt_key_;

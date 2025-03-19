@@ -17,6 +17,7 @@
 #define HLSSINK_TYPE_FIELD "hlssink_type"
 #define HTTP_ROOT_FIELD "http_root"
 #define HLS_TYPE_FIELD "hls_type"
+#define HTTP_HEADERS_FIELD "http_headers"
 #define WHIP_FIELD "whip"
 #define CHUNK_DURATION_FIELD "chunk_duration"
 #define PLAYLIST_ROOT_FIELD "playlist_root"
@@ -43,6 +44,7 @@ OutputUri::OutputUri(uri_id_t id, const url_t& url)
       chunk_duration_(),
       playlist_root_(),
       whip_(),
+      http_headers_(),
       srt_mode_(),
       srt_key_(),
       rtmpsink_type_(),
@@ -89,6 +91,14 @@ OutputUri::hlssink_type_t OutputUri::GetHlsSinkType() const {
 
 void OutputUri::SetHlsSinkType(hlssink_type_t hlssink) {
   hlssink_type_ = hlssink;
+}
+
+OutputUri::http_headers_t OutputUri::GetHttpHeaders() const {
+  return http_headers_;
+}
+
+void OutputUri::SetHttpHeaders(const http_headers_t& head) {
+  http_headers_ = head;
 }
 
 OutputUri::http_root_t OutputUri::GetHttpRoot() const {
@@ -206,9 +216,9 @@ void OutputUri::SetMulticastIface(multicast_iface_t iface) {
 bool OutputUri::Equals(const OutputUri& url) const {
   return base_class::Equals(url) && hlssink_type_ == url.hlssink_type_ && http_root_ == url.http_root_ &&
          hls_type_ == url.hls_type_ && chunk_duration_ == url.chunk_duration_ && playlist_root_ == url.playlist_root_ &&
-         whip_ == url.whip_ && srt_key_ == url.srt_key_ && srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ &&
-         aws_ == url.aws_ && azure_ == url.azure_ && ndi_ == url.ndi_ && google_ == url.google_ &&
-         webrtc_ == url.webrtc_;
+         whip_ == url.whip_ && http_headers_ == url.http_headers_ && srt_key_ == url.srt_key_ &&
+         srt_mode_ == url.srt_mode_ && kvs_ == url.kvs_ && aws_ == url.aws_ && azure_ == url.azure_ &&
+         ndi_ == url.ndi_ && google_ == url.google_ && webrtc_ == url.webrtc_;
 }
 
 common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
@@ -257,6 +267,23 @@ common::Optional<OutputUri> OutputUri::Make(common::HashValue* hash) {
   common::Value* whip_field = hash->Find(WHIP_FIELD);
   if (whip_field && whip_field->GetAsHash(&whip)) {
     url.SetWhip(WhipProp::Make(whip));
+  }
+
+  common::Value* headers_field = hash->Find(HTTP_HEADERS_FIELD);
+  common::ArrayValue* headers_array = nullptr;
+  if (headers_field && headers_field->GetAsList(&headers_array)) {
+    http_headers_t::value_type headers;
+    for (size_t i = 0; i < headers_array->GetSize(); ++i) {
+      common::Value* head = nullptr;
+      common::HashValue* head_item = nullptr;
+      if (headers_array->Get(i, &head) && head->GetAsHash(&head_item)) {
+        const auto murl = HttpHeader::Make(head_item);
+        if (murl) {
+          headers.Add(*murl);
+        }
+      }
+    }
+    url.SetHttpHeaders(headers);
   }
 
   int64_t srt_mode;
@@ -366,6 +393,17 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     err = key.DeSerialize(jwhip);
     if (!err) {
       res.SetWhip(key);
+    }
+  }
+
+  size_t hlen;
+  json_object* jhead;
+  err = GetArrayField(serialized, HTTP_HEADERS_FIELD, &jhead, &hlen);
+  if (!err) {
+    HttpHeaders headers;
+    err = headers.DeSerialize(jhead);
+    if (!err) {
+      res.SetHttpHeaders(headers);
     }
   }
 

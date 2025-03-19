@@ -393,6 +393,17 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpProxyUrl(url_t(http_proxy));
   }
 
+  size_t hlen;
+  json_object* jhead;
+  err = GetArrayField(serialized, HTTP_HEADERS_FIELD, &jhead, &hlen);
+  if (!err) {
+    HttpHeaders headers;
+    err = headers.DeSerialize(jhead);
+    if (!err) {
+      res.SetHttpHeaders(headers);
+    }
+  }
+
   size_t len;
   json_object* jkeys;
   err = GetArrayField(serialized, KEYS_FIELD, &jkeys, &len);
