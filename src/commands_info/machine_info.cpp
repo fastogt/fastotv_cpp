@@ -31,6 +31,7 @@
 
 #define TOTAL_BYTES_IN_FIELD "total_bytes_in"
 #define TOTAL_BYTES_OUT_FIELD "total_bytes_out"
+#define COST_FIELD "cost"
 
 namespace fastotv {
 namespace commands_info {
@@ -49,7 +50,8 @@ MachineInfo::MachineInfo()
       current_ts_(0),
       uptime_(0),
       net_total_bytes_recv_(0),
-      net_total_bytes_send_(0) {}
+      net_total_bytes_send_(0),
+      cost_(0) {}
 
 MachineInfo::MachineInfo(cpu_load_t cpu_load,
                          gpu_load_t gpu_load,
@@ -63,7 +65,8 @@ MachineInfo::MachineInfo(cpu_load_t cpu_load,
                          time_t uptime,
                          fastotv::timestamp_t timestamp,
                          size_t net_total_bytes_recv,
-                         size_t net_total_bytes_send)
+                         size_t net_total_bytes_send,
+                         cost_t cost)
     : base_class(),
       cpu_load_(cpu_load),
       gpu_load_(gpu_load),
@@ -77,7 +80,8 @@ MachineInfo::MachineInfo(cpu_load_t cpu_load,
       current_ts_(timestamp),
       uptime_(uptime),
       net_total_bytes_recv_(net_total_bytes_recv),
-      net_total_bytes_send_(net_total_bytes_send) {}
+      net_total_bytes_send_(net_total_bytes_send),
+      cost_(cost) {}
 
 common::Error MachineInfo::SerializeFields(json_object* out) const {
   ignore_result(SetDoubleField(out, CPU_FIELD, cpu_load_));
@@ -93,6 +97,7 @@ common::Error MachineInfo::SerializeFields(json_object* out) const {
   ignore_result(SetInt64Field(out, TIMESTAMP_FIELD, current_ts_));
   ignore_result(SetUInt64Field(out, TOTAL_BYTES_IN_FIELD, net_total_bytes_recv_));
   ignore_result(SetUInt64Field(out, TOTAL_BYTES_OUT_FIELD, net_total_bytes_send_));
+  ignore_result(SetDoubleField(out, COST_FIELD, cost_));
   return common::Error();
 }
 
@@ -136,9 +141,12 @@ common::Error MachineInfo::DoDeSerialize(json_object* serialized) {
   uint64_t net_total_bytes_send = 0;
   ignore_result(GetUint64Field(serialized, TOTAL_BYTES_OUT_FIELD, &net_total_bytes_send));
 
+  cost_t cost = 0;
+  ignore_result(GetDoubleField(serialized, COST_FIELD, &cost));
+
   *this =
       MachineInfo(cpu_load, gpu_load, load_average, ram_bytes_total, ram_bytes_free, hdd_bytes_total, hdd_bytes_free,
-                  net_bytes_recv, net_bytes_send, uptime, current_ts, net_total_bytes_recv, net_total_bytes_send);
+                  net_bytes_recv, net_bytes_send, uptime, current_ts, net_total_bytes_recv, net_total_bytes_send, cost);
   return common::Error();
 }
 
@@ -194,13 +202,18 @@ size_t MachineInfo::GetNetTotalBytesSend() const {
   return net_total_bytes_send_;
 }
 
+MachineInfo::cost_t MachineInfo::GetCost() const {
+  return cost_;
+}
+
 bool MachineInfo::Equals(const MachineInfo& mach) const {
   return mach.cpu_load_ == cpu_load_ && mach.gpu_load_ == gpu_load_ && mach.load_average_ == load_average_ &&
          mach.ram_bytes_total_ == ram_bytes_total_ && mach.ram_bytes_free_ == ram_bytes_free_ &&
          mach.hdd_bytes_total_ == hdd_bytes_total_ && mach.hdd_bytes_free_ == hdd_bytes_free_ &&
          mach.net_bytes_recv_ == net_bytes_recv_ && mach.net_bytes_send_ == net_bytes_send_ &&
          mach.uptime_ == uptime_ && mach.current_ts_ == current_ts_ &&
-         mach.net_total_bytes_recv_ == net_total_bytes_recv_ && mach.net_total_bytes_send_ == net_total_bytes_send_;
+         mach.net_total_bytes_recv_ == net_total_bytes_recv_ && mach.net_total_bytes_send_ == net_total_bytes_send_ &&
+         mach.cost_ == cost_;
 }
 
 }  // namespace commands_info

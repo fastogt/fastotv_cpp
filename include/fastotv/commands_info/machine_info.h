@@ -29,6 +29,8 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   typedef JsonSerializer<MachineInfo> base_class;
   typedef double cpu_load_t;
   typedef double gpu_load_t;
+  typedef double cost_t;
+
   MachineInfo();
   MachineInfo(cpu_load_t cpu_load,
               gpu_load_t gpu_load,
@@ -42,7 +44,8 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
               time_t uptime,
               fastotv::timestamp_t timestamp,
               size_t net_total_bytes_recv,
-              size_t net_total_bytes_send);
+              size_t net_total_bytes_send,
+              cost_t cost);
 
   cpu_load_t GetCpuLoad() const;
   gpu_load_t GetGpuLoad() const;
@@ -59,6 +62,7 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
 
   size_t GetNetTotalBytesRecv() const;
   size_t GetNetTotalBytesSend() const;
+  cost_t GetCost() const;
 
   bool Equals(const MachineInfo& mach) const;
 
@@ -80,6 +84,7 @@ class MachineInfo : public common::serializer::JsonSerializer<MachineInfo> {
   time_t uptime_;
   size_t net_total_bytes_recv_;
   size_t net_total_bytes_send_;
+  cost_t cost_;
 };
 
 inline bool operator==(const MachineInfo& left, const MachineInfo& right) {
