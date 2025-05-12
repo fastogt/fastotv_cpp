@@ -20,6 +20,8 @@
 
 #include <common/serializer/json_serializer.h>
 
+#include <fastotv/types.h>
+
 #include <string>
 
 namespace fastotv {
@@ -30,12 +32,12 @@ class ProjectInfo : public common::serializer::JsonSerializer<ProjectInfo> {
   typedef common::serializer::JsonSerializer<ProjectInfo> base_class;
 
   ProjectInfo();
-  ProjectInfo(const std::string& name, const std::string& version);
+  ProjectInfo(const std::string& project, const std::string& version);
 
   bool IsValid() const;
 
-  std::string GetName() const;
-  void SetName(const std::string& name);
+  std::string GetProject() const;
+  void SetProject(const std::string& project);
 
   std::string GetVersion() const;
   void SetVersion(const std::string& version);
@@ -47,7 +49,7 @@ class ProjectInfo : public common::serializer::JsonSerializer<ProjectInfo> {
   common::Error SerializeFields(json_object* deserialized) const override;
 
  private:
-  std::string name_;
+  std::string project_;
   std::string version_;
 };
 
@@ -58,6 +60,28 @@ inline bool operator==(const ProjectInfo& lhs, const ProjectInfo& rhs) {
 inline bool operator!=(const ProjectInfo& x, const ProjectInfo& y) {
   return !(x == y);
 }
+
+class LicenseProjectInfo : public ProjectInfo {
+ public:
+  typedef ProjectInfo base_class;
+
+  LicenseProjectInfo();
+  LicenseProjectInfo(const base_class& project, timestamp_t exp);
+
+  bool IsValid() const;
+
+  timestamp_t GetExp() const;
+  void SetExp(timestamp_t exp);
+
+  bool Equals(const LicenseProjectInfo& proj) const;
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* deserialized) const override;
+
+ private:
+  timestamp_t exp_;
+};
 
 }  // namespace commands_info
 }  // namespace fastotv
