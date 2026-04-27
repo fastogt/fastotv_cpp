@@ -665,6 +665,7 @@ TEST(BackGroundEffect, serialize_deserialize) {
   auto make = out.Make(hash);
   fastotv::ml::BackgroundEffect bg = *make;
   ASSERT_EQ(bg.GetColor(), 4294967293);
+  delete hash;
 }
 
 TEST(Alpha, serialize_deserialize) {
@@ -685,4 +686,5 @@ TEST(Alpha, serialize_deserialize) {
   fastotv::AlphaMethod bg = *make;
   ASSERT_EQ(bg.GetColor(), 4278255360);
   ASSERT_EQ(bg.GetAlpha(), 0.9);
+  delete hash;
 }

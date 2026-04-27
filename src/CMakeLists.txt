@@ -147,7 +147,6 @@ SET(PROTOCOL_SOURCES
   ${CMAKE_SOURCE_DIR}/src/commands_info/auth_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/operation_system_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/client_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/commands_info/programme_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/favorite_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/interrupt_stream_time_info.cpp
   ${CMAKE_SOURCE_DIR}/src/commands_info/recent_stream_time_info.cpp
