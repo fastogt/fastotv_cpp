@@ -35,7 +35,7 @@ class OutputUri : public OutputUrl {
   typedef OutputUrl base_class;
   typedef common::Optional<common::file_system::ascii_directory_string_path> http_root_t;
   enum HlsType { HLS_PULL = 0, HLS_PUSH = 1 };
-  enum HlsSinkType { HLSSINK = 0, HLSSINK2 = 1 };
+  enum HlsSinkType { HLSSINK = 0, HLSSINK2 = 1, HLSSINK_CMAF = 2 };
   enum SrtMode { NONE = 0, CALLER = 1, LISTENER = 2, RENDEZVOUS = 3 };
   enum RtmpSinkType { RTMPSINK = 0, RTMP2SINK = 1 };
 
